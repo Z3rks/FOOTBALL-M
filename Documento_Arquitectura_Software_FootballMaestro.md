@@ -10,9 +10,9 @@ Diseño de la arquitectura lógica y física del sistema
 
 Fecha de elaboración: 23 de septiembre de 2026
 
-Fecha de actualización: 23 de septiembre de 2026
+Fecha de actualización: 24 de septiembre de 2026
 
-Versión: 1.1
+Versión: 1.2
 
 ---
 
@@ -122,7 +122,7 @@ Cada patrón se seleccionó para resolver un problema concreto identificado en l
 | Backend | Node.js + NestJS + TypeScript | Comparte lenguaje con el frontend y su arquitectura está construida nativamente alrededor de Inyección de Dependencias, módulos y decoradores, lo que facilita demostrar SOLID y los patrones anteriores de forma explícita. |
 | Base de datos | PostgreSQL + TypeORM | Modelo relacional para usuarios, partidas, créditos y actividad; consultas parametrizadas vía ORM (Plan de Seguridad, A03). |
 | Autenticación | JWT de acceso + refresh token (cookie httpOnly), bcrypt, Google OAuth 2.0 | Roles diferenciados Player/Admin validados en el backend (RNF-SEC-03) e invalidación real de sesión (RNF-SEC-05). |
-| Servicios externos | API de noticias deportivas, Google OAuth 2.0, servicio de correo transaccional | Consumidos siempre a través de Adapters (sección 6). |
+| Servicios externos | Currents API (noticias; plan gratuito de 250 peticiones/día, sin retraso), Google OAuth 2.0, servicio de correo transaccional (por definir) | Consumidos siempre a través de Adapters (sección 6). |
 | Hosting | Vercel (frontend), Render o Railway (backend y PostgreSQL gestionado) | Planes gratuitos suficientes para el prototipo académico. |
 
 Redis y WebSockets (Socket.IO), propuestos en el documento del 19 de septiembre para resultados de partidos en vivo, no son necesarios en el alcance actual: ninguna de las 14 pantallas muestra datos en tiempo real. Se reconsiderarán si se implementa el módulo futuro de Partidos y Estadísticas.
@@ -179,3 +179,4 @@ Trabajo futuro: el módulo “Partidos y Estadísticas” (calendario, resultado
 | --- | --- | --- |
 | 1.0 | 23 de septiembre de 2026 | Versión inicial. |
 | 1.1 | 23 de septiembre de 2026 | Revisión de consistencia: se listan las 14 pantallas; se amplían las responsabilidades de cada módulo (refresh tokens, recuperación de contraseña, actividad de uso, reto diario, sincronización de noticias, auditoría); se corrige el diagrama de capas (tablas reales en lugar de “games / results”); se agregan la tabla de eventos de dominio, el stack tecnológico (frontend React + Vite, PostgreSQL + TypeORM) y la vista física de despliegue; Partidos y Estadísticas queda como trabajo futuro. |
+| 1.2 | 24 de septiembre de 2026 | Al implementar feature/news se eligió Currents API como fuente de noticias (plan gratuito para prototipos). Sin clave, el módulo usa noticias de ejemplo; cambiar de proveedor es implementar otro NewsProvider. |

@@ -12,7 +12,7 @@ Fecha de elaboración: 23 de septiembre de 2026
 
 Fecha de actualización: 24 de septiembre de 2026
 
-Versión: 1.3
+Versión: 1.4
 
 ---
 
@@ -102,7 +102,7 @@ Cubre NewsScreen y la vista previa de noticias en MainHomeScreen. Las noticias s
 
 | Método | Endpoint | Descripción | RF relacionados |
 | --- | --- | --- | --- |
-| `GET` | `/news?category=&page=&limit=` | Lista noticias ordenadas de la más reciente a la más antigua, opcionalmente filtradas por categoría (Transfers, Champions League, World Cup, Premier League; sin parámetro = All). | RF-067–070, RF-071–078 |
+| `GET` | `/news?category=&page=&limit=` | Lista noticias ordenadas de la más reciente a la más antigua, opcionalmente filtradas por categoría (Transfers, Champions League, World Cup, Premier League; All o sin parámetro = todas). Cada noticia: id, title, description, category, source, sourceUrl, imageUrl, publishedAt. | RF-067–070, RF-071–078 |
 | `GET` | `/news/:id` | Detalle de una noticia, incluida la URL de la fuente original a la que redirige el ícono ExternalLink. | RF-079–082 |
 
 ## 7. Módulo Games
@@ -239,3 +239,4 @@ Este contrato debe mantenerse sincronizado con el Documento de Requisitos: cualq
 | 1.1 | 23 de septiembre de 2026 | Revisión de consistencia: refresh token en cookie httpOnly y nuevo POST /auth/refresh; consentimiento en el registro; nuevos endpoints PATCH /users/me/password, DELETE /users/me, POST /activity/heartbeat, POST /games/sessions/:id/answers, GET /credits/earn-methods y GET /admin/users/export; se agrega el código 429; se corrige la trazabilidad de /credits/transactions, /admin/dashboard/summary y /auth/login/google. |
 | 1.2 | 24 de septiembre de 2026 | Ajustes al implementar feature/users: detalle de la respuesta de GET /users/me y /users/me/badges; cambiar la contraseña cierra todas las sesiones; eliminar la cuenta exige la contraseña. |
 | 1.3 | 24 de septiembre de 2026 | Ajustes al implementar feature/credits: nuevo POST /store/items/:id/equip; detalle de las respuestas de /credits/earn-methods y /store/items; límite de 10 compras por minuto. |
+| 1.4 | 24 de septiembre de 2026 | Ajustes al implementar feature/news: ?category acepta All y se detallan los campos de cada noticia. |
