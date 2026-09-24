@@ -12,7 +12,7 @@ Fecha de elaboración: 23 de septiembre de 2026
 
 Fecha de actualización: 24 de septiembre de 2026
 
-Versión: 1.4
+Versión: 1.5
 
 ---
 
@@ -213,7 +213,7 @@ Registro de cada movimiento de créditos del usuario (ganancia o gasto). Ver dec
 | `amount` | int |  | Cantidad, positiva (ganancia) o negativa (gasto). |
 | `type` | enum |  | “earn” o “spend”. |
 | `reason` | enum |  | daily_challenge (+50), streak_7_days (+100), share_result (+25), referral (+200) o purchase. Los montos están fijos en el backend. |
-| `reference_id` | uuid | nulo | Registro que originó el movimiento (partida, ítem comprado o usuario referido). |
+| `reference_id` | uuid | nulo | Registro que originó el movimiento (partida, ítem comprado o usuario referido). Índice único (user_id, reason, reference_id): la misma recompensa no se paga dos veces aunque el evento llegue repetido. |
 | `created_at` | datetime |  | Fecha del movimiento. |
 
 ### 5.12 STORE_ITEM
@@ -309,3 +309,4 @@ Este modelo de datos debe revisarse junto con el Documento de Arquitectura de So
 | 1.2 | 24 de septiembre de 2026 | STORE_ITEM.item_type suma ball_icon, que usa el artículo “Fire Ball Icon” de CreditsScreen (detectado al implementar feature/backend-base). |
 | 1.3 | 24 de septiembre de 2026 | Detectado al implementar feature/games: GAME suma sort_order (orden del catálogo) y GAME_SESSION suma question_ids (preguntas fijadas al iniciar la partida) y shared_at (créditos por compartir una sola vez). |
 | 1.4 | 24 de septiembre de 2026 | Detectado al implementar feature/users: BADGE suma code, para otorgar insignias por código y no por nombre. |
+| 1.5 | 24 de septiembre de 2026 | Detectado al implementar feature/credits: índice único en CREDIT_TRANSACTION (user_id, reason, reference_id) para que cada recompensa se pague una sola vez. |

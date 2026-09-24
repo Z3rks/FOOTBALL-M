@@ -12,7 +12,7 @@ Fecha de elaboración: 23 de septiembre de 2026
 
 Fecha de actualización: 24 de septiembre de 2026
 
-Versión: 1.2
+Versión: 1.3
 
 ---
 
@@ -160,10 +160,11 @@ Cubre CreditsScreen.
 | Método | Endpoint | Descripción | RF relacionados |
 | --- | --- | --- | --- |
 | `GET` | `/credits/balance` | Saldo actual de créditos del usuario. | RF-114 |
-| `GET` | `/credits/earn-methods` | Las 4 formas de ganar créditos con su monto (Daily Challenge +50, 7-day streak +100, Share +25, Refer a friend +200). Los montos viven en el backend. | RF-115–116 |
+| `GET` | `/credits/earn-methods` | Las 4 formas de ganar créditos: [{ reason, method, credits }] (Daily Challenge +50, 7-day streak +100, Share +25, Refer a friend +200). Los montos viven en el backend y se otorgan automáticamente por eventos. | RF-115–116 |
 | `GET` | `/credits/transactions?page=&limit=` | Historial de movimientos (ganancias y gastos) del ledger CREDIT_TRANSACTION. No tiene pantalla propia hoy; soporta auditoría y soporte al usuario. | Soporte (auditoría) |
-| `GET` | `/store/items` | Catálogo de los 6 ítems de la tienda con su costo y, para el usuario autenticado, si ya lo compró y si le alcanza el saldo. | RF-117–118 |
-| `POST` | `/store/items/:id/purchase` | Compra un ítem en una transacción atómica: valida saldo suficiente, descuenta créditos, registra la transacción, lo asigna y aplica al perfil. 400 si no alcanza el saldo, 409 si ya lo tiene. | RF-119–120 |
+| `GET` | `/store/items` | Catálogo de los 6 ítems de la tienda (de menor a mayor costo) con, para el usuario autenticado, owned (ya comprado), equipped (aplicado al perfil) y affordable (le alcanza el saldo). | RF-117–118 |
+| `POST` | `/store/items/:id/purchase` | Compra un ítem en una transacción atómica: valida saldo suficiente, descuenta créditos, registra la transacción, lo asigna y aplica al perfil. 400 si no alcanza el saldo, 409 si ya lo tiene. Máximo 10 compras por minuto. | RF-119–120 |
+| `POST` | `/store/items/:id/equip` | Vuelve a aplicar al perfil un ítem ya comprado (solo uno aplicado por tipo). 404 si no lo ha comprado. | RF-119 |
 
 #### 8.2 Ejemplo: POST /store/items/:id/purchase
 
@@ -237,3 +238,4 @@ Este contrato debe mantenerse sincronizado con el Documento de Requisitos: cualq
 | 1.0 | 23 de septiembre de 2026 | Versión inicial. |
 | 1.1 | 23 de septiembre de 2026 | Revisión de consistencia: refresh token en cookie httpOnly y nuevo POST /auth/refresh; consentimiento en el registro; nuevos endpoints PATCH /users/me/password, DELETE /users/me, POST /activity/heartbeat, POST /games/sessions/:id/answers, GET /credits/earn-methods y GET /admin/users/export; se agrega el código 429; se corrige la trazabilidad de /credits/transactions, /admin/dashboard/summary y /auth/login/google. |
 | 1.2 | 24 de septiembre de 2026 | Ajustes al implementar feature/users: detalle de la respuesta de GET /users/me y /users/me/badges; cambiar la contraseña cierra todas las sesiones; eliminar la cuenta exige la contraseña. |
+| 1.3 | 24 de septiembre de 2026 | Ajustes al implementar feature/credits: nuevo POST /store/items/:id/equip; detalle de las respuestas de /credits/earn-methods y /store/items; límite de 10 compras por minuto. |
