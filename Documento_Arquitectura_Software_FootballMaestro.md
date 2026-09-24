@@ -12,7 +12,7 @@ Fecha de elaboración: 23 de septiembre de 2026
 
 Fecha de actualización: 24 de septiembre de 2026
 
-Versión: 1.3
+Versión: 1.4
 
 ---
 
@@ -35,6 +35,17 @@ Establecer, de manera formal y trazable, el diseño arquitectónico del sistema 
 ## 3. Estilo arquitectónico
 
 Se adopta un monolito modular por dominios: el backend se despliega como una única aplicación, pero el código está organizado en módulos independientes por dominio de negocio, cada uno con su propia lógica interna y comunicándose con los demás solo a través de interfaces públicas bien definidas (nunca accediendo directamente a las tablas de otro módulo).
+
+Interfaces públicas entre módulos (lo único que un módulo puede importar de otro):
+
+| Módulo | Interfaz pública | Quién la usa |
+| --- | --- | --- |
+| Users | UsersService (cuentas), CreditBalanceStore (saldo), UsersStatsService y BadgesService (estadísticas) | Auth (cuentas), Credits (solo CreditBalanceStore), Admin |
+| Games | PlayerGameStatsReader (resumen de partidas de un jugador), GamesStatsService (estadísticas globales) | Users (solo PlayerGameStatsReader), Admin |
+| Auth | Decoradores @CurrentUser, @Public, @Roles y @PlayerOnly | Todos los controladores |
+| Credits, News, Admin | Ninguna: solo reaccionan a eventos o atienden sus propias pantallas | — |
+
+Las dependencias entre módulos no forman ciclos: Auth → Users → Games; Credits → Users; Admin → Users y Games. Games no depende de ningún otro módulo de dominio. Estas reglas se verifican automáticamente en la suite de pruebas (src/architecture.spec.ts): falla si un servicio importa el ORM, si un módulo importa algo interno de otro o si aparece una dependencia circular.
 
 ### 3.1 Comparación de alternativas evaluadas
 
@@ -68,9 +79,11 @@ Cada uno de los 6 módulos sigue internamente la misma estructura en capas, ilus
 | Capa | Responsabilidad |
 | --- | --- |
 | Controller | Recibe la petición HTTP, valida el DTO de entrada y delega al Service. No contiene lógica de negocio. |
-| Service | Contiene las reglas de negocio del dominio. Orquesta repositorios, estrategias y eventos. |
-| Repository | Encapsula el acceso a datos detrás de una interfaz (p. ej. IGamesRepository), independiente del motor de base de datos. |
+| Service | Contiene las reglas de negocio del dominio. Orquesta repositorios, estrategias y eventos. Solo depende de interfaces: nunca importa TypeORM. |
+| Repository | Interfaz (clase abstracta, p. ej. GameSessionsRepository) con las operaciones de datos que necesita el dominio. Su implementación con TypeORM (TypeOrmGameSessionsRepository) es la única clase que conoce el ORM; el módulo conecta una con otra. |
 | Entity / DB | Modelo de persistencia (entidades TypeORM) y almacenamiento real de los datos en PostgreSQL. Ver Documento de Modelo de Datos. |
+
+Transacciones: cuando varias escrituras deben confirmarse juntas (cerrar una partida, comprar en la tienda, sumar XP), el servicio las envuelve en UnitOfWork.run(). Los repositorios usados dentro participan automáticamente en la transacción, sin que ningún módulo le pase a otro un objeto del ORM. Para procesar de a una las operaciones de un mismo jugador, cada módulo usa su propio candado (lockPlayer en Games, lockAccount en Credits) en lugar de bloquear filas de tablas ajenas.
 
 ## 5. Comunicación entre módulos: eventos de dominio
 
@@ -85,7 +98,10 @@ Eventos de dominio definidos:
 | GameCompletedEvent | Games | Users: suma XP, recalcula nivel, precisión y racha, y otorga insignias. Credits: +50 si la partida era el reto diario (una vez por día). |
 | StreakReachedEvent | Users | Credits: +100 al alcanzar una racha de 7 días. |
 | ResultSharedEvent | Games | Credits: +25 por compartir un resultado (una vez por partida). |
-| UserRegisteredEvent | Auth | Users: crea el perfil inicial. Credits: +200 al usuario que lo refirió, si existe. |
+| UserRegisteredEvent | Auth | Credits: +200 al usuario que lo refirió, si existe. (La cuenta y el perfil los crea Auth antes, llamando a UsersService, porque necesita el id del usuario para iniciar la sesión.) |
+| ItemPurchasedEvent | Credits | Users: otorga la insignia Coleccionista con la primera compra. |
+| PasswordChangedEvent | Users | Auth: cierra todas las sesiones del usuario. |
+| UserSuspendedEvent | Admin | Auth: cierra todas las sesiones del usuario suspendido. |
 | AdminActionEvent | Admin, Auth | Admin: guarda el registro en ADMIN_AUDIT_LOG (login de administrador, suspender, activar, eliminar, exportar). |
 
 ## 6. Patrones de diseño aplicados
@@ -94,10 +110,11 @@ Cada patrón se seleccionó para resolver un problema concreto identificado en l
 
 | Patrón | Módulo(s) | Problema que resuelve |
 | --- | --- | --- |
-| Repository | Todos | Separa la lógica de negocio de cómo se persisten los datos; el Service nunca depende de un motor de base de datos concreto. |
-| Strategy | Games | Los 10 minijuegos (Who is it?, Silhouette, Guess the Badge, etc.) tienen reglas de validación y puntaje distintas. Cada uno implementa IGameStrategy en vez de un condicional gigante. |
+| Repository | Todos | Separa la lógica de negocio de cómo se persisten los datos; el Service depende de una interfaz de repositorio y nunca de un motor de base de datos concreto. |
+| Unit of Work | Todos | Agrupa en una sola transacción las escrituras de varios repositorios sin que el Service conozca el ORM. |
+| Strategy | Games | Las reglas de validación y puntaje de cada minijuego viven en una estrategia (clase abstracta GameStrategy) en vez de un condicional gigante. Hoy los 10 minijuegos son de opción múltiple y comparten MultipleChoiceStrategy; un minijuego con reglas distintas (p. ej. ordenar en Timeline) agrega su propia estrategia. |
 | Factory Method | Games | GameFactory decide qué estrategia instanciar según el strategy_key del minijuego elegido, sin acoplar ese conocimiento al resto del módulo. |
-| Observer (eventos de dominio) | Games, Users, Auth → Users, Credits, Admin | Al completar un minijuego, compartir un resultado o registrarse, varios módulos reaccionan (XP, racha, créditos, auditoría) sin que el emisor los conozca directamente. |
+| Observer (eventos de dominio) | Games, Users, Auth, Credits, Admin → Users, Credits, Auth, Admin | Al completar un minijuego, compartir un resultado o registrarse, varios módulos reaccionan (XP, racha, créditos, auditoría) sin que el emisor los conozca directamente. |
 | Adapter | Auth (Google OAuth, correo), News (API externa) | Aísla librerías/API externas detrás de una interfaz propia; cambiar de proveedor solo afecta al adapter. |
 | DTO (Data Transfer Object) | Todos | El contrato HTTP nunca expone directamente el modelo de base de datos (p. ej. password_hash o correct_answer). |
 | Facade | Admin → Dashboard / Analytics / Reports | AdminDashboardService, AdminAnalyticsService y AdminReportsService reúnen datos de Users y Games a través de sus interfaces públicas de estadísticas (UsersStatsService y GamesStatsService), sin consultar sus tablas directamente. |
@@ -106,11 +123,11 @@ Cada patrón se seleccionó para resolver un problema concreto identificado en l
 
 | Principio | Aplicación concreta en Football Maestro |
 | --- | --- |
-| S — Single Responsibility | AuthService solo autentica; la actualización del perfil de usuario es responsabilidad exclusiva de UsersService. |
-| O — Open/Closed | Gracias a IGameStrategy, agregar un minijuego 11 no modifica ninguna clase existente: solo se crea una nueva clase que implementa la interfaz y se registra en el factory (RNF-MANT-01). |
-| L — Liskov Substitution | Cualquier clase que implemente IGameStrategy debe poder sustituir a otra sin romper GamesService (mismo contrato de entrada/salida para validar y puntuar). |
-| I — Interface Segregation | En Admin se separan IUserManagement (suspender, activar, eliminar) de IReportExport (generar CSV) en vez de una única interfaz gigante que obligue a depender de métodos que no se usan. |
-| D — Dependency Inversion | GamesService depende de la interfaz IGamesRepository, no de una implementación concreta de ORM — permite cambiar de motor de base de datos o usar un repositorio falso (mock) en pruebas sin tocar la lógica de negocio. |
+| S — Single Responsibility | AuthService solo autentica; la actualización del perfil es responsabilidad de ProfileService; en Admin, AdminUsersService gestiona jugadores y CsvReportExportService solo exporta. |
+| O — Open/Closed | Gracias a GameStrategy, agregar un minijuego con reglas nuevas no modifica GameSessionsService: solo se crea una nueva estrategia y se registra en GameFactory (RNF-MANT-01). Igual con los repositorios: cambiar de ORM es escribir otras implementaciones. |
+| L — Liskov Substitution | Cualquier estrategia debe poder sustituir a otra sin romper GameSessionsService (mismo contrato para validar y puntuar); cualquier implementación de un repositorio (TypeORM o en memoria para pruebas) cumple el mismo contrato. |
+| I — Interface Segregation | En Admin se separan IUserManagement (consultar, suspender, activar, eliminar) de IReportExport (exportar CSV). Entre módulos, cada consumidor recibe solo lo que usa: Users depende de PlayerGameStatsReader y Credits de CreditBalanceStore, no de servicios completos. |
+| D — Dependency Inversion | Los servicios dependen de interfaces (GameSessionsRepository, UnitOfWork, CreditBalanceStore…), no de TypeORM; el módulo de NestJS decide qué implementación inyectar. Así se prueba la lógica con repositorios en memoria (p. ej. store.service.spec.ts) sin base de datos. |
 
 ## 8. Stack tecnológico y estructura de carpetas
 
@@ -127,29 +144,28 @@ Cada patrón se seleccionó para resolver un problema concreto identificado en l
 
 Redis y WebSockets (Socket.IO), propuestos en el documento del 19 de septiembre para resultados de partidos en vivo, no son necesarios en el alcance actual: ninguna de las 14 pantallas muestra datos en tiempo real. Se reconsiderarán si se implementa el módulo futuro de Partidos y Estadísticas.
 
-### 8.2 Estructura de carpetas propuesta (NestJS)
+### 8.2 Estructura de carpetas (NestJS)
 
 ```
-football-maestro-backend/
+backend/
 ├── src/
-│   ├── auth/           (Controller, Service, Module, Strategies JWT/Google,
-│   │                    Guards, Repository de AUTH_TOKEN, Adapter de correo, DTO)
-│   ├── users/          (Controller, Service, Module, Repository, Entity, DTO,
-│   │                    Listeners, activity/ para USER_SESSION)
-│   ├── news/           (Controller, Service, Module, Repository,
-│   │                    Adapter API externa, tarea de sincronización)
-│   ├── games/          (Controller, Service, Module, Repository,
-│   │                    Strategies/*.strategy.ts, Factory, Events)
-│   ├── credits/        (Controller, Service, Module, Repository, Listeners)
-│   ├── admin/
-│   │   ├── dashboard/
-│   │   ├── users-management/
-│   │   ├── analytics/  (Service tipo Facade)
-│   │   ├── reports/    (Service tipo Facade)
-│   │   └── audit/      (Repository de ADMIN_AUDIT_LOG, Listener)
-│   ├── shared/         (decorators, filters, interceptors, event-bus)
+│   ├── <modulo>/                 (misma estructura en los 6 módulos)
+│   │   ├── <modulo>.controller.ts
+│   │   ├── <nombre>.service.ts   (reglas de negocio; solo interfaces)
+│   │   ├── repositories/         (<nombre>.repository.ts = interfaz,
+│   │   │                          typeorm-<nombre>.repository.ts = implementación)
+│   │   ├── entities/  dto/
+│   │   └── <modulo>.module.ts    (conecta interfaz → implementación)
+│   ├── auth/      (+ guards/, adapters/ de Google y correo)
+│   ├── users/     (+ progress.listener.ts, credit-balance.store.ts)
+│   ├── news/      (+ providers/ Currents y ejemplo, sincronización)
+│   ├── games/     (+ strategies/, player-game-stats.reader.ts)
+│   ├── credits/   (+ credits.listener.ts)
+│   ├── admin/     (dashboard/, users-management/, analytics/, reports/, audit/)
+│   ├── shared/    (database/ UnitOfWork, events/, time/, csv)
+│   ├── architecture.spec.ts   (verifica las reglas de dependencias)
 │   └── app.module.ts
-├── test/
+├── test/          (pruebas e2e contra PostgreSQL)
 └── package.json
 ```
 
@@ -181,3 +197,4 @@ Trabajo futuro: el módulo “Partidos y Estadísticas” (calendario, resultado
 | 1.1 | 23 de septiembre de 2026 | Revisión de consistencia: se listan las 14 pantallas; se amplían las responsabilidades de cada módulo (refresh tokens, recuperación de contraseña, actividad de uso, reto diario, sincronización de noticias, auditoría); se corrige el diagrama de capas (tablas reales en lugar de “games / results”); se agregan la tabla de eventos de dominio, el stack tecnológico (frontend React + Vite, PostgreSQL + TypeORM) y la vista física de despliegue; Partidos y Estadísticas queda como trabajo futuro. |
 | 1.2 | 24 de septiembre de 2026 | Al implementar feature/news se eligió Currents API como fuente de noticias (plan gratuito para prototipos). Sin clave, el módulo usa noticias de ejemplo; cambiar de proveedor es implementar otro NewsProvider. |
 | 1.3 | 24 de septiembre de 2026 | Al implementar feature/admin: Users y Games exponen servicios públicos de estadísticas (UsersStatsService, GamesStatsService) que usa el Facade del panel administrativo; nuevo evento UserSuspendedEvent (Admin → Auth). |
+| 1.4 | 24 de septiembre de 2026 | Refactor de arquitectura (rama refactor/arquitectura): repositorios con interfaz en los 6 módulos y Unit of Work para las transacciones; tabla de interfaces públicas entre módulos (PlayerGameStatsReader, CreditBalanceStore); Games ya no lee la tabla de usuarios; IUserManagement e IReportExport implementados; tabla de eventos completa (ItemPurchased, PasswordChanged, UserSuspended); UserRegisteredEvent ya no crea el perfil; Strategy describe la estrategia actual; estructura de carpetas real y prueba automática de arquitectura. |

@@ -118,6 +118,8 @@ Las pruebas unitarias van junto al archivo que prueban (`games.service.spec.ts`)
 | `feature/credits` | Saldo, formas de ganar créditos, historial, tienda y compras | `feature/backend-base` | API §8 |
 | `feature/news` | Adapter de la API de noticias, sincronización, feed y filtros | `feature/backend-base` | API §6 |
 | `feature/admin` | Dashboard, gestión de usuarios, analytics, reportes CSV, auditoría | `feature/backend-base` | API §9 |
+| `feature/frontend-api` | Frontend (`project/`) conectado a la API; incluye todo el backend | `feature/admin` | API (todas las pantallas) |
+| `refactor/arquitectura` | Repositorios con interfaz, Unit of Work, interfaces públicas entre módulos, prueba de arquitectura | `feature/frontend-api` | Arquitectura §3-§7 |
 
 ### 4.2 Orden de trabajo
 
@@ -219,8 +221,8 @@ Variables de entorno del backend (documentadas en `backend/.env.example`):
 |---|---|
 | Requisitos Funcionales y No Funcionales v2.1 | Qué debe hacer cada pantalla (RF-001 a RF-153) |
 | Requisitos, Arquitectura y UML | Resumen académico, casos de uso, clases y despliegue |
-| Arquitectura de Software 1.1 | Módulos, capas, patrones, eventos y despliegue |
-| Modelo de Datos 1.1 | Las 16 tablas, sus campos y relaciones |
-| Contrato de API 1.1 | Cada endpoint: método, ruta y RF que cubre |
+| Arquitectura de Software 1.4 | Módulos, interfaces públicas, capas, patrones, SOLID, eventos y despliegue |
+| Modelo de Datos 1.5 | Las 16 tablas, sus campos y relaciones |
+| Contrato de API 1.6 | Cada endpoint: método, ruta y RF que cubre |
 | Plan de Pruebas 1.1 | Casos TC-01 a TC-49 y Definition of Done |
 | Plan de Seguridad 1.1 | Amenazas, OWASP Top 10 y checklist antes de desplegar |

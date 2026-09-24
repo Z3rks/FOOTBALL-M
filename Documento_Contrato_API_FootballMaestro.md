@@ -12,7 +12,7 @@ Fecha de elaboración: 23 de septiembre de 2026
 
 Fecha de actualización: 24 de septiembre de 2026
 
-Versión: 1.5
+Versión: 1.6
 
 ---
 
@@ -30,7 +30,7 @@ Especificar, de manera formal y trazable, cada endpoint expuesto por el backend:
 | --- | --- |
 | URL base | https://api.footballmaestro.com/v1 |
 | Formato | JSON en request y response (Content-Type: application/json), salvo las exportaciones CSV (text/csv). |
-| Autenticación | Access token JWT de corta duración (15–30 min) en el header Authorization: Bearer {accessToken}, obtenido en POST /auth/login o /auth/login/google. El refresh token se entrega en una cookie httpOnly, Secure, SameSite=Strict y se renueva en POST /auth/refresh. Todos los endpoints requieren access token salvo los endpoints públicos del módulo Auth (sección 4.1). Los de /admin/* además validan role=admin en el backend (RNF-SEC-03). |
+| Autenticación | Access token JWT de corta duración (15–30 min) en el header Authorization: Bearer {accessToken}, obtenido en POST /auth/login o /auth/login/google. El refresh token se entrega en una cookie httpOnly, Secure, SameSite=Strict y se renueva en POST /auth/refresh. Todos los endpoints requieren access token salvo los endpoints públicos del módulo Auth (sección 4.1). Los de /admin/* además validan role=admin en el backend (RNF-SEC-03), y los de /games, /credits y /store solo aceptan role=player: un administrador recibe 403 (las métricas nunca mezclan partidas de administradores). |
 | Códigos de estado | 200 OK, 201 Created, 204 No Content, 400 Bad Request (validación o regla de negocio), 401 Unauthorized, 403 Forbidden (rol insuficiente o cuenta inactiva), 404 Not Found, 409 Conflict (ej. email duplicado, ítem ya comprado), 429 Too Many Requests (rate limiting). |
 | Paginación | Listas largas (noticias, usuarios admin, transacciones) usan ?page= y ?limit=, respuesta con { data: [...], total, page, limit }. |
 | Errores | Formato uniforme: { "statusCode": 400, "message": "Passwords don't match", "error": "Bad Request" } |
@@ -248,3 +248,4 @@ Este contrato debe mantenerse sincronizado con el Documento de Requisitos: cualq
 | 1.3 | 24 de septiembre de 2026 | Ajustes al implementar feature/credits: nuevo POST /store/items/:id/equip; detalle de las respuestas de /credits/earn-methods y /store/items; límite de 10 compras por minuto. |
 | 1.4 | 24 de septiembre de 2026 | Ajustes al implementar feature/news: ?category acepta All y se detallan los campos de cada noticia. |
 | 1.5 | 24 de septiembre de 2026 | Ajustes al implementar feature/admin: reglas de cálculo de KPIs, alertas y retención; el panel gestiona solo jugadores; auditoría previa a cada acción; CSV seguros. |
+| 1.6 | 24 de septiembre de 2026 | Refactor de arquitectura: /games, /credits y /store son solo para jugadores (403 para administradores). |
