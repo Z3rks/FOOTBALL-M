@@ -10,9 +10,9 @@ Especificación de endpoints del backend
 
 Fecha de elaboración: 23 de septiembre de 2026
 
-Fecha de actualización: 23 de septiembre de 2026
+Fecha de actualización: 24 de septiembre de 2026
 
-Versión: 1.1
+Versión: 1.2
 
 ---
 
@@ -79,12 +79,12 @@ Cubre el header y “My Stats” de MainHomeScreen y ProfileScreen. Todos requie
 
 | Método | Endpoint | Descripción | RF relacionados |
 | --- | --- | --- | --- |
-| `GET` | `/users/me` | Devuelve el perfil del usuario autenticado: avatar, username, email, nivel, racha, XP, país e ítems aplicados. | RF-055–058, RF-104–106 |
+| `GET` | `/users/me` | Devuelve el perfil del usuario autenticado: username, email, rol, país, nivel, XP, XP para el siguiente nivel, racha (0 si ya está rota) y cantidad de insignias. | RF-055–058, RF-104–106 |
 | `PATCH` | `/users/me` | Actualiza datos editables del perfil (username, país, avatar) — opción “Edit Profile”. | RF-112 |
-| `PATCH` | `/users/me/password` | Cambia la contraseña (requiere la actual) — opción “Account Settings”. | RF-112 |
-| `DELETE` | `/users/me` | Elimina la cuenta y sus datos personales (derecho de supresión, Ley 1581). | RNF-SEC-07 |
+| `PATCH` | `/users/me/password` | Cambia la contraseña (requiere la actual) — opción “Account Settings”. Cierra todas las sesiones, incluida la actual. Máximo 5 intentos cada 15 min. | RF-112 |
+| `DELETE` | `/users/me` | Elimina la cuenta y sus datos personales (derecho de supresión, Ley 1581). Body { password } obligatorio si la cuenta tiene contraseña. Los administradores no pueden borrarse a sí mismos (403). | RNF-SEC-07 |
 | `GET` | `/users/me/stats` | Devuelve Accuracy, Total XP, Games Played y Badges (sección Performance y “My Stats”). | RF-068, RF-107–109 |
-| `GET` | `/users/me/badges` | Lista las insignias ganadas por el usuario. | RF-105 |
+| `GET` | `/users/me/badges` | Lista todo el catálogo de insignias con la fecha en que el usuario ganó cada una (earnedAt, null si todavía no). | RF-105 |
 
 ### 5.2 Actividad de uso
 
@@ -236,3 +236,4 @@ Este contrato debe mantenerse sincronizado con el Documento de Requisitos: cualq
 | --- | --- | --- |
 | 1.0 | 23 de septiembre de 2026 | Versión inicial. |
 | 1.1 | 23 de septiembre de 2026 | Revisión de consistencia: refresh token en cookie httpOnly y nuevo POST /auth/refresh; consentimiento en el registro; nuevos endpoints PATCH /users/me/password, DELETE /users/me, POST /activity/heartbeat, POST /games/sessions/:id/answers, GET /credits/earn-methods y GET /admin/users/export; se agrega el código 429; se corrige la trazabilidad de /credits/transactions, /admin/dashboard/summary y /auth/login/google. |
+| 1.2 | 24 de septiembre de 2026 | Ajustes al implementar feature/users: detalle de la respuesta de GET /users/me y /users/me/badges; cambiar la contraseña cierra todas las sesiones; eliminar la cuenta exige la contraseña. |

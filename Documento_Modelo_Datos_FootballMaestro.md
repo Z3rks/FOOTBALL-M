@@ -12,7 +12,7 @@ Fecha de elaboración: 23 de septiembre de 2026
 
 Fecha de actualización: 24 de septiembre de 2026
 
-Versión: 1.3
+Versión: 1.4
 
 ---
 
@@ -246,6 +246,7 @@ Catálogo de insignias que un usuario puede ganar, mostradas en ProfileScreen y 
 | Campo | Tipo | Clave | Descripción |
 | --- | --- | --- | --- |
 | `id` | uuid | PK | Identificador único de la insignia. |
+| `code` | string | único | Código fijo con el que el backend otorga la insignia (ej. “streak-7”); el nombre visible puede cambiar sin romper las reglas. |
 | `name` | string |  | Nombre de la insignia. |
 | `icon` | string |  | Ícono representativo. |
 | `description` | string |  | Descripción de cómo se obtiene. |
@@ -307,3 +308,4 @@ Este modelo de datos debe revisarse junto con el Documento de Arquitectura de So
 | 1.1 | 23 de septiembre de 2026 | Revisión de consistencia con los demás documentos: se corrige el conteo de entidades; se agregan AUTH_TOKEN, USER_SESSION, QUESTION, DAILY_CHALLENGE, FUN_FACT y NEWS_ARTICLE; USER suma status, country, last_played_on, referred_by y consent_accepted_at; GAME_SESSION suma status, is_daily_challenge, xp_earned y started_at; GAME_ANSWER suma question_id, given_answer y answered_at; se fija PostgreSQL + TypeORM; Partidos y Estadísticas queda fuera de alcance. |
 | 1.2 | 24 de septiembre de 2026 | STORE_ITEM.item_type suma ball_icon, que usa el artículo “Fire Ball Icon” de CreditsScreen (detectado al implementar feature/backend-base). |
 | 1.3 | 24 de septiembre de 2026 | Detectado al implementar feature/games: GAME suma sort_order (orden del catálogo) y GAME_SESSION suma question_ids (preguntas fijadas al iniciar la partida) y shared_at (créditos por compartir una sola vez). |
+| 1.4 | 24 de septiembre de 2026 | Detectado al implementar feature/users: BADGE suma code, para otorgar insignias por código y no por nombre. |
