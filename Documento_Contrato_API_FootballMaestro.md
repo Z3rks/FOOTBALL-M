@@ -12,7 +12,7 @@ Fecha de elaboración: 23 de septiembre de 2026
 
 Fecha de actualización: 24 de septiembre de 2026
 
-Versión: 1.4
+Versión: 1.5
 
 ---
 
@@ -188,6 +188,13 @@ Cubre CreditsScreen.
 
 Todos los endpoints de Admin requieren access token con role=admin, validado en el backend (RNF-SEC-03). Las acciones que modifican datos o exportan información quedan registradas en ADMIN_AUDIT_LOG (RNF-SEC-04). Las métricas se calculan sobre todas las categorías del catálogo de minijuegos.
 
+- Solo se gestionan y cuentan jugadores: las cuentas de administrador no aparecen en las métricas ni se pueden suspender o eliminar desde el panel (404).
+- Variaciones de los KPIs (change): usuarios totales frente a hace 7 días; activos, partidas y precisión de hoy frente a ayer (la precisión en puntos). null cuando el período anterior fue 0.
+- Alertas: caída de 3 o más puntos en la retención día 7 frente a la semana anterior, y récord diario de partidas.
+- Retención día N: porcentaje de jugadores registrados hace al menos N días que volvieron a tener actividad (heartbeat) el día N o después; null si nadie cumple N días.
+- Suspender, activar, eliminar y exportar quedan en ADMIN_AUDIT_LOG antes de ejecutarse. Suspender cierra todas las sesiones del jugador.
+- Los CSV usan BOM UTF-8 y neutralizan celdas que empiezan por = + - @ (inyección de fórmulas).
+
 ### 9.1 AdminDashboardScreen
 
 | Método | Endpoint | Descripción | RF relacionados |
@@ -240,3 +247,4 @@ Este contrato debe mantenerse sincronizado con el Documento de Requisitos: cualq
 | 1.2 | 24 de septiembre de 2026 | Ajustes al implementar feature/users: detalle de la respuesta de GET /users/me y /users/me/badges; cambiar la contraseña cierra todas las sesiones; eliminar la cuenta exige la contraseña. |
 | 1.3 | 24 de septiembre de 2026 | Ajustes al implementar feature/credits: nuevo POST /store/items/:id/equip; detalle de las respuestas de /credits/earn-methods y /store/items; límite de 10 compras por minuto. |
 | 1.4 | 24 de septiembre de 2026 | Ajustes al implementar feature/news: ?category acepta All y se detallan los campos de cada noticia. |
+| 1.5 | 24 de septiembre de 2026 | Ajustes al implementar feature/admin: reglas de cálculo de KPIs, alertas y retención; el panel gestiona solo jugadores; auditoría previa a cada acción; CSV seguros. |
