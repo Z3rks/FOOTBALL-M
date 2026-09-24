@@ -12,7 +12,7 @@ Fecha de elaboración: 23 de septiembre de 2026
 
 Fecha de actualización: 24 de septiembre de 2026
 
-Versión: 1.2
+Versión: 1.3
 
 ---
 
@@ -115,6 +115,7 @@ Catálogo de los 10 minijuegos disponibles en MinigamesScreen. Dueño: módulo G
 | `difficulty` | enum |  | Easy, Medium, Hard o Expert. |
 | `icon` | string |  | Emoji o ícono representativo. |
 | `strategy_key` | string | único | Clave que usa GameFactory para elegir la estrategia de validación y puntaje (ej. “who-is-it”). |
+| `sort_order` | int |  | Posición en el catálogo de MinigamesScreen (1 = primero). |
 
 ### 5.5 QUESTION
 
@@ -153,11 +154,13 @@ Una partida jugada por un usuario en un minijuego específico. Es la base de Res
 | `status` | enum |  | “in_progress”, “completed” o “abandoned”. |
 | `is_daily_challenge` | boolean |  | Si la partida corresponde al reto diario (otorga la recompensa adicional una sola vez por día). |
 | `score` | int | nulo | Puntaje obtenido (ej. 8). Lo calcula el servidor al completar la partida. |
-| `total_questions` | int |  | Total de preguntas de la partida (ej. 10). |
+| `total_questions` | int |  | Total de preguntas de la partida (hasta 10). |
+| `question_ids` | json |  | Preguntas de la partida en orden (question_ids[0] es la pregunta 1). Se fijan al iniciar, para validar cada respuesta contra la pregunta que realmente se mostró. |
 | `accuracy` | decimal | nulo | Porcentaje de precisión de esta partida. |
 | `xp_earned` | int | nulo | XP ganado en esta partida. |
 | `started_at` | datetime |  | Fecha y hora de inicio. |
 | `completed_at` | datetime | nulo | Fecha y hora en que terminó la partida. |
+| `shared_at` | datetime | nulo | Primera vez que se compartió el resultado; los +25 créditos por compartir se otorgan una sola vez (RF-099). |
 
 ### 5.8 GAME_ANSWER
 
@@ -303,3 +306,4 @@ Este modelo de datos debe revisarse junto con el Documento de Arquitectura de So
 | 1.0 | 23 de septiembre de 2026 | Versión inicial (10 entidades). |
 | 1.1 | 23 de septiembre de 2026 | Revisión de consistencia con los demás documentos: se corrige el conteo de entidades; se agregan AUTH_TOKEN, USER_SESSION, QUESTION, DAILY_CHALLENGE, FUN_FACT y NEWS_ARTICLE; USER suma status, country, last_played_on, referred_by y consent_accepted_at; GAME_SESSION suma status, is_daily_challenge, xp_earned y started_at; GAME_ANSWER suma question_id, given_answer y answered_at; se fija PostgreSQL + TypeORM; Partidos y Estadísticas queda fuera de alcance. |
 | 1.2 | 24 de septiembre de 2026 | STORE_ITEM.item_type suma ball_icon, que usa el artículo “Fire Ball Icon” de CreditsScreen (detectado al implementar feature/backend-base). |
+| 1.3 | 24 de septiembre de 2026 | Detectado al implementar feature/games: GAME suma sort_order (orden del catálogo) y GAME_SESSION suma question_ids (preguntas fijadas al iniciar la partida) y shared_at (créditos por compartir una sola vez). |
