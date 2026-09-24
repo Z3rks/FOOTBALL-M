@@ -1,0 +1,197 @@
+**FOOTBALL MAESTRO**
+
+*Become a Football Maestro*
+
+**PLAN DE PRUEBAS**
+
+Casos de prueba y trazabilidad de requisitos
+
+(Complemento de Requisitos, Arquitectura, Modelo de Datos y Contrato de API)
+
+Fecha de elaboración: 23 de septiembre de 2026
+
+Fecha de actualización: 23 de septiembre de 2026
+
+Versión: 1.1
+
+---
+
+## 1. Introducción
+
+Este documento define el plan de pruebas del sistema “Football Maestro”, cerrando el ciclo de trazabilidad mencionado en los documentos de Requisitos y Arquitectura: cada requisito funcional (RF-XXX) y no funcional (RNF-XXX) debe tener al menos un caso de prueba asociado que verifique su cumplimiento. Los casos cubren las 14 pantallas del sistema.
+
+## 2. Objetivo del documento
+
+Establecer la estrategia, herramientas y casos de prueba necesarios para verificar que la implementación del backend y su integración con el frontend cumplen los requisitos funcionales y no funcionales definidos, antes de considerar una funcionalidad como terminada (Definition of Done).
+
+## 3. Estrategia de pruebas
+
+Siguiendo las capas definidas en el Documento de Arquitectura de Software, las pruebas se organizan en 4 niveles:
+
+| Nivel | Qué verifica | Capa / alcance |
+| --- | --- | --- |
+| Pruebas unitarias | Lógica de negocio aislada: cada Service, cada Strategy de minijuego, cálculo de puntaje, XP, racha y créditos. | Service, Strategy (con Repository simulado / mock, aprovechando la Inyección de Dependencias) |
+| Pruebas de integración | Que un módulo completo funcione junto: Controller → Service → Repository → base de datos PostgreSQL de pruebas. | Un módulo a la vez (ej. Games, Credits) |
+| Pruebas de aceptación (E2E) | Que un flujo completo de usuario funcione de principio a fin, igual que lo describe la historia de usuario en Trello. | Varios módulos combinados, vía llamadas HTTP reales |
+| Pruebas no funcionales | Rendimiento, seguridad, compatibilidad, disponibilidad y accesibilidad, según la sección 5.2 del Documento de Requisitos. | Sistema completo |
+
+### 3.1 Herramientas sugeridas
+
+| Herramienta | Uso |
+| --- | --- |
+| Jest | Pruebas unitarias y de integración (viene integrado con NestJS). |
+| Supertest | Pruebas de integración/E2E sobre los endpoints HTTP del Contrato de API. |
+| Playwright o Cypress | Pruebas de aceptación E2E simulando al usuario en el frontend real. |
+| k6 o Artillery | Pruebas de carga/rendimiento (RNF-PERF). |
+| OWASP ZAP | Pruebas de seguridad básicas (RNF-SEC), como escaneo de XSS e inyección. |
+| axe-core | Pruebas automatizadas de accesibilidad (RNF-ACC). |
+
+## 4. Casos de prueba funcionales por pantalla
+
+Se listan los casos de prueba más representativos de cada pantalla (camino exitoso y al menos un caso de error/borde). No sustituyen una cobertura exhaustiva de los 153 RF, sino que priorizan lo crítico para validar cada historia de usuario.
+
+### 4.1 SplashScreen
+
+| ID | RF relacionado | Caso de prueba | Resultado esperado |
+| --- | --- | --- | --- |
+| TC-01 | RF-003, RF-009 | Abrir la app sin sesión activa. | Redirige automáticamente a WelcomeScreen tras el splash. |
+| TC-02 | RF-007, RF-009 | Abrir la app con sesión activa (refresh token válido). | POST /auth/refresh responde 200 y la app redirige a MainHomeScreen (o a AdminDashboardScreen si el rol es admin), saltando WelcomeScreen. |
+
+### 4.2 WelcomeScreen
+
+| ID | RF relacionado | Caso de prueba | Resultado esperado |
+| --- | --- | --- | --- |
+| TC-03 | RF-015, RF-018 | Presionar “Sign In”. | Navega a SignInScreen sin pasos intermedios. |
+| TC-04 | RF-016, RF-019 | Presionar “Create Account”. | Navega a RegisterScreen sin pasos intermedios. |
+
+### 4.3 SignInScreen
+
+| ID | RF relacionado | Caso de prueba | Resultado esperado |
+| --- | --- | --- | --- |
+| TC-05 | RF-025–029 | Iniciar sesión con credenciales válidas y rol Player. | Navega a MainHomeScreen; se recibe un accessToken válido y la cookie de refresh token. |
+| TC-06 | RF-030–034 | Iniciar sesión con credenciales válidas y rol Admin. | Navega a AdminDashboardScreen, no a MainHomeScreen; el login queda en ADMIN_AUDIT_LOG. |
+| TC-07 | RF-026 | Iniciar sesión con contraseña incorrecta. | La API responde 401; el frontend muestra un mensaje de error claro y no navega (RNF-USA-03). |
+| TC-39 | RF-035–039 | Solicitar recuperación de contraseña, usar el enlace del correo y volver a iniciar sesión. | Se establece la nueva contraseña y el usuario inicia sesión con ella; reutilizar el mismo enlace o usarlo después de 30 min responde 400. |
+
+### 4.4 RegisterScreen
+
+| ID | RF relacionado | Caso de prueba | Resultado esperado |
+| --- | --- | --- | --- |
+| TC-08 | RF-040–044 | Registrarse con username, email y password válidos y coincidentes. | Se crea la cuenta y navega a MainHomeScreen. |
+| TC-09 | RF-045–049 | Registrarse con “Password” y “Confirm Password” distintos. | Se muestra “Passwords don't match!”; no se crea la cuenta ni se navega. |
+| TC-10 | RF-041 | Registrarse con el campo Email vacío. | El formulario no permite enviarse (validación de campos obligatorios). |
+
+### 4.5 MainHomeScreen
+
+| ID | RF relacionado | Caso de prueba | Resultado esperado |
+| --- | --- | --- | --- |
+| TC-11 | RF-055–058 | Cargar el home con un usuario de nivel 12 y racha de 7 días. | El header muestra “Lvl 12” y “7” correctamente, junto al avatar y nombre. |
+| TC-12 | RF-061–062 | Presionar “Play Now” en el reto diario. | Inicia el minijuego correspondiente al reto diario del día (GAME_SESSION con is_daily_challenge = true). |
+
+### 4.6 NewsScreen
+
+| ID | RF relacionado | Caso de prueba | Resultado esperado |
+| --- | --- | --- | --- |
+| TC-13 | RF-075–077 | Seleccionar la categoría “Transfers”. | El feed muestra solo artículos con categoría Transfers. |
+| TC-14 | RF-080–081 | Presionar el ícono de enlace externo de una noticia. | Abre la fuente original sin cerrar la sesión activa del usuario. |
+
+### 4.7 MinigamesScreen
+
+| ID | RF relacionado | Caso de prueba | Resultado esperado |
+| --- | --- | --- | --- |
+| TC-15 | RF-083–085 | Cargar el catálogo de minijuegos. | Se listan los 10 minijuegos con su categoría y dificultad correctas. |
+| TC-16 | RF-087 | Seleccionar el minijuego “Silhouette”. | Inicia una nueva GAME_SESSION asociada a ese juego; las preguntas recibidas no incluyen la respuesta correcta. |
+| TC-40 | RF-090 | Salir de un minijuego sin terminarlo. | La sesión queda en estado “abandoned”, no otorga XP y la app regresa a MinigamesScreen. |
+
+### 4.8 ResultsScreen
+
+| ID | RF relacionado | Caso de prueba | Resultado esperado |
+| --- | --- | --- | --- |
+| TC-17 | RF-091–093 | Completar un minijuego respondiendo 8 de 10 correctamente. | Se muestra puntaje 8/10, 80% de precisión y el mensaje motivacional correspondiente. |
+| TC-18 | RF-095–096 | Revisar la cuadrícula de resultados tras la partida. | Cada cuadro refleja correctamente si esa pregunta fue acertada (verde) o fallada (roja). |
+| TC-19 | RF-100, RF-102 | Presionar “Play Again”. | Reinicia el mismo minijuego desde cero, sin volver al catálogo. |
+
+### 4.9 ProfileScreen
+
+| ID | RF relacionado | Caso de prueba | Resultado esperado |
+| --- | --- | --- | --- |
+| TC-20 | RF-104–109 | Abrir el perfil de un usuario con datos de progreso conocidos. | Level, Day Streak, Badges, Accuracy, Total XP y Games Played coinciden con los datos reales del usuario. |
+| TC-21 | RF-111, RF-113 | Presionar “Log Out”. | Cierra la sesión (revoca el refresh token en el servidor) y redirige a WelcomeScreen. |
+
+### 4.10 CreditsScreen
+
+| ID | RF relacionado | Caso de prueba | Resultado esperado |
+| --- | --- | --- | --- |
+| TC-22 | RF-119–120 | Comprar un ítem con saldo suficiente. | Se descuentan los créditos, el ítem se asigna y aplica al perfil y el saldo mostrado se actualiza. |
+| TC-23 | RF-118 | Intentar comprar un ítem sin saldo suficiente. | El botón muestra “Not Enough” y está deshabilitado; si se llama a la API directamente, responde 400 y la compra no se procesa. |
+
+### 4.11 AdminDashboardScreen
+
+| ID | RF relacionado | Caso de prueba | Resultado esperado |
+| --- | --- | --- | --- |
+| TC-24 | RF-121–123 | Cargar el dashboard con datos de la plataforma. | Los 4 KPIs y sus variaciones porcentuales coinciden con los datos reales del período. |
+| TC-25 | RF-128 | Presionar el acceso rápido “Usuarios”. | Navega a AdminUsersScreen. |
+
+### 4.12 AdminUsersScreen
+
+| ID | RF relacionado | Caso de prueba | Resultado esperado |
+| --- | --- | --- | --- |
+| TC-26 | RF-130–131 | Buscar un usuario por nombre parcial. | La lista se filtra en tiempo real mostrando solo coincidencias. |
+| TC-27 | RF-135 | Suspender un usuario activo desde el panel de acciones. | El estado del usuario cambia a Inactivo; el botón pasa a decir “Activar”. |
+| TC-41 | RF-132 | Presionar “Exportar” con el filtro “Activos”. | Se descarga un CSV válido que contiene solo los usuarios activos; la acción queda en ADMIN_AUDIT_LOG. |
+
+### 4.13 AdminAnalyticsScreen
+
+| ID | RF relacionado | Caso de prueba | Resultado esperado |
+| --- | --- | --- | --- |
+| TC-28 | RF-140 | Consultar la curva de retención de un período con datos conocidos. | Los valores de Día 1, 7 y 30 coinciden con el cálculo esperado sobre los datos de prueba de USER_SESSION. |
+
+### 4.14 AdminReportsScreen
+
+| ID | RF relacionado | Caso de prueba | Resultado esperado |
+| --- | --- | --- | --- |
+| TC-29 | RF-150 | Consultar el top de jugadores del mes. | Los 5 jugadores se listan ordenados correctamente por precisión/XP, con su país y medalla. |
+| TC-30 | RF-153 | Presionar “Exportar Reporte Completo (CSV)”. | Se genera y descarga un archivo CSV válido con los datos del reporte actual. |
+
+## 5. Casos de prueba no funcionales
+
+| ID | RNF relacionado | Caso de prueba | Resultado esperado |
+| --- | --- | --- | --- |
+| TC-31 | RNF-PERF-01 | Medir el tiempo desde que se abre la app hasta que SplashScreen redirige. | No debe superar 3 segundos en una conexión estándar. |
+| TC-32 | RNF-PERF-03 | Medir el tiempo de respuesta al buscar usuarios en AdminUsersScreen. | Los resultados se reflejan en menos de 1 segundo. |
+| TC-33 | RNF-SEC-01 | Inspeccionar cualquier respuesta de la API que incluya datos de USER. | El campo password_hash nunca se incluye en la respuesta. |
+| TC-34 | RNF-SEC-03 | Llamar a un endpoint /admin/* con un token válido de rol player. | La API responde 403 Forbidden; el backend valida el rol, no solo el frontend. |
+| TC-35 | RNF-SEC-06 | Ingresar un payload de script (XSS) en el campo Username de registro. | El valor se sanea/escapa antes de guardarse; no se ejecuta código en el cliente. |
+| TC-36 | RNF-COMP-01, RNF-COMP-03 | Cargar las pantallas principales en Chrome, Safari, Edge y Firefox, en móvil y escritorio. | La interfaz se ve y funciona correctamente en todos los casos. |
+| TC-37 | RNF-DISP-03 | Perder la conexión a mitad de un minijuego, después de responder 2 preguntas. | Al recuperar la conexión, las 2 respuestas ya registradas (GAME_ANSWER) no se pierden y la partida puede continuar. |
+| TC-38 | RNF-ACC-03 | Navegar SignInScreen y RegisterScreen usando solo el teclado (Tab, Enter). | Todos los campos y botones son alcanzables y accionables sin usar el mouse. |
+| TC-42 | Plan de Seguridad §6 (OWASP A04) | Enviar en PATCH /games/sessions/:id un campo score = 10 tras responder 3 de 10 bien. | El campo se rechaza o ignora; el puntaje guardado es 3, calculado en el servidor. |
+| TC-43 | Plan de Seguridad §6 | Enviar 2 compras simultáneas del mismo ítem con saldo para solo una. | Solo una compra se procesa; el saldo nunca queda negativo y hay un único registro en CREDIT_TRANSACTION. |
+| TC-44 | Plan de Seguridad §5 | Realizar 6 intentos de login fallidos desde la misma IP en 15 minutos. | A partir del 6.º intento la API responde 429 Too Many Requests. |
+| TC-45 | RNF-SEC-05 | Cerrar sesión y luego llamar a POST /auth/refresh con la cookie anterior. | La API responde 401; el refresh token quedó revocado en el servidor. |
+| TC-46 | RNF-SEC-04 | Suspender y luego eliminar un usuario desde el panel. | Ambas acciones quedan en ADMIN_AUDIT_LOG con administrador, usuario afectado, IP y fecha. |
+| TC-47 | RNF-SEC-03, RF-135 | Intentar iniciar sesión con una cuenta suspendida (status = inactive). | La API responde 403 con un mensaje claro; no se emiten tokens. |
+| TC-48 | RNF-SEC-07 | Solicitar la eliminación de la propia cuenta (DELETE /users/me). | Se eliminan los datos personales del usuario; ya no puede iniciar sesión y no aparece en rankings ni listados. |
+| TC-49 | RNF-PERF-06 | Prueba de carga con k6 a volumen normal esperado sobre los endpoints principales. | El 95% de las peticiones responde en menos de 2 segundos. |
+
+## 6. Criterios de aceptación (Definition of Done)
+
+Una historia de usuario del tablero de Trello se considera terminada solo cuando:
+
+- Todos sus RF-XXX y RNF-UI-XXX relacionados están implementados.
+- Los casos de prueba de este documento que la referencian pasan exitosamente.
+- No introduce regresiones en pruebas ya existentes (suite completa en verde).
+- El endpoint correspondiente en el Documento de Contrato de API responde según lo especificado.
+
+## 7. Consideraciones finales
+
+Esta tabla de casos de prueba debe crecer junto con el tablero de Trello: cada historia de usuario nueva o modificada debe sumar o actualizar al menos un caso de prueba aquí antes de darse por implementada. Se recomienda automatizar los casos funcionales (TC-01 a TC-30 y TC-39 a TC-41) como pruebas E2E con Playwright/Cypress, y los no funcionales (TC-31 a TC-38 y TC-42 a TC-49) integrarlos al pipeline de CI/CD como verificaciones previas a cada despliegue. Los casos de seguridad son TC-33 a TC-35 y TC-42 a TC-48.
+
+Los identificadores de los casos agregados en la versión 1.1 continúan la numeración (TC-39 en adelante) para no alterar las referencias existentes a TC-01 a TC-38.
+
+## 8. Historial de versiones
+
+| Versión | Fecha | Cambios |
+| --- | --- | --- |
+| 1.0 | 23 de septiembre de 2026 | Versión inicial (TC-01 a TC-38). |
+| 1.1 | 23 de septiembre de 2026 | Revisión de consistencia: se agregan TC-39 (recuperar contraseña), TC-40 (abandonar minijuego), TC-41 (exportar usuarios) y TC-42 a TC-49 (integridad de puntaje, compras concurrentes, rate limiting, revocación de sesión, auditoría, cuenta suspendida, supresión de datos y tiempo de respuesta de la API); TC-02, TC-05, TC-06, TC-21, TC-23 y TC-37 se ajustan al Contrato de API v1.1. |
