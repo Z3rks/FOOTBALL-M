@@ -10,9 +10,9 @@ Modelo de amenazas y medidas de mitigación
 
 Fecha de elaboración: 23 de septiembre de 2026
 
-Fecha de actualización: 24 de septiembre de 2026
+Fecha de actualización: 25 de septiembre de 2026
 
-Versión: 1.2
+Versión: 1.3
 
 ---
 
@@ -112,7 +112,7 @@ El sistema almacena datos personales (nombre de usuario, email, país) y datos d
 | 1 | npm audit / Snyk sin vulnerabilidades críticas o altas pendientes. |
 | 2 | Todas las variables sensibles (JWT secret, credenciales de BD, claves de OAuth y del servicio de correo) están en variables de entorno, nunca en el repositorio. |
 | 3 | Los endpoints /admin/* fueron probados con un token de rol player y responden 403 (caso TC-34 del Plan de Pruebas). |
-| 4 | HTTPS forzado y cabeceras de seguridad (Helmet) activas en producción. Helmet todavía no está instalado: ver sección 10. |
+| 4 | HTTPS forzado y cabeceras de seguridad (Helmet) activas en producción. Helmet ya está instalado en backend/src/app.setup.ts; falta verificar las cabeceras en el dominio real. |
 | 5 | Rate limiting activo en /auth/login, /auth/register, /auth/forgot-password y /store/*/purchase (caso TC-44). |
 | 6 | Los casos de prueba de seguridad del Plan de Pruebas (TC-33 a TC-35 y TC-42 a TC-48) pasan exitosamente. |
 | 7 | El cálculo de score/créditos se verificó del lado del servidor, no se confía en ningún valor final enviado por el cliente (casos TC-42 y TC-43). |
@@ -140,7 +140,7 @@ Controles de este plan verificados en el código el 24 de septiembre de 2026:
 | Ley 1581 | Implementado | Consentimiento en el registro (también con Google), supresión de la cuenta con DELETE /users/me, actividad mínima en USER_SESSION. |
 | Secretos fuera del repositorio | Implementado | Todas las claves en .env (ignorado por git); .env.example sin valores reales. |
 | Dependencias | Implementado | npm audit del backend: 0 vulnerabilidades. Frontend: 2 alertas que solo afectan al servidor de desarrollo de Vite. |
-| Cabeceras de seguridad (Helmet) | Pendiente | Instalar helmet en backend/src/app.setup.ts antes del primer despliegue. |
+| Cabeceras de seguridad (Helmet) | Implementado | helmet en backend/src/app.setup.ts: Content-Security-Policy, X-Frame-Options, Strict-Transport-Security, X-Content-Type-Options y sin X-Powered-By. Lo verifica una prueba E2E (health). |
 | HTTPS | Pendiente (despliegue) | Lo da el hosting (Vercel, Render/Railway); en local se usa HTTP. |
 
 ## 11. Consideraciones finales
@@ -154,3 +154,4 @@ Este plan debe revisarse cada vez que se agregue una nueva funcionalidad al tabl
 | 1.0 | 23 de septiembre de 2026 | Versión inicial. |
 | 1.1 | 23 de septiembre de 2026 | Revisión de consistencia: la verificación de respuestas usa QUESTION (antes decía GAME); refresh token alineado con el Contrato de API (cookie httpOnly + POST /auth/refresh, guardado como hash en AUTH_TOKEN); se agregan reglas de recuperación de contraseña y cuentas suspendidas; consentimiento y supresión de datos (RNF-SEC-07); ORM fijado en TypeORM; se corrige el rango de casos de seguridad del checklist (TC-33 a TC-35 y TC-42 a TC-48). |
 | 1.2 | 24 de septiembre de 2026 | Actualización con el sistema implementado: nueva sección 10 con el estado real de cada control (Helmet queda pendiente); el checklist previo al despliegue suma Google, dominio de correo, cookies/proxy y claves nuevas de producción. |
+| 1.3 | 25 de septiembre de 2026 | Helmet instalado (A05): cabeceras de seguridad HTTP en todas las respuestas, verificadas por una prueba E2E. |

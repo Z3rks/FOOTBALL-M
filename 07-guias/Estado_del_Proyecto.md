@@ -1,6 +1,6 @@
 # Estado del proyecto
 
-Actualizado al **25 de septiembre de 2026**. La versión más completa del código está en la rama `feature/idiomas-extra`; `main` todavía no la tiene (falta aceptar su Pull Request).
+Actualizado al **25 de septiembre de 2026**. La versión más completa del código está en la rama `feature/helmet`; `main` todavía no la tiene (falta aceptar su Pull Request).
 
 ## 1. Qué funciona
 
@@ -38,14 +38,13 @@ Las 14 pantallas de la maqueta original se conectaron a la API. GamePlay, Forgot
 | Suite | Resultado |
 |---|---|
 | Unitarias (incluye la prueba de arquitectura y la validación de las 203 preguntas en los dos idiomas) | 789 en verde |
-| E2E contra PostgreSQL | 114 en verde |
+| E2E contra PostgreSQL | 115 en verde |
 | Casos del Plan de Pruebas (61) | 42 automatizados, 14 probados a mano, 5 pendientes de herramientas (Plan de Pruebas §6) |
 
 ## 2. Qué falta
 
 ### Para terminar la versión actual
-- [ ] Aceptar el Pull Request `feature/idiomas-extra` → `main` (incluye todas las ramas anteriores).
-- [ ] Instalar **Helmet** (cabeceras de seguridad HTTP) en el backend.
+- [ ] Aceptar el Pull Request `feature/helmet` → `main` (incluye todas las ramas anteriores).
 - [ ] Revisión de las 203 preguntas por alguien del equipo (sobre todo precios de traspasos y capacidades de estadios, que varían según la fuente) y de su traducción al inglés.
 - [ ] Traducir los encabezados del CSV de reportes (hoy en español) y los nombres de las insignias (hoy no se muestran por nombre).
 - [ ] Imágenes para los minijuegos: fotos con licencia libre (Wikimedia Commons, con crédito del autor) para estadios y jugadores. Los escudos se siguen dibujando con los colores del club, porque son marcas registradas.

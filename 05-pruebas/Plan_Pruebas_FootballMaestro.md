@@ -200,7 +200,7 @@ Resultado de la última ejecución (25 de septiembre de 2026), todas en verde:
 | Suite | Pruebas | Qué cubre y cómo se ejecuta |
 | --- | --- | --- |
 | Unitarias (Jest) | 789 | Servicios, estrategias de cada minijuego, adaptadores (Currents en inglés y español, Brevo), validación de variables de entorno, reglas de progreso, idioma de la petición (shared/i18n), la prueba de arquitectura y la validación de las 203 preguntas en cada idioma (formato, respuesta válida para su estrategia, que details no revele la respuesta y que la traducción coincida con el original). En backend/: npm test. |
-| E2E (Jest + Supertest) | 114 | Los endpoints del Contrato de API contra PostgreSQL real, en 7 archivos (auth, users, games, credits, news, admin, health). En backend/: npm run test:e2e (con la base de datos encendida). |
+| E2E (Jest + Supertest) | 115 | Los endpoints del Contrato de API contra PostgreSQL real, en 7 archivos (auth, users, games, credits, news, admin, health). En backend/: npm run test:e2e (con la base de datos encendida). |
 | Arquitectura | 7 reglas | Parte de las unitarias (src/architecture.spec.ts). Falla si el código rompe el desacople entre módulos o la inversión de dependencias. |
 | Frontend | — | Revisión de tipos (npm run typecheck) y build de producción (npx vite build). Sin pruebas automatizadas de interfaz todavía. |
 
@@ -236,4 +236,4 @@ Los identificadores de los casos agregados en la versión 1.1 continúan la nume
 | 1.1 | 23 de septiembre de 2026 | Revisión de consistencia: se agregan TC-39 (recuperar contraseña), TC-40 (abandonar minijuego), TC-41 (exportar usuarios) y TC-42 a TC-49 (integridad de puntaje, compras concurrentes, rate limiting, revocación de sesión, auditoría, cuenta suspendida, supresión de datos y tiempo de respuesta de la API); TC-02, TC-05, TC-06, TC-21, TC-23 y TC-37 se ajustan al Contrato de API v1.1. |
 | 1.2 | 24 de septiembre de 2026 | Actualización con el sistema implementado: estado de cada herramienta; nuevos casos TC-50 a TC-56 (Edit Profile, Account Settings, Google, correo real, noticias reales, roles y arquitectura); nueva sección 6 con los resultados de las suites automatizadas y qué casos son automáticos, manuales o pendientes; la Definition of Done incluye la prueba de arquitectura. |
 | 1.3 | 24 de septiembre de 2026 | Estilos propios por minijuego: TC-57; 364 pruebas unitarias (incluye la validación de las 203 preguntas) y 110 E2E. |
-| 1.4 | 25 de septiembre de 2026 | Inglés y español: TC-58 a TC-61; 789 pruebas unitarias (el banco de preguntas se valida en los dos idiomas) y 114 E2E. |
+| 1.4 | 25 de septiembre de 2026 | Inglés y español: TC-58 a TC-61; 789 pruebas unitarias (el banco de preguntas se valida en los dos idiomas) y 115 E2E (incluye las cabeceras de seguridad de Helmet). |

@@ -49,12 +49,12 @@ Los documentos de diseño vienen en dos formatos con el mismo contenido: **`.doc
 ### 05-pruebas — Qué se prueba
 | Documento | Versión | Contenido |
 |---|---|---|
-| `Plan_Pruebas_FootballMaestro` | 1.4 | Estrategia, casos TC-01 a TC-61, estado de la automatización (789 unitarias, 114 E2E) y Definition of Done |
+| `Plan_Pruebas_FootballMaestro` | 1.4 | Estrategia, casos TC-01 a TC-61, estado de la automatización (789 unitarias, 115 E2E) y Definition of Done |
 
 ### 06-seguridad — Riesgos y controles
 | Documento | Versión | Contenido |
 |---|---|---|
-| `Plan_Seguridad_FootballMaestro` | 1.2 | Modelo de amenazas, OWASP Top 10, sesiones, integridad de puntaje y créditos, datos personales (Ley 1581), checklist antes de desplegar y estado real de cada control |
+| `Plan_Seguridad_FootballMaestro` | 1.3 | Modelo de amenazas, OWASP Top 10, sesiones, integridad de puntaje y créditos, datos personales (Ley 1581), checklist antes de desplegar y estado real de cada control |
 
 ### 07-guias — Guías prácticas
 | Documento | Para qué sirve |
