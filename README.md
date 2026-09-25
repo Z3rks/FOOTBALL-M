@@ -2,7 +2,7 @@
 
 App de trivia y minijuegos de fútbol: 10 minijuegos, reto diario, noticias, créditos con tienda y panel administrativo. Proyecto académico (UPB).
 
-Esta rama (`documentacion`) contiene **solo documentación**. El código está en las ramas `main`, `feature/*` y `refactor/*` (ver la [Guía del repositorio](07-guias/Guia_Repositorio_Ramas_y_Flujo.md)).
+Esta rama (`documentacion`) contiene **solo documentación**. El código está en la rama `main` (ver la [Guía del repositorio](07-guias/Guia_Repositorio_Ramas_y_Flujo.md)). Son las dos únicas ramas del repositorio.
 
 > **¿Por dónde empiezo?** Si vas a correr la app: [Guía de instalación](07-guias/Guia_Instalacion_y_Ejecucion.md). Si quieres saber cómo va el proyecto: [Estado del proyecto](07-guias/Estado_del_Proyecto.md). Si vas a programar: Arquitectura y Contrato de API.
 
@@ -61,7 +61,7 @@ Los documentos de diseño vienen en dos formatos con el mismo contenido: **`.doc
 |---|---|
 | [`Estado_del_Proyecto.md`](07-guias/Estado_del_Proyecto.md) | Qué funciona hoy y qué falta (terminar, desplegar, probar) |
 | [`Guia_Instalacion_y_Ejecucion.md`](07-guias/Guia_Instalacion_y_Ejecucion.md) | Cómo correr la app en un PC, crear un administrador y solucionar problemas comunes |
-| [`Guia_Repositorio_Ramas_y_Flujo.md`](07-guias/Guia_Repositorio_Ramas_y_Flujo.md) | Estructura del código, las 16 ramas del proyecto, flujo de trabajo, convenciones y checklist de Pull Request |
+| [`Guia_Repositorio_Ramas_y_Flujo.md`](07-guias/Guia_Repositorio_Ramas_y_Flujo.md) | Las dos ramas del repositorio, estructura del código, las 22 etapas del proyecto, flujo de trabajo, convenciones y checklist de Pull Request |
 | [`Guia_Servicios_Externos.md`](07-guias/Guia_Servicios_Externos.md) | Google, Currents (noticias) y Brevo (correo): configuración actual y lo que falta para producción |
 
 ### 08-propuestas — Funcionalidades futuras (no implementadas)

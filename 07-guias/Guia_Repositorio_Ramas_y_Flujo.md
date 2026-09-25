@@ -1,13 +1,15 @@
 # Guía del repositorio, ramas y flujo de trabajo
 
-Cómo está organizado el código, qué contiene cada rama y cómo trabajar en equipo. El diseño detallado está en los documentos de las carpetas `01` a `06`.
+Cómo está organizado el repositorio, cómo avanzó el proyecto y cómo trabajar en equipo. El diseño detallado está en los documentos de las carpetas `01` a `06`.
 
-## 1. Dos tipos de ramas
+## 1. Las dos ramas del repositorio
 
-| Ramas | Contienen | Se unen a `main` |
+| Rama | Contiene | Cómo se actualiza |
 |---|---|---|
-| `main`, `feature/*`, `refactor/*` | El código: frontend (`project/`) y backend (`backend/`) | Sí, por Pull Request |
-| `documentacion` | **Solo** documentación (esta rama) | No. Es independiente, sin historia compartida con `main`, y se actualiza directamente |
+| `main` | Todo el código: frontend (`project/`) y backend (`backend/`) | Por Pull Request desde una rama de trabajo temporal (sección 4) |
+| `documentacion` | **Solo** documentación (esta rama) | Directamente. Es independiente, sin historia compartida con `main` |
+
+Son las únicas ramas permanentes. Las ramas de trabajo (`feature/*`, `fix/*`, `refactor/*`) salen de `main`, se unen por Pull Request y se borran después.
 
 Regla del equipo: **nunca** se pone código en `documentacion`, ni documentos de diseño en las ramas de código. Los `README.md` técnicos (cómo correr cada parte) sí viven junto al código.
 
@@ -48,11 +50,11 @@ Cada módulo del backend tiene las mismas capas (Arquitectura §4):
 
 Entre módulos solo se usan **interfaces públicas pequeñas** (`UserAccounts`, `CreditBalanceStore`, `PlayerDirectory`, `UsersStatsReader`, `PlayerGameStatsReader`, `GamesStatsReader`) o eventos de dominio. El detalle está en Arquitectura §3.
 
-## 3. Ramas del proyecto
+## 3. Cómo avanzó el proyecto
 
-Las ramas se hicieron **en cadena**: cada una sale de la anterior y la contiene. Por eso la última (`feature/idiomas-csv-insignias`) tiene todo el proyecto. Las ramas se conservan para mostrar cómo avanzó el trabajo; no se borran.
+El proyecto se construyó en 22 etapas, cada una en su propia rama y en cadena (cada rama salía de la anterior). El 25 de septiembre de 2026 la última se unió a `main` (Pull Request #2) y todas las ramas de trabajo se borraron: **`main` tiene todo el código**, y el trabajo de cada etapa se conserva en su historial de commits (`git log --oneline` o la pestaña *Commits* de GitHub).
 
-| # | Rama | Qué agregó | Documentos que implementa |
+| # | Etapa (rama original) | Qué agregó | Documentos que implementa |
 |---|---|---|---|
 | 1 | `feature/backend-base` | Proyecto NestJS, PostgreSQL en Docker, las 16 tablas, datos iniciales, `/health` | Modelo de Datos, Arquitectura §8 |
 | 2 | `feature/auth` | Registro, login Player/Admin, Google, refresh token, logout, recuperar contraseña | API §4, Seguridad §5 |
@@ -77,8 +79,6 @@ Las ramas se hicieron **en cadena**: cada una sale de la anterior y la contiene.
 | 21 | `feature/helmet` | Cabeceras de seguridad HTTP con Helmet | Seguridad A05, §10 |
 | 22 | `feature/idiomas-csv-insignias` | CSV del panel de admin e insignias en inglés y español | API §5, §9; Modelo de Datos §5.14 |
 
-**Para dejar `main` al día basta un Pull Request: `feature/idiomas-csv-insignias` → `main`.** Las ramas anteriores ya están incluidas en ella.
-
 ## 4. Flujo de trabajo
 
 ```bash
@@ -95,7 +95,14 @@ git commit -m "feat(games): calcular puntaje en el servidor"
 
 # 4. Subir la rama y abrir un Pull Request hacia main en GitHub
 git push -u origin feature/nombre-corto
+
+# 5. Después de aceptar el Pull Request: borrar la rama y actualizar main
+git checkout main
+git pull
+git branch -d feature/nombre-corto
 ```
+
+En GitHub, al aceptar el Pull Request aparece el botón **Delete branch**; si no, se borra con `git push origin --delete feature/nombre-corto`.
 
 Para cambiar documentación: `git checkout documentacion`, editar, commit y push a esa misma rama.
 

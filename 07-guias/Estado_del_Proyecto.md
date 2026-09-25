@@ -1,6 +1,6 @@
 # Estado del proyecto
 
-Actualizado al **25 de septiembre de 2026**. La versión más completa del código está en la rama `feature/idiomas-csv-insignias`; `main` todavía no la tiene (falta aceptar su Pull Request).
+Actualizado al **25 de septiembre de 2026**. Todo el código está en la rama `main` (Pull Request #2, 25 de septiembre de 2026); la documentación, en la rama `documentacion`. Son las dos únicas ramas del repositorio.
 
 ## 1. Qué funciona
 
@@ -44,7 +44,6 @@ Las 14 pantallas de la maqueta original se conectaron a la API. GamePlay, Forgot
 ## 2. Qué falta
 
 ### Para terminar la versión actual
-- [ ] Aceptar el Pull Request `feature/idiomas-csv-insignias` → `main` (incluye todas las ramas anteriores).
 - [ ] Revisión de las 203 preguntas por alguien del equipo (sobre todo precios de traspasos y capacidades de estadios, que varían según la fuente) y de su traducción al inglés.
 - [ ] Imágenes para los minijuegos: fotos con licencia libre (Wikimedia Commons, con crédito del autor) para estadios y jugadores. Los escudos se siguen dibujando con los colores del club, porque son marcas registradas.
 

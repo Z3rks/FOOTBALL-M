@@ -1,6 +1,6 @@
 # Guía de instalación y ejecución
 
-Cómo correr Football Maestro en un PC. El `README.md` de la rama de código tiene estos mismos pasos, junto con la cuenta de administrador de desarrollo.
+Cómo correr Football Maestro en un PC. El `README.md` de la rama `main` tiene estos mismos pasos, junto con la cuenta de administrador de desarrollo.
 
 ## 1. Requisitos
 
@@ -15,7 +15,6 @@ Abre Docker Desktop y espera a que esté corriendo. Luego, en PowerShell:
 ```powershell
 git clone https://github.com/Z3rks/Football-Maestro.git
 cd Football-Maestro
-git checkout feature/idiomas-csv-insignias   # o main, cuando se haya unido el PR
 
 # Backend
 cd backend
