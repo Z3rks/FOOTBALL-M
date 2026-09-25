@@ -60,5 +60,8 @@ Las 14 pantallas de la maqueta original se conectaron a la API. GamePlay, Forgot
 - [ ] Compatibilidad entre navegadores (TC-36) y accesibilidad con teclado (TC-38).
 - [ ] Pruebas automatizadas de la interfaz (Playwright o Cypress).
 
+### Propuestas para el futuro
+- Monetización con planes Free y Premium: diseñada pero no implementada ([Propuesta de monetización](../08-propuestas/Propuesta_Monetizacion_FootballMaestro.md)).
+
 ### Fuera de alcance
 - Módulo "Partidos y Estadísticas" (calendario y resultados en vivo): no tiene pantalla; queda como trabajo futuro (Arquitectura §10).

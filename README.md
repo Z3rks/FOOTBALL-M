@@ -17,7 +17,8 @@ documentacion/
 ├── 04-contrato-api/           Los endpoints de la API
 ├── 05-pruebas/                Qué se prueba y cómo
 ├── 06-seguridad/              Riesgos y controles de seguridad
-└── 07-guias/                  Guías prácticas y estado del proyecto
+├── 07-guias/                  Guías prácticas y estado del proyecto
+└── 08-propuestas/             Diseños de funcionalidades futuras (no implementadas)
 ```
 
 Los documentos de diseño vienen en dos formatos con el mismo contenido: **`.docx`** para entregar o imprimir, y **`.md`** para leer directamente en GitHub. Las carpetas `*_images/` guardan los diagramas que usan los `.md`.
@@ -62,6 +63,11 @@ Los documentos de diseño vienen en dos formatos con el mismo contenido: **`.doc
 | [`Guia_Instalacion_y_Ejecucion.md`](07-guias/Guia_Instalacion_y_Ejecucion.md) | Cómo correr la app en un PC, crear un administrador y solucionar problemas comunes |
 | [`Guia_Repositorio_Ramas_y_Flujo.md`](07-guias/Guia_Repositorio_Ramas_y_Flujo.md) | Estructura del código, las 16 ramas del proyecto, flujo de trabajo, convenciones y checklist de Pull Request |
 | [`Guia_Servicios_Externos.md`](07-guias/Guia_Servicios_Externos.md) | Google, Currents (noticias) y Brevo (correo): configuración actual y lo que falta para producción |
+
+### 08-propuestas — Funcionalidades futuras (no implementadas)
+| Documento | Versión | Contenido |
+|---|---|---|
+| `Propuesta_Monetizacion_FootballMaestro` | 1.0 | Planes Free (anuncios alrededor del contenido, una partida por minijuego al día) y Premium (partidas ilimitadas, sin anuncios, descuento en la tienda): arquitectura, datos, endpoints, pasarela de pagos, aspectos legales, seguridad, pruebas y fases. Si se aprueba, su contenido pasa a los documentos oficiales |
 
 ## Orden de lectura sugerido
 
