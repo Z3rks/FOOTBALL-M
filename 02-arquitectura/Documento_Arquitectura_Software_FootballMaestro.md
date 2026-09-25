@@ -10,9 +10,9 @@ Diseño de la arquitectura lógica y física del sistema
 
 Fecha de elaboración: 23 de septiembre de 2026
 
-Fecha de actualización: 24 de septiembre de 2026
+Fecha de actualización: 25 de septiembre de 2026
 
-Versión: 1.6
+Versión: 1.7
 
 ---
 
@@ -117,7 +117,7 @@ Cada patrón se seleccionó para resolver un problema concreto identificado en l
 | --- | --- | --- |
 | Repository | Todos | Separa la lógica de negocio de cómo se persisten los datos; el Service depende de una interfaz de repositorio y nunca de un motor de base de datos concreto. |
 | Unit of Work | Todos | Agrupa en una sola transacción las escrituras de varios repositorios sin que el Service conozca el ORM. |
-| Strategy | Games | Las reglas de validación y puntaje de cada minijuego viven en una estrategia (clase abstracta GameStrategy) en vez de un condicional gigante. Hoy los 10 minijuegos son de opción múltiple y comparten MultipleChoiceStrategy; un minijuego con reglas distintas (p. ej. ordenar en Timeline) agrega su propia estrategia. |
+| Strategy | Games | Las reglas de validación y puntaje de cada minijuego viven en una estrategia (clase abstracta GameStrategy) en vez de un condicional gigante: MultipleChoiceStrategy (con el estilo visual de cada minijuego de selección), ConnectionsStrategy, TimelineStrategy, ValueGuessStrategy (margen del 10 %) y VarStrategy. En el frontend, cada estilo tiene su propia vista, registrada en playStyles.ts. |
 | Factory Method | Games | GameFactory decide qué estrategia instanciar según el strategy_key del minijuego elegido, sin acoplar ese conocimiento al resto del módulo. |
 | Observer (eventos de dominio) | Games, Users, Auth, Credits, Admin → Users, Credits, Auth, Admin | Al completar un minijuego, compartir un resultado o registrarse, varios módulos reaccionan (XP, racha, créditos, auditoría) sin que el emisor los conozca directamente. |
 | Adapter | Auth (Google OAuth, correo), News (API externa) | Aísla librerías/API externas detrás de una interfaz propia; cambiar de proveedor solo afecta al adapter. |
@@ -140,7 +140,7 @@ Cada patrón se seleccionó para resolver un problema concreto identificado en l
 
 | Capa | Tecnología | Justificación |
 | --- | --- | --- |
-| Frontend | React 18 + TypeScript, Vite, Tailwind CSS, Recharts, Motion | Es el stack del prototipo ya construido (14 pantallas). Se despliega como sitio estático. |
+| Frontend | React 18 + TypeScript, Vite, Tailwind CSS, Recharts, Motion, i18next | Es el stack del prototipo ya construido (14 pantallas). Se despliega como sitio estático. |
 | Backend | Node.js + NestJS + TypeScript | Comparte lenguaje con el frontend y su arquitectura está construida nativamente alrededor de Inyección de Dependencias, módulos y decoradores, lo que facilita demostrar SOLID y los patrones anteriores de forma explícita. |
 | Base de datos | PostgreSQL + TypeORM | Modelo relacional para usuarios, partidas, créditos y actividad; consultas parametrizadas vía ORM (Plan de Seguridad, A03). |
 | Autenticación | JWT de acceso + refresh token (cookie httpOnly), bcrypt, Google OAuth 2.0 | Roles diferenciados Player/Admin validados en el backend (RNF-SEC-03) e invalidación real de sesión (RNF-SEC-05). |
@@ -169,12 +169,29 @@ backend/
 │   │               games-stats.reader.ts)
 │   ├── credits/   (+ credits.listener.ts)
 │   ├── admin/     (dashboard/, users-management/, analytics/, reports/, audit/)
-│   ├── shared/    (database/ UnitOfWork, events/, time/, csv)
+│   ├── shared/    (database/ UnitOfWork, events/, time/, i18n/ idioma de la petición, csv)
 │   ├── architecture.spec.ts   (verifica las reglas de dependencias)
 │   └── app.module.ts
 ├── test/          (pruebas e2e contra PostgreSQL)
 └── package.json
 ```
+
+### 8.3 Idiomas: inglés y español
+
+La aplicación está en inglés (idioma por defecto) y español. El idioma lo elige el jugador con el selector EN | ES (pantalla de bienvenida y Account Settings) y se recuerda en el navegador. La traducción se reparte así, sin que ningún módulo dependa de otro para ello:
+
+| Parte | Cómo se traduce |
+| --- | --- |
+| Textos de las pantallas (frontend) | i18next + react-i18next. Cada texto es una clave (t("credits.title")) y sus traducciones viven en src/app/i18n/en.json y es.json. Números, fechas, países y “hace X minutos” usan el formato del idioma (Intl). |
+| Errores de la API | El backend responde siempre en inglés (mensajes estables, útiles también para registros y pruebas). El frontend los traduce con el mapa src/app/i18n/apiErrors.ts; un mensaje desconocido se muestra tal cual. |
+| Idioma de cada petición | El cliente envía la cabecera Accept-Language. En el backend, shared/i18n/locale.ts ofrece el decorador @RequestLocale() (lee la cabecera; si el idioma no se reconoce, inglés) y la función pura localize(registro, idioma). |
+| Contenido de la base de datos (minijuegos, preguntas, datos curiosos, tienda) | Cada registro guarda su texto original y, en la columna translations (jsonb), el otro idioma (Modelo de Datos §4). El servicio aplica localize() antes de responder. |
+| Partidas | GAME_SESSION.locale fija el idioma al iniciar. GameSessionsService entrega a la estrategia la pregunta ya en ese idioma, así que las estrategias (Strategy) no saben de idiomas y no cambiaron. |
+| Noticias | No se traducen: el NewsProvider trae noticias escritas en cada idioma (Currents con palabras clave y filtro de relevancia por idioma) y el feed muestra las del idioma del jugador (NEWS_ARTICLE.language). |
+| Correo de recuperación | Sale en el idioma en que se pidió. El contenido (auth/adapters/password-reset-email.ts) está separado del adapter de Brevo, que solo envía. |
+| Panel administrativo | Las alertas llegan con code y values (además del mensaje en inglés) y el frontend las traduce; el ranking devuelve el nombre del minijuego en el idioma pedido. |
+
+SOLID: la traducción está en un solo lugar por capa (Single Responsibility); agregar un idioma es agregar su archivo de textos, su clave en translations y su código en LOCALES, sin modificar servicios ni estrategias (Open/Closed); shared/i18n no depende de ningún módulo de dominio y no importa el ORM, por lo que la prueba de arquitectura sigue verificando las mismas 7 reglas.
 
 ## 9. Vista física (despliegue)
 
@@ -207,3 +224,4 @@ Trabajo futuro: el módulo “Partidos y Estadísticas” (calendario, resultado
 | 1.4 | 24 de septiembre de 2026 | Refactor de arquitectura (rama refactor/arquitectura): repositorios con interfaz en los 6 módulos y Unit of Work para las transacciones; tabla de interfaces públicas entre módulos (PlayerGameStatsReader, CreditBalanceStore); Games ya no lee la tabla de usuarios; IUserManagement e IReportExport implementados; tabla de eventos completa (ItemPurchased, PasswordChanged, UserSuspended); UserRegisteredEvent ya no crea el perfil; Strategy describe la estrategia actual; estructura de carpetas real y prueba automática de arquitectura. |
 | 1.5 | 24 de septiembre de 2026 | Auditoría de arquitectura: Auth y Admin ya no dependen de clases concretas de otros módulos. Nuevas interfaces por consumidor: UserAccounts (Auth), PlayerDirectory y UsersStatsReader (Admin), GamesStatsReader (Admin); devuelven objetos de lectura en lugar de la entidad USER. La prueba de arquitectura exige que otro módulo solo importe abstracciones. |
 | 1.6 | 24 de septiembre de 2026 | Actualización general de la documentación: el documento describe la arquitectura implementada (ya no una propuesta); el correo transaccional es Brevo, consumido con el adapter BrevoMailSender. |
+| 1.7 | 25 de septiembre de 2026 | Nueva sección 8.3 (idiomas inglés y español): textos del frontend con i18next, errores traducidos en el frontend, Accept-Language y shared/i18n en el backend, contenido con columna translations, partidas con su idioma, noticias por idioma, correo y alertas del admin traducidos. La fila de Strategy describe las 5 estrategias actuales. |

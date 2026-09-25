@@ -10,9 +10,9 @@ Diseño de la base de datos del sistema
 
 Fecha de elaboración: 23 de septiembre de 2026
 
-Fecha de actualización: 24 de septiembre de 2026
+Fecha de actualización: 25 de septiembre de 2026
 
-Versión: 1.8
+Versión: 1.9
 
 ---
 
@@ -47,6 +47,8 @@ El siguiente diagrama muestra las 16 entidades del sistema y sus relaciones prin
 | ADMIN_AUDIT_LOG existe como entidad propia | Corresponde al requisito no funcional RNF-SEC-04 (“las sesiones de administrador deben quedar registradas, conforme al aviso Access is monitored”). Registra inicios de sesión de administradores y cada acción administrativa. |
 | USER_BADGE y USER_STORE_ITEM son tablas intermedias (muchos a muchos) | Un usuario puede tener varias insignias o ítems de la tienda, y una insignia o ítem puede ser obtenido por muchos usuarios; una tabla intermedia evita duplicar datos del catálogo en cada usuario. |
 | GAME, QUESTION, DAILY_CHALLENGE, FUN_FACT, BADGE y STORE_ITEM son catálogos separados de sus tablas de uso | Estos datos cambian poco (10 minijuegos, sus preguntas, N insignias, 6 ítems de tienda) y se cargan como datos semilla, independientes de las transacciones de cada usuario. |
+| Contenido en inglés y español: columna translations (jsonb) en lugar de tablas de traducción | La app está en inglés (idioma por defecto) y español. Cada registro de contenido guarda su texto original en sus columnas normales y la traducción al otro idioma en translations, ej. {"es": {"name": "Silueta"}}. Los minijuegos y la tienda se escribieron en inglés y las preguntas y los datos curiosos en español; el backend elige el texto según la cabecera Accept-Language. Así no hace falta una tabla y un JOIN por cada tipo de contenido, ni reescribir los datos existentes. Agregar un idioma es agregar su clave en translations. |
+| GAME_SESSION.locale y NEWS_ARTICLE.language | La partida guarda el idioma en que empezó: sus preguntas se muestran y se corrigen siempre en ese idioma, aunque el jugador cambie de idioma a mitad de partida (la respuesta correcta también depende del idioma, ej. “No gol” / “No goal”). Las noticias no se traducen: se sincronizan noticias escritas en cada idioma y el feed muestra solo las del idioma del jugador. |
 | Partidos y Estadísticas fuera de alcance | El documento de Requisitos, Arquitectura y UML (19 de septiembre) mencionaba calendario y resultados de partidos en vivo. Ninguna de las 14 pantallas del sistema los usa, por lo que no se modela una entidad MATCH en esta versión; queda como trabajo futuro. |
 
 ## 5. Diccionario de datos
@@ -116,6 +118,7 @@ Catálogo de los 10 minijuegos disponibles en MinigamesScreen. Dueño: módulo G
 | `icon` | string |  | Nombre del ícono del minijuego (ej. "shield", "calendar-clock"); el frontend lo dibuja con el color de su estilo. |
 | `strategy_key` | string | único | Clave que usa GameFactory para elegir la estrategia de validación y puntaje (ej. “who-is-it”). |
 | `sort_order` | int |  | Posición en el catálogo de MinigamesScreen (1 = primero). |
+| `translations` | jsonb | nulo | Textos en el otro idioma, por código de idioma (name y description en español; el original está en inglés). Ver decisión de diseño “Contenido en inglés y español”. |
 
 ### 5.5 QUESTION
 
@@ -130,6 +133,7 @@ Banco de preguntas de cada minijuego. Dueño: módulo Games.
 | `correct_answer` | string |  | Respuesta correcta. Nunca se incluye en las respuestas de la API antes de que el usuario responda. Su formato depende del estilo del minijuego: texto de la opción, número (millones) o JSON (orden de Timeline, grupos de Connections, decisión del VAR). Ver Contrato de API §7.4. |
 | `media_url` | string | nulo | Imagen asociada (silueta, escudo, estadio), si aplica. |
 | `details` | jsonb | nulo | Datos públicos que usa el estilo del minijuego para dibujar la pregunta (pistas, colores del escudo, trayectoria, alineación…). Se envían al cliente, así que nunca contienen la respuesta. |
+| `translations` | jsonb | nulo | Textos en el otro idioma, por código de idioma (statement, options, correct_answer y details en inglés; el banco original está en español). Ver decisión de diseño “Contenido en inglés y español”. |
 
 ### 5.6 DAILY_CHALLENGE
 
@@ -153,6 +157,7 @@ Una partida jugada por un usuario en un minijuego específico. Es la base de Res
 | `user_id` | uuid | FK → USER | Usuario que jugó. |
 | `game_id` | uuid | FK → GAME | Minijuego jugado. |
 | `status` | enum |  | “in_progress”, “completed” o “abandoned”. |
+| `locale` | string |  | Idioma de la partida (“en” o “es”, por defecto “en”): sus preguntas se muestran y se corrigen en este idioma. |
 | `is_daily_challenge` | boolean |  | Si la partida corresponde al reto diario (otorga la recompensa adicional una sola vez por día). |
 | `score` | int | nulo | Puntaje obtenido (ej. 8). Lo calcula el servidor al completar la partida. |
 | `total_questions` | int |  | Total de preguntas de la partida (hasta 10). |
@@ -186,6 +191,7 @@ Datos curiosos (“Did you know?”) mostrados al final de ResultsScreen. Dueño
 | `id` | uuid | PK | Identificador único del dato curioso. |
 | `text` | string |  | Texto del dato (ej. “El primer Balón de Oro se entregó en 1956.”). |
 | `category` | enum | nulo | Categoría relacionada, para mostrar datos afines al minijuego jugado. |
+| `translations` | jsonb | nulo | Textos en el otro idioma, por código de idioma (text en inglés; el original está en español). Ver decisión de diseño “Contenido en inglés y español”. |
 
 ### 5.10 NEWS_ARTICLE
 
@@ -197,6 +203,7 @@ Noticias sincronizadas desde la API de noticias externa, mostradas en NewsScreen
 | `external_id` | string | único | Identificador del artículo en la API externa (evita duplicados al sincronizar). |
 | `title` | string |  | Título. |
 | `description` | string |  | Resumen mostrado en la tarjeta. |
+| `language` | string |  | Idioma de la noticia (“en” o “es”). El feed muestra solo las del idioma del jugador. |
 | `category` | enum |  | Transfers, Champions League, World Cup o Premier League (“All” es un filtro, no una categoría). |
 | `source` | string |  | Fuente (ej. ESPN, Sky Sports, BBC Sport). |
 | `source_url` | string |  | Enlace a la noticia original (RF-080). |
@@ -228,6 +235,7 @@ Catálogo de los 6 ítems de la tienda de CreditsScreen (avatares, marcos, ícon
 | `item_type` | enum |  | avatar, badge_frame, ball_icon o background (tipos Avatar, Badge Frame, Ball Icon y Stadium de CreditsScreen). |
 | `cost` | int |  | Costo en créditos. |
 | `icon` | string |  | Emoji o ícono representativo. |
+| `translations` | jsonb | nulo | Textos en el otro idioma, por código de idioma (name en español; el original está en inglés). Ver decisión de diseño “Contenido en inglés y español”. |
 
 ### 5.13 USER_STORE_ITEM
 
@@ -299,7 +307,7 @@ Registro de auditoría de acciones administrativas, según RNF-SEC-04 del Docume
 
 Este modelo de datos debe revisarse junto con el Documento de Arquitectura de Software: cada entidad aquí definida corresponde a un Repository dentro del módulo indicado como su dueño (USER, USER_SESSION, BADGE y USER_BADGE en Users; AUTH_TOKEN en Auth; GAME, QUESTION, DAILY_CHALLENGE, GAME_SESSION, GAME_ANSWER y FUN_FACT en Games; NEWS_ARTICLE en News; CREDIT_TRANSACTION, STORE_ITEM y USER_STORE_ITEM en Credits; ADMIN_AUDIT_LOG en Admin). Ningún módulo accede directamente a las tablas de otro: el módulo Admin obtiene sus métricas a través de las interfaces públicas de Users, Games y Credits.
 
-Índices recomendados: GAME_SESSION(user_id, completed_at), GAME_SESSION(game_id, completed_at), USER_SESSION(started_at), CREDIT_TRANSACTION(user_id, created_at), NEWS_ARTICLE(category, published_at) y USER(status, created_at), que soportan los filtros y agregaciones del panel administrativo (RNF-PERF-03, RNF-MANT-04).
+Índices recomendados: GAME_SESSION(user_id, completed_at), GAME_SESSION(game_id, completed_at), USER_SESSION(started_at), CREDIT_TRANSACTION(user_id, created_at), NEWS_ARTICLE(category, published_at), NEWS_ARTICLE(language, category, published_at) y USER(status, created_at), que soportan los filtros y agregaciones del panel administrativo (RNF-PERF-03, RNF-MANT-04).
 
 ## 8. Historial de versiones
 
@@ -314,3 +322,4 @@ Este modelo de datos debe revisarse junto con el Documento de Arquitectura de So
 | 1.6 | 24 de septiembre de 2026 | Actualización general de la documentación: verificado contra la base de datos real (las 16 tablas y sus 110 columnas coinciden con este diccionario). Sin cambios de esquema desde la versión 1.5. |
 | 1.7 | 24 de septiembre de 2026 | QUESTION.details (jsonb) para el estilo propio de cada minijuego (migraciones TimelineOrderingQuestions y GameStyleDetails); correct_answer admite formatos por estilo. Banco inicial de 203 preguntas. |
 | 1.8 | 24 de septiembre de 2026 | GAME.icon guarda el nombre del ícono del minijuego en lugar de un emoji. |
+| 1.9 | 25 de septiembre de 2026 | Inglés y español: columna translations (jsonb) en GAME, QUESTION, FUN_FACT y STORE_ITEM; GAME_SESSION.locale; NEWS_ARTICLE.language con su índice (migraciones ContentTranslations y NewsLanguage). Las 203 preguntas tienen su traducción al inglés. |

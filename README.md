@@ -34,22 +34,22 @@ Los documentos de diseño vienen en dos formatos con el mismo contenido: **`.doc
 ### 02-arquitectura — Cómo está construido el backend
 | Documento | Versión | Contenido |
 |---|---|---|
-| `Documento_Arquitectura_Software_FootballMaestro` | 1.6 | Monolito modular con 6 módulos; interfaces públicas entre módulos; capas; eventos de dominio; patrones (Repository, Unit of Work, Strategy, Factory, Adapter, Observer, Facade, DTO); SOLID; stack; estructura de carpetas y despliegue |
+| `Documento_Arquitectura_Software_FootballMaestro` | 1.7 | Monolito modular con 6 módulos; interfaces públicas entre módulos; capas; eventos de dominio; patrones (Repository, Unit of Work, Strategy, Factory, Adapter, Observer, Facade, DTO); SOLID; stack; estructura de carpetas; idiomas inglés y español (§8.3) y despliegue |
 
 ### 03-modelo-de-datos — Las tablas
 | Documento | Versión | Contenido |
 |---|---|---|
-| `Documento_Modelo_Datos_FootballMaestro` | 1.8 | Diagrama entidad-relación, decisiones de diseño y diccionario de las 16 tablas (verificado contra la base de datos real) |
+| `Documento_Modelo_Datos_FootballMaestro` | 1.9 | Diagrama entidad-relación, decisiones de diseño y diccionario de las 16 tablas (verificado contra la base de datos real), incluido el contenido en inglés y español |
 
 ### 04-contrato-api — Los endpoints
 | Documento | Versión | Contenido |
 |---|---|---|
-| `Documento_Contrato_API_FootballMaestro` | 1.8 | Convenciones (autenticación, errores, paginación), los 50 endpoints por módulo con el RF que cubre cada uno (verificado contra el código) y el formato de cada estilo de minijuego (§7.4) |
+| `Documento_Contrato_API_FootballMaestro` | 1.9 | Convenciones (autenticación, idioma, errores, paginación), los 50 endpoints por módulo con el RF que cubre cada uno (verificado contra el código) y el formato de cada estilo de minijuego (§7.4) |
 
 ### 05-pruebas — Qué se prueba
 | Documento | Versión | Contenido |
 |---|---|---|
-| `Plan_Pruebas_FootballMaestro` | 1.3 | Estrategia, casos TC-01 a TC-57, estado de la automatización (364 unitarias, 110 E2E) y Definition of Done |
+| `Plan_Pruebas_FootballMaestro` | 1.4 | Estrategia, casos TC-01 a TC-61, estado de la automatización (789 unitarias, 114 E2E) y Definition of Done |
 
 ### 06-seguridad — Riesgos y controles
 | Documento | Versión | Contenido |

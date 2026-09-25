@@ -1,6 +1,6 @@
 # Estado del proyecto
 
-Actualizado al **24 de septiembre de 2026**. La versión más completa del código está en la rama `feature/minijuego-timeline`; `main` todavía no la tiene (falta aceptar su Pull Request).
+Actualizado al **25 de septiembre de 2026**. La versión más completa del código está en la rama `feature/idiomas-extra`; `main` todavía no la tiene (falta aceptar su Pull Request).
 
 ## 1. Qué funciona
 
@@ -16,6 +16,8 @@ La aplicación corre completa en local: frontend, backend y base de datos, con l
 
 Las 14 pantallas de la maqueta original se conectaron a la API. GamePlay, Forgot/Reset Password, Edit Profile y Account Settings se agregaron para completar los flujos (Requisitos v2.2, RF-112).
 
+**Idiomas:** toda la app está en inglés (por defecto) y español, con el selector EN | ES en Welcome y en Account Settings. Se traducen las pantallas, los errores, los minijuegos y sus 203 preguntas, la tienda, los datos curiosos, el correo de recuperación y el panel de administración; las noticias se traen escritas en cada idioma (Arquitectura §8.3).
+
 ### Backend
 
 | Módulo | Qué hace |
@@ -24,7 +26,7 @@ Las 14 pantallas de la maqueta original se conectaron a la API. GamePlay, Forgot
 | Users | Perfil, estadísticas, XP/nivel/racha/precisión, insignias, editar perfil, cambiar contraseña, eliminar cuenta, actividad de uso |
 | Games | 10 minijuegos, **cada uno con su propio estilo y mecánica** (pistas, silueta, escudo dibujado, ficha del estadio, tablero de Connections, línea de tiempo, trayectoria, deslizador de precio, cancha, VAR); 203 preguntas; reto diario; puntaje calculado en el servidor; compartir |
 | Credits | Saldo, recompensas por eventos (reto diario, racha, compartir, referido), historial, tienda |
-| News | Noticias reales de Currents, sincronizadas cada 30 min y filtradas por categoría |
+| News | Noticias reales de Currents en inglés y español, sincronizadas cada 60 min y filtradas por categoría |
 | Admin | Dashboard, gestión de jugadores, analítica, reportes, exportaciones CSV y auditoría |
 
 - **50 endpoints**, todos documentados en el Contrato de API (verificado contra el código).
@@ -35,16 +37,17 @@ Las 14 pantallas de la maqueta original se conectaron a la API. GamePlay, Forgot
 
 | Suite | Resultado |
 |---|---|
-| Unitarias (incluye la prueba de arquitectura y la validación de las 203 preguntas) | 364 en verde |
-| E2E contra PostgreSQL | 110 en verde |
-| Casos del Plan de Pruebas (57) | 39 automatizados, 13 probados a mano, 5 pendientes de herramientas (Plan de Pruebas §6) |
+| Unitarias (incluye la prueba de arquitectura y la validación de las 203 preguntas en los dos idiomas) | 789 en verde |
+| E2E contra PostgreSQL | 114 en verde |
+| Casos del Plan de Pruebas (61) | 42 automatizados, 14 probados a mano, 5 pendientes de herramientas (Plan de Pruebas §6) |
 
 ## 2. Qué falta
 
 ### Para terminar la versión actual
-- [ ] Aceptar el Pull Request `feature/minijuego-timeline` → `main` (incluye todas las ramas anteriores).
+- [ ] Aceptar el Pull Request `feature/idiomas-extra` → `main` (incluye todas las ramas anteriores).
 - [ ] Instalar **Helmet** (cabeceras de seguridad HTTP) en el backend.
-- [ ] Revisión de las 203 preguntas por alguien del equipo (sobre todo precios de traspasos y capacidades de estadios, que varían según la fuente).
+- [ ] Revisión de las 203 preguntas por alguien del equipo (sobre todo precios de traspasos y capacidades de estadios, que varían según la fuente) y de su traducción al inglés.
+- [ ] Traducir los encabezados del CSV de reportes (hoy en español) y los nombres de las insignias (hoy no se muestran por nombre).
 - [ ] Imágenes para los minijuegos: fotos con licencia libre (Wikimedia Commons, con crédito del autor) para estadios y jugadores. Los escudos se siguen dibujando con los colores del club, porque son marcas registradas.
 
 ### Para desplegar en internet

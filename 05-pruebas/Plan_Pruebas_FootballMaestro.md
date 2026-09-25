@@ -10,9 +10,9 @@ Casos de prueba y trazabilidad de requisitos
 
 Fecha de elaboración: 23 de septiembre de 2026
 
-Fecha de actualización: 24 de septiembre de 2026
+Fecha de actualización: 25 de septiembre de 2026
 
-Versión: 1.3
+Versión: 1.4
 
 ---
 
@@ -187,16 +187,20 @@ Cubren funcionalidades implementadas después de la versión 1.1: Edit Profile, 
 | TC-54 | RF-067–078 | Revisar el feed de noticias de cada categoría tras una sincronización con Currents API. | Solo aparecen noticias de fútbol de la categoría elegida (sin NFL, rugby, críquet, dardos…). |
 | TC-55 | RNF-SEC-03 | Llamar a /games, /credits y /store con un token de administrador. | La API responde 403: solo los jugadores juegan y usan créditos, así las métricas no mezclan cuentas de administrador. |
 | TC-57 | RF-087–090 | Jugar una partida de cada minijuego. | Cada uno se muestra con su propio estilo (pistas, silueta, escudo, estadio, tablero, línea de tiempo, trayectoria, deslizador, cancha, VAR) y el puntaje se calcula en el servidor. |
+| TC-58 | Arquitectura §8.3 | Cambiar el idioma con el selector EN \| ES (Welcome y Account Settings) y recorrer las pantallas de jugador y de administración. | Toda la interfaz cambia al instante, incluidos los errores de la API, números y fechas; el idioma se recuerda al recargar. Por defecto la app abre en inglés. |
+| TC-59 | Arquitectura §8.3 | Pedir el catálogo y jugar una partida con Accept-Language en inglés y en español; retomar la partida pidiendo el otro idioma. | Nombres, preguntas y opciones salen en el idioma pedido; la partida se corrige en el idioma en que empezó y no cambia al retomarla. |
+| TC-60 | RF-067–078 | Consultar /news en inglés y en español tras una sincronización. | Cada idioma muestra solo sus noticias (no se mezclan). |
+| TC-61 | RF-035–039 | Pedir “Forgot password?” con la app en español. | El correo de recuperación llega en español. |
 | TC-56 | Arquitectura §3–§7 | Ejecutar la prueba de arquitectura (src/architecture.spec.ts). | Pasan sus 7 reglas: ningún servicio importa el ORM, otro módulo solo importa interfaces abstractas, la entidad USER no sale de Users y no hay dependencias circulares. |
 
 ## 6. Estado de la automatización
 
-Resultado de la última ejecución (24 de septiembre de 2026), todas en verde:
+Resultado de la última ejecución (25 de septiembre de 2026), todas en verde:
 
 | Suite | Pruebas | Qué cubre y cómo se ejecuta |
 | --- | --- | --- |
-| Unitarias (Jest) | 364 | Servicios, estrategias de cada minijuego, adaptadores (Currents, Brevo), validación de variables de entorno, reglas de progreso, la prueba de arquitectura y la validación de cada una de las 203 preguntas del banco (formato, respuesta válida para su estrategia y que details no revele la respuesta). En backend/: npm test. |
-| E2E (Jest + Supertest) | 110 | Los endpoints del Contrato de API contra PostgreSQL real, en 7 archivos (auth, users, games, credits, news, admin, health). En backend/: npm run test:e2e (con la base de datos encendida). |
+| Unitarias (Jest) | 789 | Servicios, estrategias de cada minijuego, adaptadores (Currents en inglés y español, Brevo), validación de variables de entorno, reglas de progreso, idioma de la petición (shared/i18n), la prueba de arquitectura y la validación de las 203 preguntas en cada idioma (formato, respuesta válida para su estrategia, que details no revele la respuesta y que la traducción coincida con el original). En backend/: npm test. |
+| E2E (Jest + Supertest) | 114 | Los endpoints del Contrato de API contra PostgreSQL real, en 7 archivos (auth, users, games, credits, news, admin, health). En backend/: npm run test:e2e (con la base de datos encendida). |
 | Arquitectura | 7 reglas | Parte de las unitarias (src/architecture.spec.ts). Falla si el código rompe el desacople entre módulos o la inversión de dependencias. |
 | Frontend | — | Revisión de tipos (npm run typecheck) y build de producción (npx vite build). Sin pruebas automatizadas de interfaz todavía. |
 
@@ -204,8 +208,8 @@ Casos de este documento por tipo de verificación:
 
 | Verificación | Casos |
 | --- | --- |
-| Automatizados (E2E) | TC-02, 05–08, 10–13, 15–20, 22–24, 26–30, 33–35, 37, 39–48 (37 casos), más TC-55. Cada prueba lleva su TC en el nombre, dentro de backend/test/*.e2e-spec.ts. TC-56 es la prueba de arquitectura. |
-| Manuales en el navegador | TC-01, 03, 04, 09, 14, 21 y 25 (navegación y validaciones de pantalla), TC-50 a TC-54 y TC-57 (probados por el equipo el 24 de septiembre de 2026). Su lógica en la API sí está cubierta por pruebas E2E. |
+| Automatizados (E2E) | TC-02, 05–08, 10–13, 15–20, 22–24, 26–30, 33–35, 37, 39–48 (37 casos), más TC-55 y TC-59 a TC-61. Cada prueba lleva su TC en el nombre, dentro de backend/test/*.e2e-spec.ts. TC-56 es la prueba de arquitectura. |
+| Manuales en el navegador | TC-01, 03, 04, 09, 14, 21 y 25 (navegación y validaciones de pantalla), TC-50 a TC-54, TC-57 y TC-58 (probados por el equipo el 24 y 25 de septiembre de 2026). Su lógica en la API sí está cubierta por pruebas E2E. |
 | Pendientes (requieren herramientas) | TC-31, 32 y 49 (rendimiento: k6), TC-36 (compatibilidad entre navegadores), TC-38 (accesibilidad con teclado: axe-core o prueba manual). |
 
 ## 7. Criterios de aceptación (Definition of Done)
@@ -232,3 +236,4 @@ Los identificadores de los casos agregados en la versión 1.1 continúan la nume
 | 1.1 | 23 de septiembre de 2026 | Revisión de consistencia: se agregan TC-39 (recuperar contraseña), TC-40 (abandonar minijuego), TC-41 (exportar usuarios) y TC-42 a TC-49 (integridad de puntaje, compras concurrentes, rate limiting, revocación de sesión, auditoría, cuenta suspendida, supresión de datos y tiempo de respuesta de la API); TC-02, TC-05, TC-06, TC-21, TC-23 y TC-37 se ajustan al Contrato de API v1.1. |
 | 1.2 | 24 de septiembre de 2026 | Actualización con el sistema implementado: estado de cada herramienta; nuevos casos TC-50 a TC-56 (Edit Profile, Account Settings, Google, correo real, noticias reales, roles y arquitectura); nueva sección 6 con los resultados de las suites automatizadas y qué casos son automáticos, manuales o pendientes; la Definition of Done incluye la prueba de arquitectura. |
 | 1.3 | 24 de septiembre de 2026 | Estilos propios por minijuego: TC-57; 364 pruebas unitarias (incluye la validación de las 203 preguntas) y 110 E2E. |
+| 1.4 | 25 de septiembre de 2026 | Inglés y español: TC-58 a TC-61; 789 pruebas unitarias (el banco de preguntas se valida en los dos idiomas) y 114 E2E. |

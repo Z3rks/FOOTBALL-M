@@ -10,9 +10,9 @@ Especificación de endpoints del backend
 
 Fecha de elaboración: 23 de septiembre de 2026
 
-Fecha de actualización: 24 de septiembre de 2026
+Fecha de actualización: 25 de septiembre de 2026
 
-Versión: 1.8
+Versión: 1.9
 
 ---
 
@@ -34,6 +34,7 @@ Especificar, de manera formal y trazable, cada endpoint expuesto por el backend:
 | Códigos de estado | 200 OK, 201 Created, 204 No Content, 400 Bad Request (validación o regla de negocio), 401 Unauthorized, 403 Forbidden (rol insuficiente o cuenta inactiva), 404 Not Found, 409 Conflict (ej. email duplicado, ítem ya comprado), 429 Too Many Requests (rate limiting). |
 | Paginación | Listas largas (noticias, usuarios admin, transacciones) usan ?page= y ?limit=, respuesta con { data: [...], total, page, limit }. |
 | Errores | Formato uniforme: { "statusCode": 400, "message": "Passwords don't match", "error": "Bad Request" } |
+| Idioma | Cabecera Accept-Language (ej. “es-CO,es;q=0.9”). Idiomas: en (por defecto) y es; cualquier otro se trata como en. Afecta el contenido: minijuegos y preguntas, datos curiosos, tienda, noticias, correo de recuperación y nombres del ranking de administración. Los mensajes de error se envían siempre en inglés y el frontend los traduce (Documento de Arquitectura §8.3). |
 | Estado del servicio | GET /health (público): responde { "status": "ok", "database": "up" } si la API y la base de datos funcionan; lo usan el hosting y el equipo para verificar el despliegue. |
 
 ## 4. Módulo Auth
@@ -49,7 +50,7 @@ Cubre WelcomeScreen, SignInScreen y RegisterScreen, y la verificación de sesió
 | `POST` | `/auth/login` | Inicia sesión con email/password. El body incluye role (player/admin); el backend valida el rol real del usuario (403 si no coincide) y que la cuenta esté activa (403 si status=inactive). Los inicios de sesión de administrador se registran en ADMIN_AUDIT_LOG. | RF-025–034 |
 | `POST` | `/auth/login/google` | Inicia sesión con el id_token de Google (solo rol player; el modo Admin oculta este botón, RF-032). | RF-020–024 |
 | `POST` | `/auth/refresh` | Emite un nuevo access token usando la cookie de refresh token y la rota. SplashScreen lo usa para decidir si hay sesión activa. | RF-007, RF-009 |
-| `POST` | `/auth/forgot-password` | Envía un correo (con Brevo) con el enlace de recuperación (token de un solo uso, 30 min). Responde 204 exista o no el email, y también si el envío falla, para no revelar cuentas. | RF-035–039 |
+| `POST` | `/auth/forgot-password` | Envía un correo (con Brevo) con el enlace de recuperación (token de un solo uso, 30 min). Responde 204 exista o no el email, y también si el envío falla, para no revelar cuentas. El correo va en el idioma de Accept-Language. | RF-035–039 |
 | `POST` | `/auth/reset-password` | Establece una nueva contraseña usando el token del correo y revoca los refresh tokens del usuario. | RF-035–039 |
 | `POST` | `/auth/logout` | Revoca el refresh token en el servidor y borra la cookie. Requiere access token. | RF-111, RF-113, RF-124 |
 
@@ -103,7 +104,7 @@ Cubre NewsScreen y la vista previa de noticias en MainHomeScreen. Las noticias s
 
 | Método | Endpoint | Descripción | RF relacionados |
 | --- | --- | --- | --- |
-| `GET` | `/news?category=&page=&limit=` | Lista noticias ordenadas de la más reciente a la más antigua, opcionalmente filtradas por categoría (Transfers, Champions League, World Cup, Premier League; All o sin parámetro = todas). Cada noticia: id, title, description, category, source, sourceUrl, imageUrl, publishedAt. | RF-067–070, RF-071–078 |
+| `GET` | `/news?category=&page=&limit=` | Lista noticias ordenadas de la más reciente a la más antigua, opcionalmente filtradas por categoría (Transfers, Champions League, World Cup, Premier League; All o sin parámetro = todas). Solo devuelve las noticias escritas en el idioma de Accept-Language (se sincronizan noticias en inglés y en español; no se traducen). Cada noticia: id, title, description, category, source, sourceUrl, imageUrl, publishedAt. | RF-067–070, RF-071–078 |
 | `GET` | `/news/:id` | Detalle de una noticia, incluida la URL de la fuente original a la que redirige el ícono ExternalLink. | RF-079–082 |
 
 ## 7. Módulo Games
@@ -114,10 +115,10 @@ Cubre MinigamesScreen, ResultsScreen, el reto diario y la vista previa de miniju
 
 | Método | Endpoint | Descripción | RF relacionados |
 | --- | --- | --- | --- |
-| `GET` | `/games` | Catálogo de los 10 minijuegos con nombre, descripción, categoría, dificultad e ícono. | RF-063–066, RF-083–086 |
+| `GET` | `/games` | Catálogo de los 10 minijuegos con nombre, descripción, categoría, dificultad e ícono. Nombre y descripción en el idioma de Accept-Language; category y difficulty son valores fijos que traduce el frontend. | RF-063–066, RF-083–086 |
 | `GET` | `/games/daily-challenge` | Devuelve el reto del día: minijuego, título, recompensa (+50 XP) y si el usuario ya lo completó hoy. | RF-059–062 |
-| `POST` | `/games/:id/sessions` | Inicia una partida (también usado por “Play Again”). Body opcional: { "dailyChallenge": true }. Devuelve el id de la sesión, el estilo de juego (playStyle) y hasta 10 preguntas al azar, sin la respuesta correcta. Cada pregunta trae details: los datos públicos que usa su estilo (ver 7.4). | RF-087–088, RF-100, RF-102 |
-| `POST` | `/games/sessions/:sessionId/answers` | Registra la respuesta a una pregunta ({ questionNumber, answer }) y devuelve isCorrect y la respuesta correcta. El formato de answer depende del estilo (ver 7.4). Cada respuesta queda guardada al instante (RNF-DISP-03). | RF-089, RF-095–096 |
+| `POST` | `/games/:id/sessions` | Inicia una partida (también usado por “Play Again”). Body opcional: { "dailyChallenge": true }. Devuelve el id de la sesión, el estilo de juego (playStyle) y hasta 10 preguntas al azar, sin la respuesta correcta. Cada pregunta trae details: los datos públicos que usa su estilo (ver 7.4). La partida queda en el idioma de Accept-Language: sus preguntas se muestran y se corrigen en ese idioma hasta el final, aunque luego se pida otro (al retomarla con GET también). | RF-087–088, RF-100, RF-102 |
+| `POST` | `/games/sessions/:sessionId/answers` | Registra la respuesta a una pregunta ({ questionNumber, answer }) y devuelve isCorrect y la respuesta correcta. El formato de answer depende del estilo (ver 7.4). La respuesta se compara en el idioma de la partida (ej. “No goal” en inglés, “No gol” en español). Cada respuesta queda guardada al instante (RNF-DISP-03). | RF-089, RF-095–096 |
 | `PATCH` | `/games/sessions/:sessionId` | Cierra la partida: { "status": "completed" } o { "status": "abandoned" } (salir sin terminar). Al completar, el servidor calcula score, accuracy y XP a partir de las respuestas guardadas; cualquier puntaje enviado por el cliente se ignora. | RF-089–093 |
 | `GET` | `/games/sessions/:sessionId` | Devuelve el resultado detallado (incluye respuestas para la cuadrícula tipo Wordle y un dato curioso). | RF-091–098 |
 | `POST` | `/games/sessions/:sessionId/share` | Genera un enlace/imagen compartible del resultado y otorga +25 créditos la primera vez. | RF-099, RF-115 |
@@ -180,7 +181,7 @@ Cubre CreditsScreen.
 | `GET` | `/credits/balance` | Saldo actual de créditos del usuario. | RF-114 |
 | `GET` | `/credits/earn-methods` | Las 4 formas de ganar créditos: [{ reason, method, credits }] (Daily Challenge +50, 7-day streak +100, Share +25, Refer a friend +200). Los montos viven en el backend y se otorgan automáticamente por eventos. | RF-115–116 |
 | `GET` | `/credits/transactions?page=&limit=` | Historial de movimientos (ganancias y gastos) del ledger CREDIT_TRANSACTION. No tiene pantalla propia hoy; soporta auditoría y soporte al usuario. | Soporte (auditoría) |
-| `GET` | `/store/items` | Catálogo de los 6 ítems de la tienda (de menor a mayor costo) con, para el usuario autenticado, owned (ya comprado), equipped (aplicado al perfil) y affordable (le alcanza el saldo). | RF-117–118 |
+| `GET` | `/store/items` | Catálogo de los 6 ítems de la tienda (de menor a mayor costo) con, para el usuario autenticado, owned (ya comprado), equipped (aplicado al perfil) y affordable (le alcanza el saldo). El nombre va en el idioma de Accept-Language. | RF-117–118 |
 | `POST` | `/store/items/:id/purchase` | Compra un ítem en una transacción atómica: valida saldo suficiente, descuenta créditos, registra la transacción, lo asigna y aplica al perfil. 400 si no alcanza el saldo, 409 si ya lo tiene. Máximo 10 compras por minuto. | RF-119–120 |
 | `POST` | `/store/items/:id/equip` | Vuelve a aplicar al perfil un ítem ya comprado (solo uno aplicado por tipo). 404 si no lo ha comprado. | RF-119 |
 
@@ -217,9 +218,9 @@ Todos los endpoints de Admin requieren access token con role=admin, validado en 
 
 | Método | Endpoint | Descripción | RF relacionados |
 | --- | --- | --- | --- |
-| `GET` | `/admin/dashboard/summary` | Alertas del sistema, estado en línea y los 4 KPIs (usuarios totales, activos hoy, partidas hoy, precisión media) con su variación. | RF-121–123 |
+| `GET` | `/admin/dashboard/summary` | Alertas del sistema, estado en línea y los 4 KPIs (usuarios totales, activos hoy, partidas hoy, precisión media) con su variación. Cada alerta: { type, code, values, message }; code (retentionDrop, dailyRecord) y values permiten mostrarla en el idioma del administrador; message es el texto en inglés. | RF-121–123 |
 | `GET` | `/admin/dashboard/dau` | Serie de usuarios activos diarios (últimos 7 días) con variación semanal. | RF-125 |
-| `GET` | `/admin/dashboard/ranking` | Ranking de los 4 minijuegos más jugados con jugadas, puntaje promedio y tendencia. | RF-126 |
+| `GET` | `/admin/dashboard/ranking` | Ranking de los 4 minijuegos más jugados con jugadas, puntaje promedio y tendencia. El nombre del minijuego va en el idioma de Accept-Language. | RF-126 |
 
 ### 9.2 AdminUsersScreen
 
@@ -246,7 +247,7 @@ Todos los endpoints de Admin requieren access token con role=admin, validado en 
 
 | Método | Endpoint | Descripción | RF relacionados |
 | --- | --- | --- | --- |
-| `GET` | `/admin/reports/summary?month=` | Métricas clave del mes seleccionado y resumen de las últimas 4 semanas (“Cambiar mes”). | RF-146–149 |
+| `GET` | `/admin/reports/summary?month=` | Métricas clave del mes seleccionado y resumen de las últimas 4 semanas (“Cambiar mes”). Cada semana trae week (número de semana ISO, para armar la etiqueta en el idioma del administrador) además de label. | RF-146–149 |
 | `GET` | `/admin/reports/top-players?month=` | Top 5 jugadores por precisión/XP, con país. | RF-150 |
 | `GET` | `/admin/reports/category-performance?month=` | Rendimiento y tendencia por categoría. | RF-151 |
 | `GET` | `/admin/reports/peak-hours?month=` | Actividad por hora del día (24 valores). | RF-152 |
@@ -269,3 +270,4 @@ Este contrato debe mantenerse sincronizado con el Documento de Requisitos: cualq
 | 1.6 | 24 de septiembre de 2026 | Refactor de arquitectura: /games, /credits y /store son solo para jugadores (403 para administradores). |
 | 1.7 | 24 de septiembre de 2026 | Actualización general de la documentación: verificado contra las rutas reales de la API (los 50 endpoints coinciden); se documenta GET /health; forgot-password envía el correo con Brevo. |
 | 1.8 | 24 de septiembre de 2026 | Estilos propios por minijuego: la partida devuelve playStyle y cada pregunta details; nueva sección 7.4 con el formato de cada estilo; la respuesta a una pregunta incluye correctAnswer. |
+| 1.9 | 25 de septiembre de 2026 | Inglés y español: convención de la cabecera Accept-Language; contenido traducido en /games, las partidas (con su idioma fijo), /store/items, /news (noticias por idioma), el correo de forgot-password y el ranking de administración; las alertas del dashboard suman code y values y el resumen del reporte suma week. |

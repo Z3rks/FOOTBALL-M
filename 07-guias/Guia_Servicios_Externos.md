@@ -28,13 +28,14 @@ Football Maestro usa tres servicios externos, siempre a través de un *adapter* 
 
 ## 2. Currents API (noticias)
 
-**Estado:** funciona, con noticias reales de las 4 categorías.
+**Estado:** funciona, con noticias reales de las 4 categorías en inglés y en español.
 
 - Variable: `NEWS_API_KEY` en `backend/.env`. Cada integrante puede sacar su propia clave gratis en currentsapi.services, para no compartir el cupo diario.
-- Sincroniza al arrancar y cada 30 minutos (`NEWS_SYNC_MINUTES`): 4 categorías × 48 veces = 192 peticiones al día. La app siempre lee de la base de datos, así que el feed sigue funcionando aunque Currents falle. Las noticias de más de 30 días se borran.
-- Búsqueda: una por categoría con el parámetro `keywords` ("transfer news", "Champions League", "World Cup", "Premier League"). **Currents ignora el parámetro `query`**. Como su búsqueda es aproximada, el adapter además descarta noticias de otros deportes (NFL, rugby, críquet, dardos…) y las que no mencionan el tema de la categoría.
+- Sincroniza al arrancar y cada 60 minutos (`NEWS_SYNC_MINUTES`): 4 categorías × 2 idiomas × 24 veces = 192 peticiones al día. **No bajar de 60 minutos**: con 30 serían 384 y se pasaría del cupo gratuito (250). La app siempre lee de la base de datos, así que el feed sigue funcionando aunque Currents falle. Las noticias de más de 30 días se borran.
+- Búsqueda: una por categoría e idioma con los parámetros `keywords` y `language` (en inglés "transfer news", "Champions League", "World Cup", "Premier League"; en español "fichajes", "Champions League", "Mundial", "Premier League"). **Currents ignora el parámetro `query`**. Como su búsqueda es aproximada, el adapter además descarta noticias de otros deportes (NFL, rugby, críquet, dardos, ciclismo, baloncesto…) y las que no mencionan el tema de la categoría, con palabras de cada idioma.
+- Cada noticia guarda su idioma y el feed muestra solo las del idioma del jugador: las noticias no se traducen.
 - Máximo 20 resultados por consulta; el feed crece con cada sincronización.
-- Al activar la clave, las 6 noticias de ejemplo se borran con `DELETE FROM news_articles WHERE external_id LIKE 'sample:%'`.
+- Sin clave se usan 6 noticias de ejemplo en cada idioma. Al activar la clave se borran con `DELETE FROM news_articles WHERE external_id LIKE 'sample:%'`.
 
 ## 3. Brevo (correo)
 
@@ -52,6 +53,7 @@ Football Maestro usa tres servicios externos, siempre a través de un *adapter* 
 - Sin dominio propio, los correos salen desde un Gmail verificado como remitente. Al principio pueden llegar a **spam**.
 - Si el envío falla, la API responde igual que siempre (para no revelar qué correos están registrados) y el error queda en el log.
 - En *Brevo → Transaccional → Registros* se ve si cada correo se entregó, se abrió o rebotó.
+- El correo de recuperación sale en el idioma en que se pidió (inglés o español, según la app). Sus textos están en `backend/src/auth/adapters/password-reset-email.ts`.
 
 **Pendiente para producción:** autenticar un dominio propio en Brevo (SPF/DKIM) para que los correos no caigan en spam, y usar una clave nueva guardada solo en el servidor.
 

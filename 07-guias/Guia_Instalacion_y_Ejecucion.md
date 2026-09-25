@@ -15,7 +15,7 @@ Abre Docker Desktop y espera a que esté corriendo. Luego, en PowerShell:
 ```powershell
 git clone https://github.com/Z3rks/Football-Maestro.git
 cd Football-Maestro
-git checkout feature/minijuego-timeline   # o main, cuando se haya unido el PR
+git checkout feature/idiomas-extra   # o main, cuando se haya unido el PR
 
 # Backend
 cd backend
