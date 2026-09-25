@@ -10,9 +10,9 @@ Modelo de amenazas y medidas de mitigación
 
 Fecha de elaboración: 23 de septiembre de 2026
 
-Fecha de actualización: 23 de septiembre de 2026
+Fecha de actualización: 24 de septiembre de 2026
 
-Versión: 1.1
+Versión: 1.2
 
 ---
 
@@ -112,18 +112,45 @@ El sistema almacena datos personales (nombre de usuario, email, país) y datos d
 | 1 | npm audit / Snyk sin vulnerabilidades críticas o altas pendientes. |
 | 2 | Todas las variables sensibles (JWT secret, credenciales de BD, claves de OAuth y del servicio de correo) están en variables de entorno, nunca en el repositorio. |
 | 3 | Los endpoints /admin/* fueron probados con un token de rol player y responden 403 (caso TC-34 del Plan de Pruebas). |
-| 4 | HTTPS forzado y cabeceras de seguridad (Helmet) activas en producción. |
+| 4 | HTTPS forzado y cabeceras de seguridad (Helmet) activas en producción. Helmet todavía no está instalado: ver sección 10. |
 | 5 | Rate limiting activo en /auth/login, /auth/register, /auth/forgot-password y /store/*/purchase (caso TC-44). |
 | 6 | Los casos de prueba de seguridad del Plan de Pruebas (TC-33 a TC-35 y TC-42 a TC-48) pasan exitosamente. |
 | 7 | El cálculo de score/créditos se verificó del lado del servidor, no se confía en ningún valor final enviado por el cliente (casos TC-42 y TC-43). |
+| 8 | Google: el dominio real está en los orígenes autorizados del cliente OAuth y la app de Google está publicada (hoy en modo prueba). |
+| 9 | Correo: dominio propio autenticado en Brevo (SPF/DKIM) para que los correos no lleguen a spam. |
+| 10 | Cookies y proxy: COOKIE_SAMESITE=none si frontend y API están en dominios distintos (exige HTTPS) y TRUST_PROXY=true detrás del proxy del hosting. |
+| 11 | Claves nuevas para producción: las claves de Currents y Brevo usadas en desarrollo se compartieron por chat; generar otras y ponerlas solo en las variables de entorno del servidor. Administrador creado con una contraseña distinta a la de desarrollo. |
 
-## 10. Consideraciones finales
+## 10. Estado de implementación
+
+Controles de este plan verificados en el código el 24 de septiembre de 2026:
+
+| Control | Estado | Dónde / cómo |
+| --- | --- | --- |
+| Contraseñas con bcrypt (costo 12) | Implementado | BCRYPT_COST; mínimo 8 caracteres en todos los DTO. |
+| Access token 15 min + refresh token rotativo | Implementado | Cookie httpOnly en /v1/auth, guardado como hash SHA-256 en AUTH_TOKEN; reutilizar uno revocado cierra todas las sesiones. |
+| Rate limiting | Implementado | Global 100/min; login, registro y recuperación 5 cada 15 min; cambio de contraseña y borrado de cuenta 5 cada 15 min; compras 10/min. |
+| Roles validados en el backend | Implementado | RolesGuard global; /admin/* solo admin; /games, /credits y /store solo jugadores. |
+| Google verificado en el servidor | Implementado | google-auth-library comprueba firma y audiencia del id_token (GoogleVerifier). |
+| Recuperación de contraseña | Implementado | Token de un solo uso, 30 min, guardado como hash; correo con Brevo; la respuesta no revela si el email existe, ni siquiera si el envío falla. |
+| Puntaje y créditos del lado del servidor | Implementado | Score, XP y créditos se calculan en el backend; transacciones atómicas; índice único para cobrar cada recompensa una vez; CHECK que impide saldo negativo. |
+| Validación de entrada y CORS | Implementado | ValidationPipe con whitelist y forbidNonWhitelisted; CORS solo para FRONTEND_URL; body máximo 1 MB. |
+| Auditoría de administradores | Implementado | ADMIN_AUDIT_LOG antes de cada acción; si no se puede auditar, la acción falla. |
+| CSV seguros | Implementado | Protección contra inyección de fórmulas en las exportaciones. |
+| Ley 1581 | Implementado | Consentimiento en el registro (también con Google), supresión de la cuenta con DELETE /users/me, actividad mínima en USER_SESSION. |
+| Secretos fuera del repositorio | Implementado | Todas las claves en .env (ignorado por git); .env.example sin valores reales. |
+| Dependencias | Implementado | npm audit del backend: 0 vulnerabilidades. Frontend: 2 alertas que solo afectan al servidor de desarrollo de Vite. |
+| Cabeceras de seguridad (Helmet) | Pendiente | Instalar helmet en backend/src/app.setup.ts antes del primer despliegue. |
+| HTTPS | Pendiente (despliegue) | Lo da el hosting (Vercel, Render/Railway); en local se usa HTTP. |
+
+## 11. Consideraciones finales
 
 Este plan debe revisarse cada vez que se agregue una nueva funcionalidad al tablero de Trello, especialmente si involucra dinero, créditos, datos personales o el rol de administrador. La seguridad no es un documento que se firma una vez: el checklist de la sección 9 debe ejecutarse antes de cada despliegue a producción, y el modelo de amenazas de la sección 3 debe revisarse cuando el sistema crezca (por ejemplo, si se agregan pagos reales, multijugador en tiempo real o el módulo futuro de Partidos y Estadísticas).
 
-## 11. Historial de versiones
+## 12. Historial de versiones
 
 | Versión | Fecha | Cambios |
 | --- | --- | --- |
 | 1.0 | 23 de septiembre de 2026 | Versión inicial. |
 | 1.1 | 23 de septiembre de 2026 | Revisión de consistencia: la verificación de respuestas usa QUESTION (antes decía GAME); refresh token alineado con el Contrato de API (cookie httpOnly + POST /auth/refresh, guardado como hash en AUTH_TOKEN); se agregan reglas de recuperación de contraseña y cuentas suspendidas; consentimiento y supresión de datos (RNF-SEC-07); ORM fijado en TypeORM; se corrige el rango de casos de seguridad del checklist (TC-33 a TC-35 y TC-42 a TC-48). |
+| 1.2 | 24 de septiembre de 2026 | Actualización con el sistema implementado: nueva sección 10 con el estado real de cada control (Helmet queda pendiente); el checklist previo al despliegue suma Google, dominio de correo, cookies/proxy y claves nuevas de producción. |

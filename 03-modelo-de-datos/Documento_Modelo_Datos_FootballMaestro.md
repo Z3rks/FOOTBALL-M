@@ -12,13 +12,13 @@ Fecha de elaboración: 23 de septiembre de 2026
 
 Fecha de actualización: 24 de septiembre de 2026
 
-Versión: 1.5
+Versión: 1.6
 
 ---
 
 ## 1. Introducción
 
-Este documento describe el modelo de datos propuesto para el backend de “Football Maestro”, complementando el Documento de Arquitectura de Software. Cada entidad se derivó de las historias de usuario y criterios de aceptación de las 14 pantallas del tablero de Trello (Documento de Requisitos v2): niveles y racha del jugador, preguntas y resultados de minijuegos, reto diario, noticias, saldo y canje de créditos, insignias, actividad de uso para la analítica administrativa, y auditoría del panel administrativo.
+Este documento describe el modelo de datos del backend de “Football Maestro”, complementando el Documento de Arquitectura de Software. Cada entidad se derivó de las historias de usuario y criterios de aceptación de las 14 pantallas del tablero de Trello (Documento de Requisitos v2): niveles y racha del jugador, preguntas y resultados de minijuegos, reto diario, noticias, saldo y canje de créditos, insignias, actividad de uso para la analítica administrativa, y auditoría del panel administrativo.
 
 ## 2. Objetivo del documento
 
@@ -310,3 +310,4 @@ Este modelo de datos debe revisarse junto con el Documento de Arquitectura de So
 | 1.3 | 24 de septiembre de 2026 | Detectado al implementar feature/games: GAME suma sort_order (orden del catálogo) y GAME_SESSION suma question_ids (preguntas fijadas al iniciar la partida) y shared_at (créditos por compartir una sola vez). |
 | 1.4 | 24 de septiembre de 2026 | Detectado al implementar feature/users: BADGE suma code, para otorgar insignias por código y no por nombre. |
 | 1.5 | 24 de septiembre de 2026 | Detectado al implementar feature/credits: índice único en CREDIT_TRANSACTION (user_id, reason, reference_id) para que cada recompensa se pague una sola vez. |
+| 1.6 | 24 de septiembre de 2026 | Actualización general de la documentación: verificado contra la base de datos real (las 16 tablas y sus 110 columnas coinciden con este diccionario). Sin cambios de esquema desde la versión 1.5. |

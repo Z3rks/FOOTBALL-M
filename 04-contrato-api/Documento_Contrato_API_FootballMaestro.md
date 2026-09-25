@@ -12,7 +12,7 @@ Fecha de elaboración: 23 de septiembre de 2026
 
 Fecha de actualización: 24 de septiembre de 2026
 
-Versión: 1.6
+Versión: 1.7
 
 ---
 
@@ -34,6 +34,7 @@ Especificar, de manera formal y trazable, cada endpoint expuesto por el backend:
 | Códigos de estado | 200 OK, 201 Created, 204 No Content, 400 Bad Request (validación o regla de negocio), 401 Unauthorized, 403 Forbidden (rol insuficiente o cuenta inactiva), 404 Not Found, 409 Conflict (ej. email duplicado, ítem ya comprado), 429 Too Many Requests (rate limiting). |
 | Paginación | Listas largas (noticias, usuarios admin, transacciones) usan ?page= y ?limit=, respuesta con { data: [...], total, page, limit }. |
 | Errores | Formato uniforme: { "statusCode": 400, "message": "Passwords don't match", "error": "Bad Request" } |
+| Estado del servicio | GET /health (público): responde { "status": "ok", "database": "up" } si la API y la base de datos funcionan; lo usan el hosting y el equipo para verificar el despliegue. |
 
 ## 4. Módulo Auth
 
@@ -48,7 +49,7 @@ Cubre WelcomeScreen, SignInScreen y RegisterScreen, y la verificación de sesió
 | `POST` | `/auth/login` | Inicia sesión con email/password. El body incluye role (player/admin); el backend valida el rol real del usuario (403 si no coincide) y que la cuenta esté activa (403 si status=inactive). Los inicios de sesión de administrador se registran en ADMIN_AUDIT_LOG. | RF-025–034 |
 | `POST` | `/auth/login/google` | Inicia sesión con el id_token de Google (solo rol player; el modo Admin oculta este botón, RF-032). | RF-020–024 |
 | `POST` | `/auth/refresh` | Emite un nuevo access token usando la cookie de refresh token y la rota. SplashScreen lo usa para decidir si hay sesión activa. | RF-007, RF-009 |
-| `POST` | `/auth/forgot-password` | Envía un correo con enlace de recuperación (token de un solo uso, 30 min). Responde 204 exista o no el email, para no revelar cuentas. | RF-035–039 |
+| `POST` | `/auth/forgot-password` | Envía un correo (con Brevo) con el enlace de recuperación (token de un solo uso, 30 min). Responde 204 exista o no el email, y también si el envío falla, para no revelar cuentas. | RF-035–039 |
 | `POST` | `/auth/reset-password` | Establece una nueva contraseña usando el token del correo y revoca los refresh tokens del usuario. | RF-035–039 |
 | `POST` | `/auth/logout` | Revoca el refresh token en el servidor y borra la cookie. Requiere access token. | RF-111, RF-113, RF-124 |
 
@@ -249,3 +250,4 @@ Este contrato debe mantenerse sincronizado con el Documento de Requisitos: cualq
 | 1.4 | 24 de septiembre de 2026 | Ajustes al implementar feature/news: ?category acepta All y se detallan los campos de cada noticia. |
 | 1.5 | 24 de septiembre de 2026 | Ajustes al implementar feature/admin: reglas de cálculo de KPIs, alertas y retención; el panel gestiona solo jugadores; auditoría previa a cada acción; CSV seguros. |
 | 1.6 | 24 de septiembre de 2026 | Refactor de arquitectura: /games, /credits y /store son solo para jugadores (403 para administradores). |
+| 1.7 | 24 de septiembre de 2026 | Actualización general de la documentación: verificado contra las rutas reales de la API (los 50 endpoints coinciden); se documenta GET /health; forgot-password envía el correo con Brevo. |

@@ -12,13 +12,13 @@ Fecha de elaboración: 23 de septiembre de 2026
 
 Fecha de actualización: 24 de septiembre de 2026
 
-Versión: 1.5
+Versión: 1.6
 
 ---
 
 ## 1. Introducción
 
-Este documento define la arquitectura de software propuesta para el backend de “Football Maestro”, complementando el Documento de Requisitos Funcionales y No Funcionales (v2) y el tablero de historias de usuario del proyecto en Trello. El frontend (React 18 + TypeScript + Vite + Tailwind CSS) ya existe como maqueta funcional; este documento se centra en el backend que dará soporte real a sus 14 pantallas:
+Este documento define la arquitectura de software del backend de “Football Maestro”, complementando el Documento de Requisitos Funcionales y No Funcionales (v2) y el tablero de historias de usuario del proyecto en Trello. El frontend (React 18 + TypeScript + Vite + Tailwind CSS) ya existe como maqueta funcional; este documento se centra en el backend que dará soporte real a sus 14 pantallas:
 
 - Acceso (4): SplashScreen, WelcomeScreen, SignInScreen, RegisterScreen.
 - Jugador (6, con navegación inferior BottomNav de 5 pestañas: Home, Games, News, Credits, Profile): MainHomeScreen, MinigamesScreen, ResultsScreen, NewsScreen, CreditsScreen, ProfileScreen.
@@ -144,7 +144,7 @@ Cada patrón se seleccionó para resolver un problema concreto identificado en l
 | Backend | Node.js + NestJS + TypeScript | Comparte lenguaje con el frontend y su arquitectura está construida nativamente alrededor de Inyección de Dependencias, módulos y decoradores, lo que facilita demostrar SOLID y los patrones anteriores de forma explícita. |
 | Base de datos | PostgreSQL + TypeORM | Modelo relacional para usuarios, partidas, créditos y actividad; consultas parametrizadas vía ORM (Plan de Seguridad, A03). |
 | Autenticación | JWT de acceso + refresh token (cookie httpOnly), bcrypt, Google OAuth 2.0 | Roles diferenciados Player/Admin validados en el backend (RNF-SEC-03) e invalidación real de sesión (RNF-SEC-05). |
-| Servicios externos | Currents API (noticias; plan gratuito de 250 peticiones/día, sin retraso), Google OAuth 2.0, servicio de correo transaccional (por definir) | Consumidos siempre a través de Adapters (sección 6). |
+| Servicios externos | Currents API (noticias; plan gratuito de 250 peticiones/día, sin retraso), Google OAuth 2.0, Brevo (correo transaccional; plan gratuito de 300 correos/día) | Consumidos siempre a través de Adapters (sección 6). |
 | Hosting | Vercel (frontend), Render o Railway (backend y PostgreSQL gestionado) | Planes gratuitos suficientes para el prototipo académico. |
 
 Redis y WebSockets (Socket.IO), propuestos en el documento del 19 de septiembre para resultados de partidos en vivo, no son necesarios en el alcance actual: ninguna de las 14 pantallas muestra datos en tiempo real. Se reconsiderarán si se implementa el módulo futuro de Partidos y Estadísticas.
@@ -188,7 +188,7 @@ El siguiente diagrama muestra cómo se distribuyen físicamente los componentes.
 | Vercel | Frontend React + Vite compilado (archivos estáticos) | Solo sirve archivos; no accede a datos. |
 | Render / Railway | Backend NestJS (monolito modular) | TCP/SSL hacia PostgreSQL; HTTPS hacia Google, la API de noticias y el servicio de correo. |
 | PostgreSQL gestionado | Las 16 entidades del Modelo de Datos | Solo accesible desde el backend (credenciales en variables de entorno). |
-| Servicios externos | Google OAuth 2.0, API de noticias, servicio de correo transaccional | Consumidos mediante Adapters; un fallo de Google no bloquea el login con correo (RNF-DISP-02). |
+| Servicios externos | Google OAuth 2.0, Currents API (noticias), Brevo (correo transaccional) | Consumidos mediante Adapters; un fallo de Google no bloquea el login con correo (RNF-DISP-02). |
 
 ## 10. Consideraciones finales
 
@@ -206,3 +206,4 @@ Trabajo futuro: el módulo “Partidos y Estadísticas” (calendario, resultado
 | 1.3 | 24 de septiembre de 2026 | Al implementar feature/admin: Users y Games exponen servicios públicos de estadísticas (UsersStatsService, GamesStatsService) que usa el Facade del panel administrativo; nuevo evento UserSuspendedEvent (Admin → Auth). |
 | 1.4 | 24 de septiembre de 2026 | Refactor de arquitectura (rama refactor/arquitectura): repositorios con interfaz en los 6 módulos y Unit of Work para las transacciones; tabla de interfaces públicas entre módulos (PlayerGameStatsReader, CreditBalanceStore); Games ya no lee la tabla de usuarios; IUserManagement e IReportExport implementados; tabla de eventos completa (ItemPurchased, PasswordChanged, UserSuspended); UserRegisteredEvent ya no crea el perfil; Strategy describe la estrategia actual; estructura de carpetas real y prueba automática de arquitectura. |
 | 1.5 | 24 de septiembre de 2026 | Auditoría de arquitectura: Auth y Admin ya no dependen de clases concretas de otros módulos. Nuevas interfaces por consumidor: UserAccounts (Auth), PlayerDirectory y UsersStatsReader (Admin), GamesStatsReader (Admin); devuelven objetos de lectura en lugar de la entidad USER. La prueba de arquitectura exige que otro módulo solo importe abstracciones. |
+| 1.6 | 24 de septiembre de 2026 | Actualización general de la documentación: el documento describe la arquitectura implementada (ya no una propuesta); el correo transaccional es Brevo, consumido con el adapter BrevoMailSender. |

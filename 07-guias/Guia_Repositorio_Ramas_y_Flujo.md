@@ -1,0 +1,120 @@
+# Guía del repositorio, ramas y flujo de trabajo
+
+Cómo está organizado el código, qué contiene cada rama y cómo trabajar en equipo. El diseño detallado está en los documentos de las carpetas `01` a `06`.
+
+## 1. Dos tipos de ramas
+
+| Ramas | Contienen | Se unen a `main` |
+|---|---|---|
+| `main`, `feature/*`, `refactor/*` | El código: frontend (`project/`) y backend (`backend/`) | Sí, por Pull Request |
+| `documentacion` | **Solo** documentación (esta rama) | No. Es independiente, sin historia compartida con `main`, y se actualiza directamente |
+
+Regla del equipo: **nunca** se pone código en `documentacion`, ni documentos de diseño en las ramas de código. Los `README.md` técnicos (cómo correr cada parte) sí viven junto al código.
+
+## 2. Estructura del código
+
+```
+Football-Maestro/                 (ramas de código)
+├── README.md                     Cómo correr el proyecto (empieza por aquí)
+├── project/                      Frontend: React 18 + TypeScript + Vite + Tailwind
+│   └── src/app/
+│       ├── App.tsx               Navegación entre pantallas
+│       ├── api/                  Cliente HTTP, una función por endpoint, hook useApi
+│       └── components/           Las pantallas
+│           └── shared/           ScreenHeader, FormField, TextInput, SelectInput, ErrorBox
+└── backend/                      Backend: NestJS + PostgreSQL (monolito modular)
+    ├── docker-compose.yml        PostgreSQL 16 para desarrollo
+    ├── .env.example              Variables necesarias (sin valores reales)
+    ├── src/
+    │   ├── auth/  users/  games/  credits/  news/  admin/     Los 6 módulos
+    │   ├── shared/               UnitOfWork (database/), eventos de dominio, fechas, CSV
+    │   ├── database/             Migraciones, datos iniciales (seeds) y script admin:create
+    │   ├── config/               Validación de variables de entorno
+    │   └── architecture.spec.ts  Prueba que verifica las reglas de arquitectura
+    └── test/                     Pruebas E2E contra PostgreSQL real
+```
+
+Cada módulo del backend tiene las mismas capas (Arquitectura §4):
+
+| Capa | Archivo típico | Responsabilidad |
+|---|---|---|
+| Controller | `games.controller.ts` | Recibe la petición HTTP y valida el DTO. Sin lógica de negocio |
+| Service | `game-sessions.service.ts` | Reglas de negocio. Solo depende de interfaces |
+| Repository (interfaz) | `repositories/game-sessions.repository.ts` | Qué datos necesita el dominio (clase abstracta) |
+| Repository (implementación) | `repositories/typeorm-game-sessions.repository.ts` | Cómo se obtienen con TypeORM. La única capa que ve el ORM |
+| Entity | `entities/game-session.entity.ts` | La tabla de la base de datos |
+| DTO | `dto/*.dto.ts` | Forma exacta de lo que entra por la API |
+
+Entre módulos solo se usan **interfaces públicas pequeñas** (`UserAccounts`, `CreditBalanceStore`, `PlayerDirectory`, `UsersStatsReader`, `PlayerGameStatsReader`, `GamesStatsReader`) o eventos de dominio. El detalle está en Arquitectura §3.
+
+## 3. Ramas del proyecto
+
+Las ramas se hicieron **en cadena**: cada una sale de la anterior y la contiene. Por eso la última (`refactor/puertos-publicos`) tiene todo el proyecto. Las ramas se conservan para mostrar cómo avanzó el trabajo; no se borran.
+
+| # | Rama | Qué agregó | Documentos que implementa |
+|---|---|---|---|
+| 1 | `feature/backend-base` | Proyecto NestJS, PostgreSQL en Docker, las 16 tablas, datos iniciales, `/health` | Modelo de Datos, Arquitectura §8 |
+| 2 | `feature/auth` | Registro, login Player/Admin, Google, refresh token, logout, recuperar contraseña | API §4, Seguridad §5 |
+| 3 | `feature/games` | Catálogo, reto diario, partidas, puntaje en el servidor, compartir | API §7, Seguridad §6 |
+| 4 | `feature/users` | Perfil, estadísticas, progreso (XP, nivel, racha), insignias, actividad | API §5 |
+| 5 | `feature/credits` | Saldo, recompensas por eventos, historial, tienda | API §8 |
+| 6 | `feature/news` | Adaptador de noticias (Currents), sincronización, feed | API §6 |
+| 7 | `feature/admin` | Dashboard, gestión de usuarios, analítica, reportes CSV, auditoría | API §9 |
+| 8 | `feature/frontend-api` | Frontend conectado a la API (14 pantallas + GamePlay, Forgot/Reset Password) | Contrato de API |
+| 9 | `refactor/arquitectura` | Repositorios con interfaz, Unit of Work, desacople entre módulos, prueba de arquitectura | Arquitectura §3–§7 |
+| 10 | `feature/google-login` | Botón oficial de Google, configuración del cliente OAuth | Seguridad §5 |
+| 11 | `feature/noticias-reales` | Búsqueda correcta en Currents y filtro de otros deportes | API §6 |
+| 12 | `feature/correo-brevo` | Correo real de recuperación de contraseña con Brevo | API §4, Seguridad §5 |
+| 13 | `feature/perfil-ajustes` | Pantallas Edit Profile y Account Settings | Requisitos RF-112 |
+| 14 | `refactor/frontend-componentes` | Componentes compartidos del frontend (sin cambios visibles) | — |
+| 15 | `refactor/puertos-publicos` | Interfaces por consumidor entre módulos del backend | Arquitectura §3, §7 |
+
+**Para dejar `main` al día basta un Pull Request: `refactor/puertos-publicos` → `main`.** Las ramas anteriores ya están incluidas en ella.
+
+## 4. Flujo de trabajo
+
+```bash
+# 1. Partir de la versión más reciente
+git checkout main
+git pull
+
+# 2. Crear la rama
+git checkout -b feature/nombre-corto
+
+# 3. Commits pequeños
+git add .
+git commit -m "feat(games): calcular puntaje en el servidor"
+
+# 4. Subir la rama y abrir un Pull Request hacia main en GitHub
+git push -u origin feature/nombre-corto
+```
+
+Para cambiar documentación: `git checkout documentacion`, editar, commit y push a esa misma rama.
+
+### Convenciones
+
+**Nombres de rama:** `feature/<tema>` (funcionalidad nueva), `fix/<tema>` (corrección), `refactor/<tema>` (reorganizar sin cambiar comportamiento).
+
+**Mensajes de commit:** `tipo(módulo): descripción en minúscula`.
+
+| Tipo | Uso |
+|---|---|
+| `feat` | Funcionalidad nueva |
+| `fix` | Corrección de un error |
+| `refactor` | Reorganizar código sin cambiar su comportamiento |
+| `test` | Agregar o corregir pruebas |
+| `docs` | Documentación |
+| `chore` | Configuración, dependencias |
+
+**Nunca subir al repositorio:** los archivos `.env`, contraseñas, claves (Google, Currents, Brevo, JWT, base de datos) ni `node_modules/`.
+
+### Checklist de cada Pull Request
+
+Tomado de la *Definition of Done* del Plan de Pruebas (§7):
+
+- [ ] Los RF del cambio están implementados según el Contrato de API.
+- [ ] `npm test` y `npm run test:e2e` pasan en `backend/` (incluida la prueba de arquitectura).
+- [ ] `npm run typecheck` pasa en `project/`.
+- [ ] No se exponen campos sensibles (`password_hash`, `correct_answer`, tokens).
+- [ ] Si cambió el diseño (endpoints, tablas, módulos), se actualizó el documento correspondiente en la rama `documentacion`.
+- [ ] Al menos una persona del equipo revisó el Pull Request.

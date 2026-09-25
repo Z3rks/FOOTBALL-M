@@ -12,9 +12,9 @@ Elaboración del documento de requisitos funcionales y no funcionales
 
 Fecha de elaboración: 4 de septiembre de 2026
 
-Fecha de actualización: 23 de septiembre de 2026
+Fecha de actualización: 24 de septiembre de 2026
 
-Versión: 2.1
+Versión: 2.2
 
 1\. Introducción
 
@@ -658,8 +658,12 @@ ProfileScreen
 
   RF-112     \(26\) Menú de           \"Account Settings\" y \"Edit
              configuración y cerrar   Profile\" deben abrir sus
-             sesión                   respectivas pantallas de edición
-                                      (pendientes de definir en detalle).
+             sesión                   respectivas pantallas: Edit Profile
+                                      cambia el nombre de usuario y el
+                                      país; Account Settings cambia la
+                                      contraseña (cerrando todas las
+                                      sesiones) y elimina la cuenta con
+                                      confirmación (Ley 1581).
 
   RF-113     \(26\) Menú de           \"Log Out\" (onLogout) debe cerrar
              configuración y cerrar   sesión y redirigir a WelcomeScreen.
@@ -1657,3 +1661,12 @@ RF-142 y RF-144 pasan a cubrir todas las categorías del catálogo de
 minijuegos; se agregan RNF-PERF-06 (tiempo de respuesta de la API) y
 RNF-SEC-07 (Ley 1581), provenientes del documento UML; y se deja
 explícito que "Partidos y Estadísticas" está fuera de alcance.
+
+Nota de versión 2.2 (24 de septiembre de 2026): actualización con el
+sistema implementado. RF-112 define el contenido de Edit Profile (nombre
+de usuario y país) y de Account Settings (cambiar la contraseña y
+eliminar la cuenta). Para completar los flujos se agregaron pantallas
+que no estaban en la maqueta original: GamePlayScreen (jugar la partida
+pregunta por pregunta), ForgotPasswordScreen y ResetPasswordScreen
+(recuperar la contraseña por correo). El detalle de cada endpoint está
+en el Contrato de API.

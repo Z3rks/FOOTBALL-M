@@ -10,9 +10,9 @@ Casos de prueba y trazabilidad de requisitos
 
 Fecha de elaboración: 23 de septiembre de 2026
 
-Fecha de actualización: 23 de septiembre de 2026
+Fecha de actualización: 24 de septiembre de 2026
 
-Versión: 1.1
+Versión: 1.2
 
 ---
 
@@ -30,21 +30,21 @@ Siguiendo las capas definidas en el Documento de Arquitectura de Software, las p
 
 | Nivel | Qué verifica | Capa / alcance |
 | --- | --- | --- |
-| Pruebas unitarias | Lógica de negocio aislada: cada Service, cada Strategy de minijuego, cálculo de puntaje, XP, racha y créditos. | Service, Strategy (con Repository simulado / mock, aprovechando la Inyección de Dependencias) |
+| Pruebas unitarias | Lógica de negocio aislada: cada Service, cada Strategy de minijuego, cálculo de puntaje, XP, racha y créditos. | Service, Strategy (con repositorios en memoria que implementan la interfaz del repositorio, gracias a la inversión de dependencias) |
 | Pruebas de integración | Que un módulo completo funcione junto: Controller → Service → Repository → base de datos PostgreSQL de pruebas. | Un módulo a la vez (ej. Games, Credits) |
 | Pruebas de aceptación (E2E) | Que un flujo completo de usuario funcione de principio a fin, igual que lo describe la historia de usuario en Trello. | Varios módulos combinados, vía llamadas HTTP reales |
 | Pruebas no funcionales | Rendimiento, seguridad, compatibilidad, disponibilidad y accesibilidad, según la sección 5.2 del Documento de Requisitos. | Sistema completo |
 
-### 3.1 Herramientas sugeridas
+### 3.1 Herramientas
 
-| Herramienta | Uso |
-| --- | --- |
-| Jest | Pruebas unitarias y de integración (viene integrado con NestJS). |
-| Supertest | Pruebas de integración/E2E sobre los endpoints HTTP del Contrato de API. |
-| Playwright o Cypress | Pruebas de aceptación E2E simulando al usuario en el frontend real. |
-| k6 o Artillery | Pruebas de carga/rendimiento (RNF-PERF). |
-| OWASP ZAP | Pruebas de seguridad básicas (RNF-SEC), como escaneo de XSS e inyección. |
-| axe-core | Pruebas automatizadas de accesibilidad (RNF-ACC). |
+| Herramienta | Estado | Uso |
+| --- | --- | --- |
+| Jest | En uso | Pruebas unitarias y pruebas de arquitectura del backend (npm test). |
+| Supertest | En uso | Pruebas E2E sobre los endpoints HTTP del Contrato de API contra PostgreSQL real (npm run test:e2e). |
+| Playwright o Cypress | Pendiente | Pruebas de aceptación E2E simulando al usuario en el frontend real. |
+| k6 o Artillery | Pendiente | Pruebas de carga/rendimiento (RNF-PERF). |
+| OWASP ZAP | Pendiente | Pruebas de seguridad básicas (RNF-SEC), como escaneo de XSS e inyección. |
+| axe-core | Pendiente | Pruebas automatizadas de accesibilidad (RNF-ACC). |
 
 ## 4. Casos de prueba funcionales por pantalla
 
@@ -174,7 +174,40 @@ Se listan los casos de prueba más representativos de cada pantalla (camino exit
 | TC-48 | RNF-SEC-07 | Solicitar la eliminación de la propia cuenta (DELETE /users/me). | Se eliminan los datos personales del usuario; ya no puede iniciar sesión y no aparece en rankings ni listados. |
 | TC-49 | RNF-PERF-06 | Prueba de carga con k6 a volumen normal esperado sobre los endpoints principales. | El 95% de las peticiones responde en menos de 2 segundos. |
 
-## 6. Criterios de aceptación (Definition of Done)
+### 5.1 Casos agregados en la versión 1.2
+
+Cubren funcionalidades implementadas después de la versión 1.1: Edit Profile, Account Settings, inicio de sesión con Google, correo real de recuperación, noticias reales y las reglas de arquitectura.
+
+| ID | RF relacionado | Caso de prueba | Resultado esperado |
+| --- | --- | --- | --- |
+| TC-50 | RF-112 | Cambiar el nombre de usuario y el país en Edit Profile; intentar un nombre ya usado por otra cuenta (con otras mayúsculas). | El perfil se actualiza; con el nombre ocupado la API responde 409 y la pantalla muestra el aviso. |
+| TC-51 | RF-112, RNF-SEC-05 | Cambiar la contraseña en Account Settings, primero con la contraseña actual incorrecta y luego correcta. | Con la incorrecta: 400 con mensaje. Con la correcta: se cierran todas las sesiones, la contraseña vieja deja de servir y la nueva funciona. |
+| TC-52 | RF-020–024 | Pulsar “Continue with Google” con una cuenta agregada como usuario de prueba en Google Cloud. | Se crea la cuenta (tras aceptar la política de datos) o se inicia sesión, y se llega al Home. |
+| TC-53 | RF-035–039 | Pedir “Forgot password?” con un correo registrado y abrir el enlace del correo recibido. | El correo llega (Brevo lo registra como entregado); el enlace abre New Password y la nueva contraseña funciona una sola vez. |
+| TC-54 | RF-067–078 | Revisar el feed de noticias de cada categoría tras una sincronización con Currents API. | Solo aparecen noticias de fútbol de la categoría elegida (sin NFL, rugby, críquet, dardos…). |
+| TC-55 | RNF-SEC-03 | Llamar a /games, /credits y /store con un token de administrador. | La API responde 403: solo los jugadores juegan y usan créditos, así las métricas no mezclan cuentas de administrador. |
+| TC-56 | Arquitectura §3–§7 | Ejecutar la prueba de arquitectura (src/architecture.spec.ts). | Pasan sus 7 reglas: ningún servicio importa el ORM, otro módulo solo importa interfaces abstractas, la entidad USER no sale de Users y no hay dependencias circulares. |
+
+## 6. Estado de la automatización
+
+Resultado de la última ejecución (24 de septiembre de 2026), todas en verde:
+
+| Suite | Pruebas | Qué cubre y cómo se ejecuta |
+| --- | --- | --- |
+| Unitarias (Jest) | 117 | Servicios, estrategias, adaptadores (Currents, Brevo), validación de variables de entorno, reglas de progreso y la prueba de arquitectura. En backend/: npm test. |
+| E2E (Jest + Supertest) | 108 | Los endpoints del Contrato de API contra PostgreSQL real, en 7 archivos (auth, users, games, credits, news, admin, health). En backend/: npm run test:e2e (con la base de datos encendida). |
+| Arquitectura | 7 reglas | Parte de las unitarias (src/architecture.spec.ts). Falla si el código rompe el desacople entre módulos o la inversión de dependencias. |
+| Frontend | — | Revisión de tipos (npm run typecheck) y build de producción (npx vite build). Sin pruebas automatizadas de interfaz todavía. |
+
+Casos de este documento por tipo de verificación:
+
+| Verificación | Casos |
+| --- | --- |
+| Automatizados (E2E) | TC-02, 05–08, 10–13, 15–20, 22–24, 26–30, 33–35, 37, 39–48 (37 casos), más TC-55. Cada prueba lleva su TC en el nombre, dentro de backend/test/*.e2e-spec.ts. TC-56 es la prueba de arquitectura. |
+| Manuales en el navegador | TC-01, 03, 04, 09, 14, 21 y 25 (navegación y validaciones de pantalla), TC-50 a TC-54 (probados por el equipo el 24 de septiembre de 2026). Su lógica en la API sí está cubierta por pruebas E2E. |
+| Pendientes (requieren herramientas) | TC-31, 32 y 49 (rendimiento: k6), TC-36 (compatibilidad entre navegadores), TC-38 (accesibilidad con teclado: axe-core o prueba manual). |
+
+## 7. Criterios de aceptación (Definition of Done)
 
 Una historia de usuario del tablero de Trello se considera terminada solo cuando:
 
@@ -182,16 +215,18 @@ Una historia de usuario del tablero de Trello se considera terminada solo cuando
 - Los casos de prueba de este documento que la referencian pasan exitosamente.
 - No introduce regresiones en pruebas ya existentes (suite completa en verde).
 - El endpoint correspondiente en el Documento de Contrato de API responde según lo especificado.
+- La prueba de arquitectura sigue en verde (el cambio respeta las interfaces públicas entre módulos).
 
-## 7. Consideraciones finales
+## 8. Consideraciones finales
 
 Esta tabla de casos de prueba debe crecer junto con el tablero de Trello: cada historia de usuario nueva o modificada debe sumar o actualizar al menos un caso de prueba aquí antes de darse por implementada. Se recomienda automatizar los casos funcionales (TC-01 a TC-30 y TC-39 a TC-41) como pruebas E2E con Playwright/Cypress, y los no funcionales (TC-31 a TC-38 y TC-42 a TC-49) integrarlos al pipeline de CI/CD como verificaciones previas a cada despliegue. Los casos de seguridad son TC-33 a TC-35 y TC-42 a TC-48.
 
 Los identificadores de los casos agregados en la versión 1.1 continúan la numeración (TC-39 en adelante) para no alterar las referencias existentes a TC-01 a TC-38.
 
-## 8. Historial de versiones
+## 9. Historial de versiones
 
 | Versión | Fecha | Cambios |
 | --- | --- | --- |
 | 1.0 | 23 de septiembre de 2026 | Versión inicial (TC-01 a TC-38). |
 | 1.1 | 23 de septiembre de 2026 | Revisión de consistencia: se agregan TC-39 (recuperar contraseña), TC-40 (abandonar minijuego), TC-41 (exportar usuarios) y TC-42 a TC-49 (integridad de puntaje, compras concurrentes, rate limiting, revocación de sesión, auditoría, cuenta suspendida, supresión de datos y tiempo de respuesta de la API); TC-02, TC-05, TC-06, TC-21, TC-23 y TC-37 se ajustan al Contrato de API v1.1. |
+| 1.2 | 24 de septiembre de 2026 | Actualización con el sistema implementado: estado de cada herramienta; nuevos casos TC-50 a TC-56 (Edit Profile, Account Settings, Google, correo real, noticias reales, roles y arquitectura); nueva sección 6 con los resultados de las suites automatizadas y qué casos son automáticos, manuales o pendientes; la Definition of Done incluye la prueba de arquitectura. |
