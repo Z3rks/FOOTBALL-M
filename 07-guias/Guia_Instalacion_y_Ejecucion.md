@@ -15,7 +15,7 @@ Abre Docker Desktop y espera a que esté corriendo. Luego, en PowerShell:
 ```powershell
 git clone https://github.com/Z3rks/Football-Maestro.git
 cd Football-Maestro
-git checkout refactor/puertos-publicos   # o main, cuando se haya unido el PR
+git checkout feature/minijuego-timeline   # o main, cuando se haya unido el PR
 
 # Backend
 cd backend
@@ -74,8 +74,8 @@ Sin ellos la app funciona igual: noticias de ejemplo, botón de Google deshabili
 | Qué | Cómo |
 |---|---|
 | API y base de datos | http://localhost:3000/v1/health responde `{"status":"ok","database":"up"}` |
-| Pruebas unitarias y de arquitectura | `npm test` en `backend` (117 pruebas) |
-| Pruebas E2E | `npm run test:e2e` en `backend`, con la base de datos encendida (108 pruebas) |
+| Pruebas unitarias y de arquitectura | `npm test` en `backend` (364 pruebas) |
+| Pruebas E2E | `npm run test:e2e` en `backend`, con la base de datos encendida (110 pruebas) |
 | Tipos del frontend | `npm run typecheck` en `project` |
 
 ## 7. Problemas comunes

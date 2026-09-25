@@ -21,7 +21,8 @@ Football-Maestro/                 (ramas de código)
 │       ├── App.tsx               Navegación entre pantallas
 │       ├── api/                  Cliente HTTP, una función por endpoint, hook useApi
 │       └── components/           Las pantallas
-│           └── shared/           ScreenHeader, FormField, TextInput, SelectInput, ErrorBox
+│           ├── shared/           ScreenHeader, FormField, TextInput, SelectInput, ErrorBox
+│           └── games/            Una vista por estilo de minijuego (playStyles.ts las registra)
 └── backend/                      Backend: NestJS + PostgreSQL (monolito modular)
     ├── docker-compose.yml        PostgreSQL 16 para desarrollo
     ├── .env.example              Variables necesarias (sin valores reales)
@@ -49,7 +50,7 @@ Entre módulos solo se usan **interfaces públicas pequeñas** (`UserAccounts`, 
 
 ## 3. Ramas del proyecto
 
-Las ramas se hicieron **en cadena**: cada una sale de la anterior y la contiene. Por eso la última (`refactor/puertos-publicos`) tiene todo el proyecto. Las ramas se conservan para mostrar cómo avanzó el trabajo; no se borran.
+Las ramas se hicieron **en cadena**: cada una sale de la anterior y la contiene. Por eso la última (`feature/minijuego-timeline`) tiene todo el proyecto. Las ramas se conservan para mostrar cómo avanzó el trabajo; no se borran.
 
 | # | Rama | Qué agregó | Documentos que implementa |
 |---|---|---|---|
@@ -68,8 +69,9 @@ Las ramas se hicieron **en cadena**: cada una sale de la anterior y la contiene.
 | 13 | `feature/perfil-ajustes` | Pantallas Edit Profile y Account Settings | Requisitos RF-112 |
 | 14 | `refactor/frontend-componentes` | Componentes compartidos del frontend (sin cambios visibles) | — |
 | 15 | `refactor/puertos-publicos` | Interfaces por consumidor entre módulos del backend | Arquitectura §3, §7 |
+| 16 | `feature/minijuego-timeline` | Estilo y mecánica propios para los 10 minijuegos (`components/games/`), `QUESTION.details` y banco de 203 preguntas | API §7.4, Modelo de Datos §5.5 |
 
-**Para dejar `main` al día basta un Pull Request: `refactor/puertos-publicos` → `main`.** Las ramas anteriores ya están incluidas en ella.
+**Para dejar `main` al día basta un Pull Request: `feature/minijuego-timeline` → `main`.** Las ramas anteriores ya están incluidas en ella.
 
 ## 4. Flujo de trabajo
 

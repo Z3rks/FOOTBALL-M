@@ -12,7 +12,7 @@ Fecha de elaboración: 23 de septiembre de 2026
 
 Fecha de actualización: 24 de septiembre de 2026
 
-Versión: 1.7
+Versión: 1.8
 
 ---
 
@@ -116,8 +116,8 @@ Cubre MinigamesScreen, ResultsScreen, el reto diario y la vista previa de miniju
 | --- | --- | --- | --- |
 | `GET` | `/games` | Catálogo de los 10 minijuegos con nombre, descripción, categoría, dificultad e ícono. | RF-063–066, RF-083–086 |
 | `GET` | `/games/daily-challenge` | Devuelve el reto del día: minijuego, título, recompensa (+50 XP) y si el usuario ya lo completó hoy. | RF-059–062 |
-| `POST` | `/games/:id/sessions` | Inicia una partida (también usado por “Play Again”). Body opcional: { "dailyChallenge": true }. Devuelve el id de la sesión y las preguntas, sin la respuesta correcta. | RF-087–088, RF-100, RF-102 |
-| `POST` | `/games/sessions/:sessionId/answers` | Registra la respuesta a una pregunta ({ questionNumber, answer }) y devuelve isCorrect. Cada respuesta queda guardada al instante (RNF-DISP-03). | RF-089, RF-095–096 |
+| `POST` | `/games/:id/sessions` | Inicia una partida (también usado por “Play Again”). Body opcional: { "dailyChallenge": true }. Devuelve el id de la sesión, el estilo de juego (playStyle) y hasta 10 preguntas al azar, sin la respuesta correcta. Cada pregunta trae details: los datos públicos que usa su estilo (ver 7.4). | RF-087–088, RF-100, RF-102 |
+| `POST` | `/games/sessions/:sessionId/answers` | Registra la respuesta a una pregunta ({ questionNumber, answer }) y devuelve isCorrect y la respuesta correcta. El formato de answer depende del estilo (ver 7.4). Cada respuesta queda guardada al instante (RNF-DISP-03). | RF-089, RF-095–096 |
 | `PATCH` | `/games/sessions/:sessionId` | Cierra la partida: { "status": "completed" } o { "status": "abandoned" } (salir sin terminar). Al completar, el servidor calcula score, accuracy y XP a partir de las respuestas guardadas; cualquier puntaje enviado por el cliente se ignora. | RF-089–093 |
 | `GET` | `/games/sessions/:sessionId` | Devuelve el resultado detallado (incluye respuestas para la cuadrícula tipo Wordle y un dato curioso). | RF-091–098 |
 | `POST` | `/games/sessions/:sessionId/share` | Genera un enlace/imagen compartible del resultado y otorga +25 créditos la primera vez. | RF-099, RF-115 |
@@ -129,7 +129,7 @@ Cubre MinigamesScreen, ResultsScreen, el reto diario y la vista previa de miniju
 { "questionNumber": 3, "answer": "Lionel Messi" }
 
 // Response 201
-{ "questionNumber": 3, "isCorrect": true, "answeredCount": 3, "totalQuestions": 10 }
+{ "questionNumber": 3, "isCorrect": true, "correctAnswer": "Lionel Messi", "answeredCount": 3, "totalQuestions": 10 }
 ```
 
 #### 7.3 Ejemplo: GET /games/sessions/:sessionId
@@ -151,6 +151,23 @@ Cubre MinigamesScreen, ResultsScreen, el reto diario y la vista previa de miniju
   "funFact": "El primer Balón de Oro se entregó en 1956."
 }
 ```
+
+#### 7.4 Estilos de juego
+
+Cada minijuego tiene su propio estilo. POST /games/:id/sessions devuelve playStyle, y cada pregunta trae options (o null) y details, con los datos públicos que el frontend usa para dibujarla. details nunca contiene la respuesta. La respuesta correcta que se revela al responder usa el formato de la tabla.
+
+| Minijuego | playStyle | details (público) | answer / respuesta revelada |
+| --- | --- | --- | --- |
+| Who is it? | clues | { clues: [3 pistas] } | Una de las 4 opciones |
+| Silhouette | silhouette | { flag, position, era, fact } | Una de las 4 opciones |
+| Guess the Badge | crest | { colors, initials, city, founded } | Una de las 4 opciones |
+| Guess the Stadium | stadium | { flag, city, capacity, opened } | Una de las 4 opciones |
+| Connections | connections | — (options: 8 jugadores) | answer: JSON con 4 nombres. Revelada: [[grupo, [4 nombres]], …] |
+| Timeline | timeline | — (options: 4 eventos) | answer: JSON con los eventos en orden. Revelada: [[evento, año], …] |
+| The Transfer | career | { player, year, path } | Una de las 4 opciones |
+| How much was he worth? | value | { player, from, to, year, max, step } | answer: millones de euros ("120"). Acierta a ±10 % (mínimo 5 M) |
+| Dream Team | lineup | { team, formation, rows } (null = jugador oculto) | Una de las 4 opciones |
+| Goal or No Goal? | var | { play } | Una de las 2 opciones. Revelada: { a: decisión, w: explicación } |
 
 ## 8. Módulo Credits
 
@@ -251,3 +268,4 @@ Este contrato debe mantenerse sincronizado con el Documento de Requisitos: cualq
 | 1.5 | 24 de septiembre de 2026 | Ajustes al implementar feature/admin: reglas de cálculo de KPIs, alertas y retención; el panel gestiona solo jugadores; auditoría previa a cada acción; CSV seguros. |
 | 1.6 | 24 de septiembre de 2026 | Refactor de arquitectura: /games, /credits y /store son solo para jugadores (403 para administradores). |
 | 1.7 | 24 de septiembre de 2026 | Actualización general de la documentación: verificado contra las rutas reales de la API (los 50 endpoints coinciden); se documenta GET /health; forgot-password envía el correo con Brevo. |
+| 1.8 | 24 de septiembre de 2026 | Estilos propios por minijuego: la partida devuelve playStyle y cada pregunta details; nueva sección 7.4 con el formato de cada estilo; la respuesta a una pregunta incluye correctAnswer. |

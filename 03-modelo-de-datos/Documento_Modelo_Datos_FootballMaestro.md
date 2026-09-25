@@ -12,7 +12,7 @@ Fecha de elaboración: 23 de septiembre de 2026
 
 Fecha de actualización: 24 de septiembre de 2026
 
-Versión: 1.6
+Versión: 1.7
 
 ---
 
@@ -127,8 +127,9 @@ Banco de preguntas de cada minijuego. Dueño: módulo Games.
 | `game_id` | uuid | FK → GAME | Minijuego al que pertenece. |
 | `statement` | string |  | Enunciado de la pregunta. |
 | `options` | json | nulo | Opciones de respuesta, si el minijuego es de selección. |
-| `correct_answer` | string |  | Respuesta correcta. Nunca se incluye en las respuestas de la API antes de que el usuario responda. |
+| `correct_answer` | string |  | Respuesta correcta. Nunca se incluye en las respuestas de la API antes de que el usuario responda. Su formato depende del estilo del minijuego: texto de la opción, número (millones) o JSON (orden de Timeline, grupos de Connections, decisión del VAR). Ver Contrato de API §7.4. |
 | `media_url` | string | nulo | Imagen asociada (silueta, escudo, estadio), si aplica. |
+| `details` | jsonb | nulo | Datos públicos que usa el estilo del minijuego para dibujar la pregunta (pistas, colores del escudo, trayectoria, alineación…). Se envían al cliente, así que nunca contienen la respuesta. |
 
 ### 5.6 DAILY_CHALLENGE
 
@@ -311,3 +312,4 @@ Este modelo de datos debe revisarse junto con el Documento de Arquitectura de So
 | 1.4 | 24 de septiembre de 2026 | Detectado al implementar feature/users: BADGE suma code, para otorgar insignias por código y no por nombre. |
 | 1.5 | 24 de septiembre de 2026 | Detectado al implementar feature/credits: índice único en CREDIT_TRANSACTION (user_id, reason, reference_id) para que cada recompensa se pague una sola vez. |
 | 1.6 | 24 de septiembre de 2026 | Actualización general de la documentación: verificado contra la base de datos real (las 16 tablas y sus 110 columnas coinciden con este diccionario). Sin cambios de esquema desde la versión 1.5. |
+| 1.7 | 24 de septiembre de 2026 | QUESTION.details (jsonb) para el estilo propio de cada minijuego (migraciones TimelineOrderingQuestions y GameStyleDetails); correct_answer admite formatos por estilo. Banco inicial de 203 preguntas. |

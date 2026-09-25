@@ -38,17 +38,17 @@ Los documentos de diseño vienen en dos formatos con el mismo contenido: **`.doc
 ### 03-modelo-de-datos — Las tablas
 | Documento | Versión | Contenido |
 |---|---|---|
-| `Documento_Modelo_Datos_FootballMaestro` | 1.6 | Diagrama entidad-relación, decisiones de diseño y diccionario de las 16 tablas (verificado contra la base de datos real) |
+| `Documento_Modelo_Datos_FootballMaestro` | 1.7 | Diagrama entidad-relación, decisiones de diseño y diccionario de las 16 tablas (verificado contra la base de datos real) |
 
 ### 04-contrato-api — Los endpoints
 | Documento | Versión | Contenido |
 |---|---|---|
-| `Documento_Contrato_API_FootballMaestro` | 1.7 | Convenciones (autenticación, errores, paginación) y los 50 endpoints por módulo, con el RF que cubre cada uno (verificado contra el código) |
+| `Documento_Contrato_API_FootballMaestro` | 1.8 | Convenciones (autenticación, errores, paginación), los 50 endpoints por módulo con el RF que cubre cada uno (verificado contra el código) y el formato de cada estilo de minijuego (§7.4) |
 
 ### 05-pruebas — Qué se prueba
 | Documento | Versión | Contenido |
 |---|---|---|
-| `Plan_Pruebas_FootballMaestro` | 1.2 | Estrategia, casos TC-01 a TC-56, estado de la automatización (117 unitarias, 108 E2E) y Definition of Done |
+| `Plan_Pruebas_FootballMaestro` | 1.3 | Estrategia, casos TC-01 a TC-57, estado de la automatización (364 unitarias, 110 E2E) y Definition of Done |
 
 ### 06-seguridad — Riesgos y controles
 | Documento | Versión | Contenido |
@@ -60,7 +60,7 @@ Los documentos de diseño vienen en dos formatos con el mismo contenido: **`.doc
 |---|---|
 | [`Estado_del_Proyecto.md`](07-guias/Estado_del_Proyecto.md) | Qué funciona hoy y qué falta (terminar, desplegar, probar) |
 | [`Guia_Instalacion_y_Ejecucion.md`](07-guias/Guia_Instalacion_y_Ejecucion.md) | Cómo correr la app en un PC, crear un administrador y solucionar problemas comunes |
-| [`Guia_Repositorio_Ramas_y_Flujo.md`](07-guias/Guia_Repositorio_Ramas_y_Flujo.md) | Estructura del código, las 15 ramas del proyecto, flujo de trabajo, convenciones y checklist de Pull Request |
+| [`Guia_Repositorio_Ramas_y_Flujo.md`](07-guias/Guia_Repositorio_Ramas_y_Flujo.md) | Estructura del código, las 16 ramas del proyecto, flujo de trabajo, convenciones y checklist de Pull Request |
 | [`Guia_Servicios_Externos.md`](07-guias/Guia_Servicios_Externos.md) | Google, Currents (noticias) y Brevo (correo): configuración actual y lo que falta para producción |
 
 ## Orden de lectura sugerido
