@@ -12,7 +12,7 @@ Fecha de elaboración: 23 de septiembre de 2026
 
 Fecha de actualización: 24 de septiembre de 2026
 
-Versión: 1.4
+Versión: 1.5
 
 ---
 
@@ -36,16 +36,21 @@ Establecer, de manera formal y trazable, el diseño arquitectónico del sistema 
 
 Se adopta un monolito modular por dominios: el backend se despliega como una única aplicación, pero el código está organizado en módulos independientes por dominio de negocio, cada uno con su propia lógica interna y comunicándose con los demás solo a través de interfaces públicas bien definidas (nunca accediendo directamente a las tablas de otro módulo).
 
-Interfaces públicas entre módulos (lo único que un módulo puede importar de otro):
+Interfaces públicas entre módulos (lo único que un módulo puede importar de otro). Son clases abstractas pequeñas, una por consumidor, que devuelven objetos de lectura propios (UserAccount, PlayerSummary) y nunca la entidad de base de datos:
 
-| Módulo | Interfaz pública | Quién la usa |
+| Módulo | Interfaz pública | Quién la usa y para qué |
 | --- | --- | --- |
-| Users | UsersService (cuentas), CreditBalanceStore (saldo), UsersStatsService y BadgesService (estadísticas) | Auth (cuentas), Credits (solo CreditBalanceStore), Admin |
-| Games | PlayerGameStatsReader (resumen de partidas de un jugador), GamesStatsService (estadísticas globales) | Users (solo PlayerGameStatsReader), Admin |
-| Auth | Decoradores @CurrentUser, @Public, @Roles y @PlayerOnly | Todos los controladores |
+| Users | UserAccounts | Auth: buscar y crear cuentas, vincular Google y cambiar la contraseña. |
+| Users | CreditBalanceStore | Credits: leer y mover el saldo de créditos. |
+| Users | PlayerDirectory, UsersStatsReader | Admin: gestionar jugadores (buscar, suspender, eliminar) y métricas de actividad. |
+| Games | PlayerGameStatsReader | Users: resumen de partidas de un jugador (perfil, precisión, insignias). |
+| Games | GamesStatsReader | Admin: métricas de partidas, categorías y ranking. |
+| Auth | Decoradores @CurrentUser, @Public, @Roles y @PlayerOnly | Todos los controladores. |
 | Credits, News, Admin | Ninguna: solo reaccionan a eventos o atienden sus propias pantallas | — |
 
-Las dependencias entre módulos no forman ciclos: Auth → Users → Games; Credits → Users; Admin → Users y Games. Games no depende de ningún otro módulo de dominio. Estas reglas se verifican automáticamente en la suite de pruebas (src/architecture.spec.ts): falla si un servicio importa el ORM, si un módulo importa algo interno de otro o si aparece una dependencia circular.
+Los enums de rol y estado (users/user.enums) son vocabulario compartido. La entidad USER solo la importan otras entidades, para sus llaves foráneas.
+
+Las dependencias entre módulos no forman ciclos: Auth → Users → Games; Credits → Users; Admin → Users y Games. Games no depende de ningún otro módulo de dominio. Estas reglas se verifican automáticamente en la suite de pruebas (src/architecture.spec.ts): falla si un servicio importa el ORM, si un módulo importa de otro algo que no sea una de estas interfaces (o si una de ellas deja de ser abstracta), si otro módulo usa la entidad USER fuera de una llave foránea o si aparece una dependencia circular.
 
 ### 3.1 Comparación de alternativas evaluadas
 
@@ -126,8 +131,8 @@ Cada patrón se seleccionó para resolver un problema concreto identificado en l
 | S — Single Responsibility | AuthService solo autentica; la actualización del perfil es responsabilidad de ProfileService; en Admin, AdminUsersService gestiona jugadores y CsvReportExportService solo exporta. |
 | O — Open/Closed | Gracias a GameStrategy, agregar un minijuego con reglas nuevas no modifica GameSessionsService: solo se crea una nueva estrategia y se registra en GameFactory (RNF-MANT-01). Igual con los repositorios: cambiar de ORM es escribir otras implementaciones. |
 | L — Liskov Substitution | Cualquier estrategia debe poder sustituir a otra sin romper GameSessionsService (mismo contrato para validar y puntuar); cualquier implementación de un repositorio (TypeORM o en memoria para pruebas) cumple el mismo contrato. |
-| I — Interface Segregation | En Admin se separan IUserManagement (consultar, suspender, activar, eliminar) de IReportExport (exportar CSV). Entre módulos, cada consumidor recibe solo lo que usa: Users depende de PlayerGameStatsReader y Credits de CreditBalanceStore, no de servicios completos. |
-| D — Dependency Inversion | Los servicios dependen de interfaces (GameSessionsRepository, UnitOfWork, CreditBalanceStore…), no de TypeORM; el módulo de NestJS decide qué implementación inyectar. Así se prueba la lógica con repositorios en memoria (p. ej. store.service.spec.ts) sin base de datos. |
+| I — Interface Segregation | En Admin se separan IUserManagement (consultar, suspender, activar, eliminar) de IReportExport (exportar CSV). Entre módulos, cada consumidor recibe solo lo que usa: Auth depende de UserAccounts, Credits de CreditBalanceStore, Users de PlayerGameStatsReader y Admin de PlayerDirectory, UsersStatsReader y GamesStatsReader, nunca de servicios completos. |
+| D — Dependency Inversion | Los servicios dependen de interfaces (GameSessionsRepository, UnitOfWork, UserAccounts, PlayerDirectory…), nunca de TypeORM ni de clases concretas de otro módulo; el módulo de NestJS decide qué implementación inyectar. Así se prueba la lógica con repositorios en memoria (p. ej. store.service.spec.ts) sin base de datos. |
 
 ## 8. Stack tecnológico y estructura de carpetas
 
@@ -157,9 +162,11 @@ backend/
 │   │   ├── entities/  dto/
 │   │   └── <modulo>.module.ts    (conecta interfaz → implementación)
 │   ├── auth/      (+ guards/, adapters/ de Google y correo)
-│   ├── users/     (+ progress.listener.ts, credit-balance.store.ts)
+│   ├── users/     (+ progress.listener.ts; interfaces públicas user-accounts.ts,
+│   │               credit-balance.store.ts, player-directory.ts, users-stats.reader.ts)
 │   ├── news/      (+ providers/ Currents y ejemplo, sincronización)
-│   ├── games/     (+ strategies/, player-game-stats.reader.ts)
+│   ├── games/     (+ strategies/; interfaces públicas player-game-stats.reader.ts,
+│   │               games-stats.reader.ts)
 │   ├── credits/   (+ credits.listener.ts)
 │   ├── admin/     (dashboard/, users-management/, analytics/, reports/, audit/)
 │   ├── shared/    (database/ UnitOfWork, events/, time/, csv)
@@ -198,3 +205,4 @@ Trabajo futuro: el módulo “Partidos y Estadísticas” (calendario, resultado
 | 1.2 | 24 de septiembre de 2026 | Al implementar feature/news se eligió Currents API como fuente de noticias (plan gratuito para prototipos). Sin clave, el módulo usa noticias de ejemplo; cambiar de proveedor es implementar otro NewsProvider. |
 | 1.3 | 24 de septiembre de 2026 | Al implementar feature/admin: Users y Games exponen servicios públicos de estadísticas (UsersStatsService, GamesStatsService) que usa el Facade del panel administrativo; nuevo evento UserSuspendedEvent (Admin → Auth). |
 | 1.4 | 24 de septiembre de 2026 | Refactor de arquitectura (rama refactor/arquitectura): repositorios con interfaz en los 6 módulos y Unit of Work para las transacciones; tabla de interfaces públicas entre módulos (PlayerGameStatsReader, CreditBalanceStore); Games ya no lee la tabla de usuarios; IUserManagement e IReportExport implementados; tabla de eventos completa (ItemPurchased, PasswordChanged, UserSuspended); UserRegisteredEvent ya no crea el perfil; Strategy describe la estrategia actual; estructura de carpetas real y prueba automática de arquitectura. |
+| 1.5 | 24 de septiembre de 2026 | Auditoría de arquitectura: Auth y Admin ya no dependen de clases concretas de otros módulos. Nuevas interfaces por consumidor: UserAccounts (Auth), PlayerDirectory y UsersStatsReader (Admin), GamesStatsReader (Admin); devuelven objetos de lectura en lugar de la entidad USER. La prueba de arquitectura exige que otro módulo solo importe abstracciones. |
