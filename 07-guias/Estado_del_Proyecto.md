@@ -1,6 +1,6 @@
 # Estado del proyecto
 
-Actualizado al **25 de septiembre de 2026**. La versión más completa del código está en la rama `feature/helmet`; `main` todavía no la tiene (falta aceptar su Pull Request).
+Actualizado al **25 de septiembre de 2026**. La versión más completa del código está en la rama `feature/idiomas-csv-insignias`; `main` todavía no la tiene (falta aceptar su Pull Request).
 
 ## 1. Qué funciona
 
@@ -16,7 +16,7 @@ La aplicación corre completa en local: frontend, backend y base de datos, con l
 
 Las 14 pantallas de la maqueta original se conectaron a la API. GamePlay, Forgot/Reset Password, Edit Profile y Account Settings se agregaron para completar los flujos (Requisitos v2.2, RF-112).
 
-**Idiomas:** toda la app está en inglés (por defecto) y español, con el selector EN | ES en Welcome y en Account Settings. Se traducen las pantallas, los errores, los minijuegos y sus 203 preguntas, la tienda, los datos curiosos, el correo de recuperación y el panel de administración; las noticias se traen escritas en cada idioma (Arquitectura §8.3).
+**Idiomas:** toda la app está en inglés (por defecto) y español, con el selector EN | ES en Welcome y en Account Settings. Se traducen las pantallas, los errores, los minijuegos y sus 203 preguntas, la tienda, las insignias, los datos curiosos, el correo de recuperación y el panel de administración (incluidos sus CSV); las noticias se traen escritas en cada idioma (Arquitectura §8.3).
 
 ### Backend
 
@@ -44,9 +44,8 @@ Las 14 pantallas de la maqueta original se conectaron a la API. GamePlay, Forgot
 ## 2. Qué falta
 
 ### Para terminar la versión actual
-- [ ] Aceptar el Pull Request `feature/helmet` → `main` (incluye todas las ramas anteriores).
+- [ ] Aceptar el Pull Request `feature/idiomas-csv-insignias` → `main` (incluye todas las ramas anteriores).
 - [ ] Revisión de las 203 preguntas por alguien del equipo (sobre todo precios de traspasos y capacidades de estadios, que varían según la fuente) y de su traducción al inglés.
-- [ ] Traducir los encabezados del CSV de reportes (hoy en español) y los nombres de las insignias (hoy no se muestran por nombre).
 - [ ] Imágenes para los minijuegos: fotos con licencia libre (Wikimedia Commons, con crédito del autor) para estadios y jugadores. Los escudos se siguen dibujando con los colores del club, porque son marcas registradas.
 
 ### Para desplegar en internet

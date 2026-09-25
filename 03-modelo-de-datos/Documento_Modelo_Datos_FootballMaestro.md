@@ -12,7 +12,7 @@ Fecha de elaboración: 23 de septiembre de 2026
 
 Fecha de actualización: 25 de septiembre de 2026
 
-Versión: 1.9
+Versión: 2.0
 
 ---
 
@@ -259,6 +259,7 @@ Catálogo de insignias que un usuario puede ganar, mostradas en ProfileScreen y 
 | `name` | string |  | Nombre de la insignia. |
 | `icon` | string |  | Ícono representativo. |
 | `description` | string |  | Descripción de cómo se obtiene. |
+| `translations` | jsonb | nulo | Textos en el otro idioma, por código de idioma (name y description en inglés; el original está en español). Ver decisión de diseño “Contenido en inglés y español”. |
 
 ### 5.15 USER_BADGE
 
@@ -323,3 +324,4 @@ Este modelo de datos debe revisarse junto con el Documento de Arquitectura de So
 | 1.7 | 24 de septiembre de 2026 | QUESTION.details (jsonb) para el estilo propio de cada minijuego (migraciones TimelineOrderingQuestions y GameStyleDetails); correct_answer admite formatos por estilo. Banco inicial de 203 preguntas. |
 | 1.8 | 24 de septiembre de 2026 | GAME.icon guarda el nombre del ícono del minijuego en lugar de un emoji. |
 | 1.9 | 25 de septiembre de 2026 | Inglés y español: columna translations (jsonb) en GAME, QUESTION, FUN_FACT y STORE_ITEM; GAME_SESSION.locale; NEWS_ARTICLE.language con su índice (migraciones ContentTranslations y NewsLanguage). Las 203 preguntas tienen su traducción al inglés. |
+| 2.0 | 25 de septiembre de 2026 | BADGE suma translations (migración BadgeTranslations): las insignias también están en inglés y español. |

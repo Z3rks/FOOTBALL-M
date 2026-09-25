@@ -12,7 +12,7 @@ Fecha de elaboración: 23 de septiembre de 2026
 
 Fecha de actualización: 25 de septiembre de 2026
 
-Versión: 1.9
+Versión: 2.0
 
 ---
 
@@ -34,7 +34,7 @@ Especificar, de manera formal y trazable, cada endpoint expuesto por el backend:
 | Códigos de estado | 200 OK, 201 Created, 204 No Content, 400 Bad Request (validación o regla de negocio), 401 Unauthorized, 403 Forbidden (rol insuficiente o cuenta inactiva), 404 Not Found, 409 Conflict (ej. email duplicado, ítem ya comprado), 429 Too Many Requests (rate limiting). |
 | Paginación | Listas largas (noticias, usuarios admin, transacciones) usan ?page= y ?limit=, respuesta con { data: [...], total, page, limit }. |
 | Errores | Formato uniforme: { "statusCode": 400, "message": "Passwords don't match", "error": "Bad Request" } |
-| Idioma | Cabecera Accept-Language (ej. “es-CO,es;q=0.9”). Idiomas: en (por defecto) y es; cualquier otro se trata como en. Afecta el contenido: minijuegos y preguntas, datos curiosos, tienda, noticias, correo de recuperación y nombres del ranking de administración. Los mensajes de error se envían siempre en inglés y el frontend los traduce (Documento de Arquitectura §8.3). |
+| Idioma | Cabecera Accept-Language (ej. “es-CO,es;q=0.9”). Idiomas: en (por defecto) y es; cualquier otro se trata como en. Afecta el contenido: minijuegos y preguntas, datos curiosos, tienda, insignias, noticias, correo de recuperación, nombres del ranking de administración y los CSV exportados. Los mensajes de error se envían siempre en inglés y el frontend los traduce (Documento de Arquitectura §8.3). |
 | Estado del servicio | GET /health (público): responde { "status": "ok", "database": "up" } si la API y la base de datos funcionan; lo usan el hosting y el equipo para verificar el despliegue. |
 
 ## 4. Módulo Auth
@@ -86,7 +86,7 @@ Cubre el header y “My Stats” de MainHomeScreen y ProfileScreen. Todos requie
 | `PATCH` | `/users/me/password` | Cambia la contraseña (requiere la actual) — opción “Account Settings”. Cierra todas las sesiones, incluida la actual. Máximo 5 intentos cada 15 min. | RF-112 |
 | `DELETE` | `/users/me` | Elimina la cuenta y sus datos personales (derecho de supresión, Ley 1581). Body { password } obligatorio si la cuenta tiene contraseña. Los administradores no pueden borrarse a sí mismos (403). | RNF-SEC-07 |
 | `GET` | `/users/me/stats` | Devuelve Accuracy, Total XP, Games Played y Badges (sección Performance y “My Stats”). | RF-068, RF-107–109 |
-| `GET` | `/users/me/badges` | Lista todo el catálogo de insignias con la fecha en que el usuario ganó cada una (earnedAt, null si todavía no). | RF-105 |
+| `GET` | `/users/me/badges` | Lista todo el catálogo de insignias con la fecha en que el usuario ganó cada una (earnedAt, null si todavía no). Nombre y descripción en el idioma de Accept-Language. | RF-105 |
 
 ### 5.2 Actividad de uso
 
@@ -227,7 +227,7 @@ Todos los endpoints de Admin requieren access token con role=admin, validado en 
 | Método | Endpoint | Descripción | RF relacionados |
 | --- | --- | --- | --- |
 | `GET` | `/admin/users?search=&filter=&page=` | Lista y busca usuarios por nombre o email con filtros (all, active, inactive, new7d). Incluye el conteo de cada filtro. | RF-130–133 |
-| `GET` | `/admin/users/export?search=&filter=` | Descarga en CSV la lista de usuarios filtrada (botón “Exportar”). | RF-132 |
+| `GET` | `/admin/users/export?search=&filter=` | Descarga en CSV la lista de usuarios filtrada (botón “Exportar”). Encabezados y nombre del archivo en el idioma de Accept-Language (football-maestro-users.csv / football-maestro-usuarios.csv). | RF-132 |
 | `GET` | `/admin/users/:id` | Detalle de un usuario (panel de acciones expandible y “Ver perfil”): país, nivel, racha, XP, fecha de registro y estado. | RF-134–136 |
 | `PATCH` | `/admin/users/:id/status` | Suspende o activa una cuenta: { "status": "inactive" \| "active" }. Al suspender se revocan sus refresh tokens. | RF-135 |
 | `DELETE` | `/admin/users/:id` | Elimina una cuenta. | RF-135 |
@@ -247,11 +247,11 @@ Todos los endpoints de Admin requieren access token con role=admin, validado en 
 
 | Método | Endpoint | Descripción | RF relacionados |
 | --- | --- | --- | --- |
-| `GET` | `/admin/reports/summary?month=` | Métricas clave del mes seleccionado y resumen de las últimas 4 semanas (“Cambiar mes”). Cada semana trae week (número de semana ISO, para armar la etiqueta en el idioma del administrador) además de label. | RF-146–149 |
+| `GET` | `/admin/reports/summary?month=` | Métricas clave del mes seleccionado y resumen de las últimas 4 semanas (“Cambiar mes”). Cada semana trae week (número de semana ISO, para armar la etiqueta en el idioma del administrador) además de label (en inglés, ej. “Wk 39”). | RF-146–149 |
 | `GET` | `/admin/reports/top-players?month=` | Top 5 jugadores por precisión/XP, con país. | RF-150 |
 | `GET` | `/admin/reports/category-performance?month=` | Rendimiento y tendencia por categoría. | RF-151 |
 | `GET` | `/admin/reports/peak-hours?month=` | Actividad por hora del día (24 valores). | RF-152 |
-| `GET` | `/admin/reports/export?month=` | Descarga el reporte completo del mes en formato CSV. Si falla, responde un error claro (RNF-DISP-04). | RF-152–153 |
+| `GET` | `/admin/reports/export?month=` | Descarga el reporte completo del mes en formato CSV, con títulos, encabezados, categorías y nombre del archivo en el idioma de Accept-Language. Si falla, responde un error claro (RNF-DISP-04). | RF-152–153 |
 
 ## 10. Consideraciones finales
 
@@ -271,3 +271,4 @@ Este contrato debe mantenerse sincronizado con el Documento de Requisitos: cualq
 | 1.7 | 24 de septiembre de 2026 | Actualización general de la documentación: verificado contra las rutas reales de la API (los 50 endpoints coinciden); se documenta GET /health; forgot-password envía el correo con Brevo. |
 | 1.8 | 24 de septiembre de 2026 | Estilos propios por minijuego: la partida devuelve playStyle y cada pregunta details; nueva sección 7.4 con el formato de cada estilo; la respuesta a una pregunta incluye correctAnswer. |
 | 1.9 | 25 de septiembre de 2026 | Inglés y español: convención de la cabecera Accept-Language; contenido traducido en /games, las partidas (con su idioma fijo), /store/items, /news (noticias por idioma), el correo de forgot-password y el ranking de administración; las alertas del dashboard suman code y values y el resumen del reporte suma week. |
+| 2.0 | 25 de septiembre de 2026 | GET /users/me/badges y los CSV de /admin/users/export y /admin/reports/export responden en el idioma de Accept-Language; label de las semanas del reporte en inglés. |

@@ -39,12 +39,12 @@ Los documentos de diseño vienen en dos formatos con el mismo contenido: **`.doc
 ### 03-modelo-de-datos — Las tablas
 | Documento | Versión | Contenido |
 |---|---|---|
-| `Documento_Modelo_Datos_FootballMaestro` | 1.9 | Diagrama entidad-relación, decisiones de diseño y diccionario de las 16 tablas (verificado contra la base de datos real), incluido el contenido en inglés y español |
+| `Documento_Modelo_Datos_FootballMaestro` | 2.0 | Diagrama entidad-relación, decisiones de diseño y diccionario de las 16 tablas (verificado contra la base de datos real), incluido el contenido en inglés y español |
 
 ### 04-contrato-api — Los endpoints
 | Documento | Versión | Contenido |
 |---|---|---|
-| `Documento_Contrato_API_FootballMaestro` | 1.9 | Convenciones (autenticación, idioma, errores, paginación), los 50 endpoints por módulo con el RF que cubre cada uno (verificado contra el código) y el formato de cada estilo de minijuego (§7.4) |
+| `Documento_Contrato_API_FootballMaestro` | 2.0 | Convenciones (autenticación, idioma, errores, paginación), los 50 endpoints por módulo con el RF que cubre cada uno (verificado contra el código) y el formato de cada estilo de minijuego (§7.4) |
 
 ### 05-pruebas — Qué se prueba
 | Documento | Versión | Contenido |

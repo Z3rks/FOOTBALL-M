@@ -50,7 +50,7 @@ Entre módulos solo se usan **interfaces públicas pequeñas** (`UserAccounts`, 
 
 ## 3. Ramas del proyecto
 
-Las ramas se hicieron **en cadena**: cada una sale de la anterior y la contiene. Por eso la última (`feature/helmet`) tiene todo el proyecto. Las ramas se conservan para mostrar cómo avanzó el trabajo; no se borran.
+Las ramas se hicieron **en cadena**: cada una sale de la anterior y la contiene. Por eso la última (`feature/idiomas-csv-insignias`) tiene todo el proyecto. Las ramas se conservan para mostrar cómo avanzó el trabajo; no se borran.
 
 | # | Rama | Qué agregó | Documentos que implementa |
 |---|---|---|---|
@@ -75,8 +75,9 @@ Las ramas se hicieron **en cadena**: cada una sale de la anterior y la contiene.
 | 19 | `feature/idiomas-contenido` | Minijuegos, 203 preguntas, tienda y datos curiosos en los dos idiomas (`translations`, `GAME_SESSION.locale`) | Modelo de Datos §4, API §3 |
 | 20 | `feature/idiomas-extra` | Noticias por idioma, correo de recuperación y panel de admin traducidos; arreglo del botón “atrás” | API §6, §9; Arquitectura §8.3 |
 | 21 | `feature/helmet` | Cabeceras de seguridad HTTP con Helmet | Seguridad A05, §10 |
+| 22 | `feature/idiomas-csv-insignias` | CSV del panel de admin e insignias en inglés y español | API §5, §9; Modelo de Datos §5.14 |
 
-**Para dejar `main` al día basta un Pull Request: `feature/helmet` → `main`.** Las ramas anteriores ya están incluidas en ella.
+**Para dejar `main` al día basta un Pull Request: `feature/idiomas-csv-insignias` → `main`.** Las ramas anteriores ya están incluidas en ella.
 
 ## 4. Flujo de trabajo
 
