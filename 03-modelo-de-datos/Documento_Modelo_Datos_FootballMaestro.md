@@ -12,7 +12,7 @@ Fecha de elaboración: 23 de septiembre de 2026
 
 Fecha de actualización: 24 de septiembre de 2026
 
-Versión: 1.7
+Versión: 1.8
 
 ---
 
@@ -113,7 +113,7 @@ Catálogo de los 10 minijuegos disponibles en MinigamesScreen. Dueño: módulo G
 | `description` | string |  | Descripción corta mostrada en la tarjeta del juego. |
 | `category` | enum |  | Players, Clubs, Stadiums, Logic, History, Transfers, Teams o Rules. |
 | `difficulty` | enum |  | Easy, Medium, Hard o Expert. |
-| `icon` | string |  | Emoji o ícono representativo. |
+| `icon` | string |  | Nombre del ícono del minijuego (ej. "shield", "calendar-clock"); el frontend lo dibuja con el color de su estilo. |
 | `strategy_key` | string | único | Clave que usa GameFactory para elegir la estrategia de validación y puntaje (ej. “who-is-it”). |
 | `sort_order` | int |  | Posición en el catálogo de MinigamesScreen (1 = primero). |
 
@@ -313,3 +313,4 @@ Este modelo de datos debe revisarse junto con el Documento de Arquitectura de So
 | 1.5 | 24 de septiembre de 2026 | Detectado al implementar feature/credits: índice único en CREDIT_TRANSACTION (user_id, reason, reference_id) para que cada recompensa se pague una sola vez. |
 | 1.6 | 24 de septiembre de 2026 | Actualización general de la documentación: verificado contra la base de datos real (las 16 tablas y sus 110 columnas coinciden con este diccionario). Sin cambios de esquema desde la versión 1.5. |
 | 1.7 | 24 de septiembre de 2026 | QUESTION.details (jsonb) para el estilo propio de cada minijuego (migraciones TimelineOrderingQuestions y GameStyleDetails); correct_answer admite formatos por estilo. Banco inicial de 203 preguntas. |
+| 1.8 | 24 de septiembre de 2026 | GAME.icon guarda el nombre del ícono del minijuego en lugar de un emoji. |

@@ -39,7 +39,7 @@ Los documentos de diseño vienen en dos formatos con el mismo contenido: **`.doc
 ### 03-modelo-de-datos — Las tablas
 | Documento | Versión | Contenido |
 |---|---|---|
-| `Documento_Modelo_Datos_FootballMaestro` | 1.7 | Diagrama entidad-relación, decisiones de diseño y diccionario de las 16 tablas (verificado contra la base de datos real) |
+| `Documento_Modelo_Datos_FootballMaestro` | 1.8 | Diagrama entidad-relación, decisiones de diseño y diccionario de las 16 tablas (verificado contra la base de datos real) |
 
 ### 04-contrato-api — Los endpoints
 | Documento | Versión | Contenido |
