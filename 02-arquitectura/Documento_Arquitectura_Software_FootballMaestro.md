@@ -12,7 +12,7 @@ Fecha de elaboración: 23 de septiembre de 2026
 
 Fecha de actualización: 27 de septiembre de 2026
 
-Versión: 1.8
+Versión: 1.9
 
 ---
 
@@ -42,9 +42,12 @@ Interfaces públicas entre módulos (lo único que un módulo puede importar de 
 | --- | --- | --- |
 | Users | UserAccounts | Auth: buscar y crear cuentas, vincular Google y cambiar la contraseña. |
 | Users | CreditBalanceStore | Credits: leer y mover el saldo de créditos. |
-| Users | PlayerDirectory, UsersStatsReader | Admin: gestionar jugadores (buscar, suspender, eliminar) y métricas de actividad. |
+| Users | PlayerDirectory, UsersStatsReader | Admin: gestionar jugadores (buscar, suspender, eliminar) y métricas de registros, actividad y retención. |
+| Users | PlayersBreakdownReader | Admin: cómo se reparten los jugadores (país, método de registro, nivel e insignias). |
 | Games | PlayerGameStatsReader | Users: resumen de partidas de un jugador (perfil, precisión, insignias). |
-| Games | GamesStatsReader | Admin: métricas de partidas, categorías, ranking, rendimiento por minijuego y preguntas más difíciles. |
+| Games | GamesStatsReader | Admin (Dashboard, Analytics y Reportes): métricas generales de partidas, categorías y ranking. |
+| Games | GameInsightsReader | Admin (pantalla Minijuegos): rendimiento por minijuego, puntajes, preguntas más difíciles, reto diario e idioma. |
+| Games | GamesByPlayerReader | Admin: partidas de jugadores concretos (“Ver perfil” y embudo de activación). |
 | Credits | CreditsStatsReader | Admin: créditos ganados, gastados y en circulación, y compras de la tienda. |
 | Auth | Decoradores @CurrentUser, @Public, @Roles y @PlayerOnly | Todos los controladores. |
 | News, Admin | Ninguna: solo reaccionan a eventos o atienden sus propias pantallas | — |
@@ -91,6 +94,8 @@ Cada uno de los 6 módulos sigue internamente la misma estructura en capas, ilus
 
 Transacciones: cuando varias escrituras deben confirmarse juntas (cerrar una partida, comprar en la tienda, sumar XP), el servicio las envuelve en UnitOfWork.run(). Los repositorios usados dentro participan automáticamente en la transacción, sin que ningún módulo le pase a otro un objeto del ORM. Para procesar de a una las operaciones de un mismo jugador, cada módulo usa su propio candado (lockPlayer en Games, lockAccount en Credits) en lugar de bloquear filas de tablas ajenas.
 
+Fecha y zona horaria: AppClock (shared/time) da la fecha de hoy en APP_TIMEZONE y la zona para las consultas. Es el único lugar que lee esa variable; el reto diario, la racha y las métricas del panel lo usan para cambiar de día a la medianoche de la app.
+
 ## 5. Comunicación entre módulos: eventos de dominio
 
 Para evitar que los módulos se llamen directamente entre sí (acoplamiento fuerte), la comunicación entre dominios se realiza mediante eventos. Ejemplo: al completar un minijuego, Games no conoce ni llama a Users ni a Credits directamente — publica un evento que cada módulo interesado escucha por su cuenta.
@@ -123,7 +128,7 @@ Cada patrón se seleccionó para resolver un problema concreto identificado en l
 | Observer (eventos de dominio) | Games, Users, Auth, Credits, Admin → Users, Credits, Auth, Admin | Al completar un minijuego, compartir un resultado o registrarse, varios módulos reaccionan (XP, racha, créditos, auditoría) sin que el emisor los conozca directamente. |
 | Adapter | Auth (Google OAuth, correo), News (API externa) | Aísla librerías/API externas detrás de una interfaz propia; cambiar de proveedor solo afecta al adapter. |
 | DTO (Data Transfer Object) | Todos | El contrato HTTP nunca expone directamente el modelo de base de datos (p. ej. password_hash o correct_answer). |
-| Facade | Admin → Dashboard / Analytics / Reports / Games / Economy | AdminDashboardService, AdminAnalyticsService, AdminReportsService, AdminGamesService y AdminEconomyService reúnen datos de Users, Games y Credits a través de sus interfaces públicas de estadísticas (UsersStatsReader, GamesStatsReader y CreditsStatsReader), sin consultar sus tablas directamente. |
+| Facade | Admin → Dashboard / Analytics / Reports / Games / Economy | AdminDashboardService, AdminAnalyticsService, AdminReportsService, AdminGamesService y AdminEconomyService reúnen datos de Users, Games y Credits a través de sus interfaces públicas de estadísticas (UsersStatsReader, PlayersBreakdownReader, GamesStatsReader, GameInsightsReader, GamesByPlayerReader y CreditsStatsReader), sin consultar sus tablas directamente. Cada servicio depende solo de las interfaces que usa. |
 
 ## 7. Principios SOLID aplicados
 
@@ -132,7 +137,7 @@ Cada patrón se seleccionó para resolver un problema concreto identificado en l
 | S — Single Responsibility | AuthService solo autentica; la actualización del perfil es responsabilidad de ProfileService; en Admin, AdminUsersService gestiona jugadores y CsvReportExportService solo exporta. |
 | O — Open/Closed | Gracias a GameStrategy, agregar un minijuego con reglas nuevas no modifica GameSessionsService: solo se crea una nueva estrategia y se registra en GameFactory (RNF-MANT-01). Igual con los repositorios: cambiar de ORM es escribir otras implementaciones. |
 | L — Liskov Substitution | Cualquier estrategia debe poder sustituir a otra sin romper GameSessionsService (mismo contrato para validar y puntuar); cualquier implementación de un repositorio (TypeORM o en memoria para pruebas) cumple el mismo contrato. |
-| I — Interface Segregation | En Admin se separan IUserManagement (consultar, suspender, activar, eliminar) de IReportExport (exportar CSV). Entre módulos, cada consumidor recibe solo lo que usa: Auth depende de UserAccounts, Credits de CreditBalanceStore, Users de PlayerGameStatsReader y Admin de PlayerDirectory, UsersStatsReader, GamesStatsReader y CreditsStatsReader, nunca de servicios completos. |
+| I — Interface Segregation | En Admin se separan IUserManagement (consultar, suspender, activar, eliminar) de IReportExport (exportar CSV). Entre módulos, cada consumidor recibe solo lo que usa: Auth depende de UserAccounts, Credits de CreditBalanceStore, Users de PlayerGameStatsReader y Admin de PlayerDirectory, UsersStatsReader, PlayersBreakdownReader, GamesStatsReader, GameInsightsReader, GamesByPlayerReader y CreditsStatsReader, nunca de servicios completos. Las interfaces de estadísticas se dividen por uso: la pantalla Minijuegos no depende de los métodos de “Ver perfil”, ni al revés. |
 | D — Dependency Inversion | Los servicios dependen de interfaces (GameSessionsRepository, UnitOfWork, UserAccounts, PlayerDirectory…), nunca de TypeORM ni de clases concretas de otro módulo; el módulo de NestJS decide qué implementación inyectar. Así se prueba la lógica con repositorios en memoria (p. ej. store.service.spec.ts) sin base de datos. |
 
 ## 8. Stack tecnológico y estructura de carpetas
@@ -169,16 +174,17 @@ backend/
 │   ├── games/     (+ strategies/; interfaces públicas player-game-stats.reader.ts,
 │   │               games-stats.reader.ts)
 │   ├── credits/   (+ credits.listener.ts; interfaz pública credits-stats.reader.ts)
-│   ├── admin/     (dashboard/, users-management/, analytics/, reports/, games-insights/,
-│   │               economy/, audit/; period.ts = período 7/30/90 días)
-│   ├── shared/    (database/ UnitOfWork, events/, time/, i18n/ idioma de la petición, csv)
+│   ├── admin/     (una carpeta por pantalla con su controlador y su servicio: dashboard/,
+│   │               users-management/, analytics/, reports/, games-insights/, economy/;
+│   │               audit/; period.ts = período 7/30/90 días; admin-http.ts)
+│   ├── shared/    (database/ UnitOfWork, events/, time/ AppClock, i18n/ idioma de la petición, csv)
 │   ├── architecture.spec.ts   (verifica las reglas de dependencias)
 │   └── app.module.ts
 ├── test/          (pruebas e2e contra PostgreSQL)
 └── package.json
 ```
 
-Frontend del panel de administración: las gráficas comparten un kit propio en project/src/app/components/admin/charts (Recharts para las series de tiempo y HTML/CSS para barras con etiqueta, mapa de calor y embudo). La paleta está validada para daltonismo sobre el fondo de las tarjetas; cada gráfica muestra la pregunta que responde, un estado vacío y su tabla (“Ver tabla”). Requisitos RNF-UI-094 a RNF-UI-099.
+Frontend del panel de administración (project/src/app/components/admin): charts/ es el kit de gráficas, una pieza por archivo (ChartCard, PeriodSelector, ColumnChart y TrendChart sobre Recharts; BarList, StackedBarList, Heatmap, Funnel y Sparkline en HTML/CSS; paleta validada para daltonismo); data/ tiene un hook por pantalla que consulta la API y deja los datos listos para dibujar (useGamesInsights, useEconomy, useAnalytics); AdminHeader, StatRow y KpiTile son piezas comunes. Así cada pantalla solo compone tarjetas. Cada gráfica muestra la pregunta que responde, un estado vacío y su tabla (“Ver tabla”). Requisitos RNF-UI-094 a RNF-UI-099.
 
 ### 8.3 Idiomas: inglés y español
 
@@ -230,3 +236,4 @@ Trabajo futuro: el módulo “Partidos y Estadísticas” (calendario, resultado
 | 1.6 | 24 de septiembre de 2026 | Actualización general de la documentación: el documento describe la arquitectura implementada (ya no una propuesta); el correo transaccional es Brevo, consumido con el adapter BrevoMailSender. |
 | 1.7 | 25 de septiembre de 2026 | Nueva sección 8.3 (idiomas inglés y español): textos del frontend con i18next, errores traducidos en el frontend, Accept-Language y shared/i18n en el backend, contenido con columna translations, partidas con su idioma, noticias por idioma, correo y alertas del admin traducidos. La fila de Strategy describe las 5 estrategias actuales. |
 | 1.8 | 27 de septiembre de 2026 | Gráficas del panel de administración: Credits expone CreditsStatsReader para Admin (Admin → Users, Games y Credits, sin ciclos); Admin suma AdminGamesService y AdminEconomyService (Facade) y las pantallas AdminGamesScreen y AdminEconomyScreen; kit de gráficas del frontend. |
+| 1.9 | 27 de septiembre de 2026 | Refactor de legibilidad: las interfaces de estadísticas se dividen por uso (GameInsightsReader, GamesByPlayerReader y PlayersBreakdownReader); AppClock centraliza la fecha y la zona horaria; Admin tiene un controlador por pantalla; el frontend del panel se organiza en charts/ (una pieza por archivo) y data/ (un hook por pantalla). |
