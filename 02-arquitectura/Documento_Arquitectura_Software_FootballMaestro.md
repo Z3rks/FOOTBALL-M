@@ -10,9 +10,9 @@ Diseño de la arquitectura lógica y física del sistema
 
 Fecha de elaboración: 23 de septiembre de 2026
 
-Fecha de actualización: 25 de septiembre de 2026
+Fecha de actualización: 27 de septiembre de 2026
 
-Versión: 1.7
+Versión: 1.8
 
 ---
 
@@ -44,13 +44,14 @@ Interfaces públicas entre módulos (lo único que un módulo puede importar de 
 | Users | CreditBalanceStore | Credits: leer y mover el saldo de créditos. |
 | Users | PlayerDirectory, UsersStatsReader | Admin: gestionar jugadores (buscar, suspender, eliminar) y métricas de actividad. |
 | Games | PlayerGameStatsReader | Users: resumen de partidas de un jugador (perfil, precisión, insignias). |
-| Games | GamesStatsReader | Admin: métricas de partidas, categorías y ranking. |
+| Games | GamesStatsReader | Admin: métricas de partidas, categorías, ranking, rendimiento por minijuego y preguntas más difíciles. |
+| Credits | CreditsStatsReader | Admin: créditos ganados, gastados y en circulación, y compras de la tienda. |
 | Auth | Decoradores @CurrentUser, @Public, @Roles y @PlayerOnly | Todos los controladores. |
-| Credits, News, Admin | Ninguna: solo reaccionan a eventos o atienden sus propias pantallas | — |
+| News, Admin | Ninguna: solo reaccionan a eventos o atienden sus propias pantallas | — |
 
 Los enums de rol y estado (users/user.enums) son vocabulario compartido. La entidad USER solo la importan otras entidades, para sus llaves foráneas.
 
-Las dependencias entre módulos no forman ciclos: Auth → Users → Games; Credits → Users; Admin → Users y Games. Games no depende de ningún otro módulo de dominio. Estas reglas se verifican automáticamente en la suite de pruebas (src/architecture.spec.ts): falla si un servicio importa el ORM, si un módulo importa de otro algo que no sea una de estas interfaces (o si una de ellas deja de ser abstracta), si otro módulo usa la entidad USER fuera de una llave foránea o si aparece una dependencia circular.
+Las dependencias entre módulos no forman ciclos: Auth → Users → Games; Credits → Users; Admin → Users, Games y Credits. Games no depende de ningún otro módulo de dominio. Estas reglas se verifican automáticamente en la suite de pruebas (src/architecture.spec.ts): falla si un servicio importa el ORM, si un módulo importa de otro algo que no sea una de estas interfaces (o si una de ellas deja de ser abstracta), si otro módulo usa la entidad USER fuera de una llave foránea o si aparece una dependencia circular.
 
 ### 3.1 Comparación de alternativas evaluadas
 
@@ -73,7 +74,7 @@ Las dependencias entre módulos no forman ciclos: Auth → Users → Games; Cred
 | News | Sincronización periódica de la API de noticias externa, feed y filtrado por categoría. | NewsScreen, MainHomeScreen (vista previa) |
 | Games | Catálogo de minijuegos, preguntas, reto diario, lógica de cada juego, cálculo de resultados y datos curiosos. | MinigamesScreen, ResultsScreen, MainHomeScreen (reto diario y vista previa) |
 | Credits | Saldo de créditos, formas de ganarlos, tienda de canje e ítems aplicados al perfil. | CreditsScreen |
-| Admin | Dashboard, gestión de usuarios, analítica, reportes y registro de auditoría. Consulta a Users, Games y Credits solo a través de sus interfaces públicas. | AdminDashboardScreen, AdminUsersScreen, AdminAnalyticsScreen, AdminReportsScreen |
+| Admin | Dashboard, gestión de usuarios, analítica, reportes y registro de auditoría. Consulta a Users, Games y Credits solo a través de sus interfaces públicas. | AdminDashboardScreen, AdminUsersScreen, AdminAnalyticsScreen, AdminReportsScreen, AdminGamesScreen, AdminEconomyScreen |
 
 ## 4. Arquitectura en capas por módulo
 
@@ -122,7 +123,7 @@ Cada patrón se seleccionó para resolver un problema concreto identificado en l
 | Observer (eventos de dominio) | Games, Users, Auth, Credits, Admin → Users, Credits, Auth, Admin | Al completar un minijuego, compartir un resultado o registrarse, varios módulos reaccionan (XP, racha, créditos, auditoría) sin que el emisor los conozca directamente. |
 | Adapter | Auth (Google OAuth, correo), News (API externa) | Aísla librerías/API externas detrás de una interfaz propia; cambiar de proveedor solo afecta al adapter. |
 | DTO (Data Transfer Object) | Todos | El contrato HTTP nunca expone directamente el modelo de base de datos (p. ej. password_hash o correct_answer). |
-| Facade | Admin → Dashboard / Analytics / Reports | AdminDashboardService, AdminAnalyticsService y AdminReportsService reúnen datos de Users y Games a través de sus interfaces públicas de estadísticas (UsersStatsService y GamesStatsService), sin consultar sus tablas directamente. |
+| Facade | Admin → Dashboard / Analytics / Reports / Games / Economy | AdminDashboardService, AdminAnalyticsService, AdminReportsService, AdminGamesService y AdminEconomyService reúnen datos de Users, Games y Credits a través de sus interfaces públicas de estadísticas (UsersStatsReader, GamesStatsReader y CreditsStatsReader), sin consultar sus tablas directamente. |
 
 ## 7. Principios SOLID aplicados
 
@@ -131,7 +132,7 @@ Cada patrón se seleccionó para resolver un problema concreto identificado en l
 | S — Single Responsibility | AuthService solo autentica; la actualización del perfil es responsabilidad de ProfileService; en Admin, AdminUsersService gestiona jugadores y CsvReportExportService solo exporta. |
 | O — Open/Closed | Gracias a GameStrategy, agregar un minijuego con reglas nuevas no modifica GameSessionsService: solo se crea una nueva estrategia y se registra en GameFactory (RNF-MANT-01). Igual con los repositorios: cambiar de ORM es escribir otras implementaciones. |
 | L — Liskov Substitution | Cualquier estrategia debe poder sustituir a otra sin romper GameSessionsService (mismo contrato para validar y puntuar); cualquier implementación de un repositorio (TypeORM o en memoria para pruebas) cumple el mismo contrato. |
-| I — Interface Segregation | En Admin se separan IUserManagement (consultar, suspender, activar, eliminar) de IReportExport (exportar CSV). Entre módulos, cada consumidor recibe solo lo que usa: Auth depende de UserAccounts, Credits de CreditBalanceStore, Users de PlayerGameStatsReader y Admin de PlayerDirectory, UsersStatsReader y GamesStatsReader, nunca de servicios completos. |
+| I — Interface Segregation | En Admin se separan IUserManagement (consultar, suspender, activar, eliminar) de IReportExport (exportar CSV). Entre módulos, cada consumidor recibe solo lo que usa: Auth depende de UserAccounts, Credits de CreditBalanceStore, Users de PlayerGameStatsReader y Admin de PlayerDirectory, UsersStatsReader, GamesStatsReader y CreditsStatsReader, nunca de servicios completos. |
 | D — Dependency Inversion | Los servicios dependen de interfaces (GameSessionsRepository, UnitOfWork, UserAccounts, PlayerDirectory…), nunca de TypeORM ni de clases concretas de otro módulo; el módulo de NestJS decide qué implementación inyectar. Así se prueba la lógica con repositorios en memoria (p. ej. store.service.spec.ts) sin base de datos. |
 
 ## 8. Stack tecnológico y estructura de carpetas
@@ -167,14 +168,17 @@ backend/
 │   ├── news/      (+ providers/ Currents y ejemplo, sincronización)
 │   ├── games/     (+ strategies/; interfaces públicas player-game-stats.reader.ts,
 │   │               games-stats.reader.ts)
-│   ├── credits/   (+ credits.listener.ts)
-│   ├── admin/     (dashboard/, users-management/, analytics/, reports/, audit/)
+│   ├── credits/   (+ credits.listener.ts; interfaz pública credits-stats.reader.ts)
+│   ├── admin/     (dashboard/, users-management/, analytics/, reports/, games-insights/,
+│   │               economy/, audit/; period.ts = período 7/30/90 días)
 │   ├── shared/    (database/ UnitOfWork, events/, time/, i18n/ idioma de la petición, csv)
 │   ├── architecture.spec.ts   (verifica las reglas de dependencias)
 │   └── app.module.ts
 ├── test/          (pruebas e2e contra PostgreSQL)
 └── package.json
 ```
+
+Frontend del panel de administración: las gráficas comparten un kit propio en project/src/app/components/admin/charts (Recharts para las series de tiempo y HTML/CSS para barras con etiqueta, mapa de calor y embudo). La paleta está validada para daltonismo sobre el fondo de las tarjetas; cada gráfica muestra la pregunta que responde, un estado vacío y su tabla (“Ver tabla”). Requisitos RNF-UI-094 a RNF-UI-099.
 
 ### 8.3 Idiomas: inglés y español
 
@@ -225,3 +229,4 @@ Trabajo futuro: el módulo “Partidos y Estadísticas” (calendario, resultado
 | 1.5 | 24 de septiembre de 2026 | Auditoría de arquitectura: Auth y Admin ya no dependen de clases concretas de otros módulos. Nuevas interfaces por consumidor: UserAccounts (Auth), PlayerDirectory y UsersStatsReader (Admin), GamesStatsReader (Admin); devuelven objetos de lectura en lugar de la entidad USER. La prueba de arquitectura exige que otro módulo solo importe abstracciones. |
 | 1.6 | 24 de septiembre de 2026 | Actualización general de la documentación: el documento describe la arquitectura implementada (ya no una propuesta); el correo transaccional es Brevo, consumido con el adapter BrevoMailSender. |
 | 1.7 | 25 de septiembre de 2026 | Nueva sección 8.3 (idiomas inglés y español): textos del frontend con i18next, errores traducidos en el frontend, Accept-Language y shared/i18n en el backend, contenido con columna translations, partidas con su idioma, noticias por idioma, correo y alertas del admin traducidos. La fila de Strategy describe las 5 estrategias actuales. |
+| 1.8 | 27 de septiembre de 2026 | Gráficas del panel de administración: Credits expone CreditsStatsReader para Admin (Admin → Users, Games y Credits, sin ciclos); Admin suma AdminGamesService y AdminEconomyService (Facade) y las pantallas AdminGamesScreen y AdminEconomyScreen; kit de gráficas del frontend. |

@@ -10,9 +10,9 @@ Especificación de endpoints del backend
 
 Fecha de elaboración: 23 de septiembre de 2026
 
-Fecha de actualización: 25 de septiembre de 2026
+Fecha de actualización: 27 de septiembre de 2026
 
-Versión: 2.0
+Versión: 2.1
 
 ---
 
@@ -213,6 +213,7 @@ Todos los endpoints de Admin requieren access token con role=admin, validado en 
 - Retención día N: porcentaje de jugadores registrados hace al menos N días que volvieron a tener actividad (heartbeat) el día N o después; null si nadie cumple N días.
 - Suspender, activar, eliminar y exportar quedan en ADMIN_AUDIT_LOG antes de ejecutarse. Suspender cierra todas las sesiones del jugador.
 - Los CSV usan BOM UTF-8 y neutralizan celdas que empiezan por = + - @ (inyección de fórmulas).
+- Período de las gráficas: ?days=7, 30 o 90 (por defecto 30) = los últimos N días hasta hoy, incluido, en APP_TIMEZONE. Otro valor responde 400. Las series por día incluyen los días sin datos (con 0).
 
 ### 9.1 AdminDashboardScreen
 
@@ -221,6 +222,7 @@ Todos los endpoints de Admin requieren access token con role=admin, validado en 
 | `GET` | `/admin/dashboard/summary` | Alertas del sistema, estado en línea y los 4 KPIs (usuarios totales, activos hoy, partidas hoy, precisión media) con su variación. Cada alerta: { type, code, values, message }; code (retentionDrop, dailyRecord) y values permiten mostrarla en el idioma del administrador; message es el texto en inglés. | RF-121–123 |
 | `GET` | `/admin/dashboard/dau` | Serie de usuarios activos diarios (últimos 7 días) con variación semanal. | RF-125 |
 | `GET` | `/admin/dashboard/ranking` | Ranking de los 4 minijuegos más jugados con jugadas, puntaje promedio y tendencia. El nombre del minijuego va en el idioma de Accept-Language. | RF-126 |
+| `GET` | `/admin/dashboard/trends` | Tendencia de los últimos 7 días para las mini gráficas de los KPIs: [{ date, totalUsers, activeUsers, games, accuracy }]. | RF-173 |
 
 ### 9.2 AdminUsersScreen
 
@@ -229,6 +231,7 @@ Todos los endpoints de Admin requieren access token con role=admin, validado en 
 | `GET` | `/admin/users?search=&filter=&page=` | Lista y busca usuarios por nombre o email con filtros (all, active, inactive, new7d). Incluye el conteo de cada filtro. | RF-130–133 |
 | `GET` | `/admin/users/export?search=&filter=` | Descarga en CSV la lista de usuarios filtrada (botón “Exportar”). Encabezados y nombre del archivo en el idioma de Accept-Language (football-maestro-users.csv / football-maestro-usuarios.csv). | RF-132 |
 | `GET` | `/admin/users/:id` | Detalle de un usuario (panel de acciones expandible y “Ver perfil”): país, nivel, racha, XP, fecha de registro y estado. | RF-134–136 |
+| `GET` | `/admin/users/:id/activity` | Actividad del jugador para “Ver perfil”: dailyXp (XP de cada uno de los últimos 30 días) y accuracyByCategory (las 8 categorías, null si no la jugó). 404 si no existe. | RF-174 |
 | `PATCH` | `/admin/users/:id/status` | Suspende o activa una cuenta: { "status": "inactive" \| "active" }. Al suspender se revocan sus refresh tokens. | RF-135 |
 | `DELETE` | `/admin/users/:id` | Elimina una cuenta. | RF-135 |
 
@@ -239,9 +242,15 @@ Todos los endpoints de Admin requieren access token con role=admin, validado en 
 | `GET` | `/admin/analytics/kpis` | Sesión media, Retención D7, DAU/MAU. | RF-138 |
 | `GET` | `/admin/analytics/growth` | Usuarios nuevos vs. activos, últimos 6 meses. | RF-139 |
 | `GET` | `/admin/analytics/retention` | Curva de retención (Día 1, 3, 7, 14, 30). | RF-140 |
-| `GET` | `/admin/analytics/categories` | Partidas jugadas por categoría de minijuego. | RF-142 |
-| `GET` | `/admin/analytics/session-duration` | Distribución de duración de sesión por rangos (<2m, 2-5m, 5-10m, 10-20m, >20m). | RF-143 |
-| `GET` | `/admin/analytics/accuracy-radar` | Precisión promedio por categoría de minijuego. | RF-144 |
+| `GET` | `/admin/analytics/categories?days=` | Partidas jugadas por categoría de minijuego en el período; sin days, de todos los tiempos. | RF-142, RF-166 |
+| `GET` | `/admin/analytics/session-duration?days=` | Distribución de duración de sesión por rangos (<2m, 2-5m, 5-10m, 10-20m, >20m) en el período, con el rango más común. | RF-143, RF-166 |
+| `GET` | `/admin/analytics/accuracy-radar?days=` | Precisión promedio por categoría de minijuego en el período; sin days, de todos los tiempos. (El nombre se conserva; la pantalla la muestra en barras.) | RF-144, RF-166 |
+| `GET` | `/admin/analytics/signups?days=` | Jugadores nuevos de cada día del período: [{ date, users }]. | RF-167 |
+| `GET` | `/admin/analytics/funnel?days=` | Embudo de los jugadores registrados en el período: registered, firstGame (1 partida completada), regular (5 o más) y returned (volvieron otro día en su primera semana). | RF-168 |
+| `GET` | `/admin/analytics/countries` | Los 8 países con más jugadores (código ISO), más “other” (el resto) y “unknown” (sin país). | RF-169 |
+| `GET` | `/admin/analytics/signup-methods` | Jugadores por método de registro: email, google o both. | RF-170 |
+| `GET` | `/admin/analytics/levels` | Jugadores por grupo de nivel: 1, 2, 3, 4, 5, 6-10, 11-20 y 21+. | RF-171 |
+| `GET` | `/admin/analytics/heatmap?days=` | Sesiones del período por día de la semana (weekday 0 = lunes) y hora (0-23); las celdas sin sesiones no aparecen. | RF-172 |
 
 ### 9.4 AdminReportsScreen
 
@@ -252,6 +261,29 @@ Todos los endpoints de Admin requieren access token con role=admin, validado en 
 | `GET` | `/admin/reports/category-performance?month=` | Rendimiento y tendencia por categoría. | RF-151 |
 | `GET` | `/admin/reports/peak-hours?month=` | Actividad por hora del día (24 valores). | RF-152 |
 | `GET` | `/admin/reports/export?month=` | Descarga el reporte completo del mes en formato CSV, con títulos, encabezados, categorías y nombre del archivo en el idioma de Accept-Language. Si falla, responde un error claro (RNF-DISP-04). | RF-152–153 |
+
+### 9.5 AdminGamesScreen
+
+Se abre desde los accesos rápidos del Dashboard (RF-175). Las partidas del período son las iniciadas en esos días; la precisión solo cuenta las completadas.
+
+| Método | Endpoint | Descripción | RF relacionados |
+| --- | --- | --- | --- |
+| `GET` | `/admin/games/overview?days=` | Por minijuego (en el orden del catálogo, nombre en el idioma de Accept-Language): completed, abandoned, accuracy y abandonRate (%); y locales: partidas por idioma. | RF-154–156, RF-160 |
+| `GET` | `/admin/games/:id/scores?days=` | Partidas completadas del minijuego por puntaje (0 a 10). | RF-157 |
+| `GET` | `/admin/games/hardest-questions?days=` | Las 10 preguntas con menor tasa de aciertos del período (mínimo 3 respuestas): enunciado en el idioma pedido, minijuego, respuesta correcta legible (null para el orden de Timeline), respuestas y correctRate. | RF-158 |
+| `GET` | `/admin/games/daily-challenge?days=` | Jugadores que completaron el reto diario cada día del período. | RF-159 |
+
+### 9.6 AdminEconomyScreen
+
+Se abre desde los accesos rápidos del Dashboard (RF-175). Admin lee estos datos de Credits a través de su interfaz pública CreditsStatsReader.
+
+| Método | Endpoint | Descripción | RF relacionados |
+| --- | --- | --- | --- |
+| `GET` | `/admin/economy/flow?days=` | Créditos ganados y gastados: por día si days=7 (granularity: day) o por semana, desde el lunes de cada semana, si days es 30 o 90 (granularity: week). | RF-161 |
+| `GET` | `/admin/economy/reasons?days=` | Créditos ganados en el período por motivo: daily_challenge, streak_7_days, share_result y referral (todos, aunque sumen 0). | RF-162 |
+| `GET` | `/admin/economy/circulation?days=` | Créditos en manos de los jugadores al final de cada día del período (suma de todos los movimientos). | RF-164 |
+| `GET` | `/admin/economy/items` | Cada artículo de la tienda con sus compras de todos los tiempos, del más al menos comprado; nombre en el idioma de Accept-Language. | RF-163 |
+| `GET` | `/admin/economy/badges` | Cuántos jugadores tienen cada insignia; nombre en el idioma de Accept-Language. | RF-165 |
 
 ## 10. Consideraciones finales
 
@@ -272,3 +304,4 @@ Este contrato debe mantenerse sincronizado con el Documento de Requisitos: cualq
 | 1.8 | 24 de septiembre de 2026 | Estilos propios por minijuego: la partida devuelve playStyle y cada pregunta details; nueva sección 7.4 con el formato de cada estilo; la respuesta a una pregunta incluye correctAnswer. |
 | 1.9 | 25 de septiembre de 2026 | Inglés y español: convención de la cabecera Accept-Language; contenido traducido en /games, las partidas (con su idioma fijo), /store/items, /news (noticias por idioma), el correo de forgot-password y el ranking de administración; las alertas del dashboard suman code y values y el resumen del reporte suma week. |
 | 2.0 | 25 de septiembre de 2026 | GET /users/me/badges y los CSV de /admin/users/export y /admin/reports/export responden en el idioma de Accept-Language; label de las semanas del reporte en inglés. |
+| 2.1 | 27 de septiembre de 2026 | Gráficas del panel de administración: período ?days=7\|30\|90; GET /admin/dashboard/trends, /admin/users/:id/activity y 6 endpoints nuevos de Analytics; secciones nuevas 9.5 (AdminGamesScreen, 4 endpoints) y 9.6 (AdminEconomyScreen, 5 endpoints). Total: 67 endpoints. |

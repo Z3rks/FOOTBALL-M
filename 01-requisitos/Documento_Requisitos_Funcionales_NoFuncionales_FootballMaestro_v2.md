@@ -12,9 +12,9 @@ Elaboración del documento de requisitos funcionales y no funcionales
 
 Fecha de elaboración: 4 de septiembre de 2026
 
-Fecha de actualización: 24 de septiembre de 2026
+Fecha de actualización: 27 de septiembre de 2026
 
-Versión: 2.2
+Versión: 2.3
 
 1\. Introducción
 
@@ -23,9 +23,9 @@ funcionales del proyecto "Football Maestro", una aplicación móvil/web
 orientada a aficionados al fútbol que combina noticias deportivas,
 minijuegos de trivia y conocimiento futbolístico, seguimiento de
 progreso del usuario (niveles, rachas, experiencia), un sistema de
-créditos canjeables y un panel administrativo de 4 pantallas (Dashboard,
-Usuarios, Analytics y Reportes) para la gestión y el análisis de la
-plataforma.
+créditos canjeables y un panel administrativo de 6 pantallas (Dashboard,
+Usuarios, Analytics, Reportes, Minijuegos y Economía) para la gestión y
+el análisis de la plataforma.
 
 La información aquí consolidada se extrajo y organizó a partir del
 tablero de gestión ágil del proyecto (Trello), específicamente de las
@@ -43,14 +43,15 @@ desarrollo y las pruebas del sistema "Football Maestro".
 
 3\. Alcance del proyecto
 
-El alcance funcional cubre las siguientes catorce (14) pantallas o
+El alcance funcional cubre las siguientes dieciséis (16) pantallas o
 módulos principales del sistema, derivados directamente del tablero del
 proyecto, junto con la cantidad de historias de usuario relevadas para
-cada uno (36 historias de usuario en total). El panel administrativo,
+cada uno (44 historias de usuario en total). El panel administrativo,
 originalmente una sola pantalla, se reorganizó en 4 pantallas
 independientes con su propia navegación (AdminBottomNav):
 AdminDashboardScreen, AdminUsersScreen, AdminAnalyticsScreen y
-AdminReportsScreen.
+AdminReportsScreen. En la versión 2.3 se agregaron AdminGamesScreen y
+AdminEconomyScreen, que se abren desde los accesos rápidos del Dashboard.
 
   --------------------------------------------------------------------------
   **\#**   **Módulo / Pantalla**                 **N.º de historias de
@@ -76,13 +77,17 @@ AdminReportsScreen.
 
   10       CreditsScreen                         2
 
-  11       AdminDashboardScreen                  2
+  11       AdminDashboardScreen                  3
 
-  12       AdminUsersScreen                      2
+  12       AdminUsersScreen                      3
 
-  13       AdminAnalyticsScreen                  2
+  13       AdminAnalyticsScreen                  4
 
   14       AdminReportsScreen                    2
+
+  15       AdminGamesScreen                      2
+
+  16       AdminEconomyScreen                    2
   --------------------------------------------------------------------------
 
 Adicionalmente, el backlog del proyecto contempla las siguientes
@@ -742,19 +747,34 @@ AdminDashboardScreen
              rápidos                  de jugadas, puntaje promedio y
                                       tendencia (arriba/abajo).
 
-  RF-127     \(30\) Gráfica DAU,      Debe mostrar 3 botones de acceso
-             ranking y accesos        rápido: Usuarios, Analytics y
-             rápidos                  Reportes.
+  RF-127     \(30\) Gráfica DAU,      Debe mostrar 4 accesos rápidos en
+             ranking y accesos        grid 2×2: Usuarios, Minijuegos,
+             rápidos                  Economía y Analytics, cada uno con
+                                      una frase que explique qué contiene.
 
   RF-128     \(30\) Gráfica DAU,      Cada acceso rápido (onNavigate) debe
              ranking y accesos        llevar directo a AdminUsersScreen,
-             rápidos                  AdminAnalyticsScreen o
-                                      AdminReportsScreen según
-                                      corresponda.
+             rápidos                  AdminGamesScreen, AdminEconomyScreen
+                                      o AdminAnalyticsScreen según
+                                      corresponda. Reportes sigue en
+                                      AdminBottomNav.
 
   RF-129     \(30\) Gráfica DAU,      El AdminBottomNav debe permanecer
              ranking y accesos        visible y resaltar \"Dashboard\"
              rápidos                  como pestaña activa.
+
+  RF-173     \(43\) Tendencias del    Cada una de las 4 tarjetas de KPI
+             panel                    debe incluir una mini gráfica con la
+                                      tendencia de los últimos 7 días
+                                      (usuarios totales, activos, partidas
+                                      y precisión de cada día).
+
+  RF-175     \(43\) Tendencias del    AdminGamesScreen y
+             panel                    AdminEconomyScreen se abren solo
+                                      desde los accesos rápidos del
+                                      Dashboard y tienen botón "atrás"
+                                      hacia él; AdminBottomNav mantiene 4
+                                      pestañas.
   ------------------------------------------------------------------------
 
 AdminUsersScreen
@@ -800,6 +820,11 @@ AdminUsersScreen
              expandible por usuario   tarjeta debe colapsar el panel
                                       (toggle), sin navegar a otra
                                       pantalla.
+
+  RF-174     \(44\) Actividad del     Al pulsar "Ver perfil", el panel del
+             jugador                  jugador debe mostrar su XP de cada
+                                      uno de los últimos 30 días y su
+                                      precisión por categoría.
   ------------------------------------------------------------------------
 
 AdminAnalyticsScreen
@@ -837,14 +862,54 @@ AdminAnalyticsScreen
                                       2-5m, 5-10m, 10-20m, \>20m) con el
                                       rango más común destacado.
 
-  RF-144     \(34\) Categorías,       Debe mostrar un radar de precisión
-             sesión y precisión       promedio por categoría de
-                                      minijuego (las mismas de RF-142),
-                                      calculado sobre toda la plataforma.
+  RF-144     \(34\) Categorías, sesión  Debe mostrar la precisión promedio
+             y precisión              por categoría de minijuego (las
+                                      mismas de RF-142) en barras
+                                      horizontales ordenadas de la más
+                                      difícil a la más fácil, con una
+                                      línea del promedio. Reemplaza al
+                                      radar de la maqueta, que era más
+                                      difícil de leer.
 
-  RF-145     \(34\) Categorías,       Las 3 gráficas son informativas; no
-             sesión y precisión       deben tener elementos que naveguen a
+  RF-145     \(34\) Categorías, sesión  Las gráficas son informativas; no
+             y precisión              deben tener elementos que naveguen a
                                       otra pantalla.
+
+  RF-166     \(41\) Período, registros  Debe tener un selector de período
+             y embudo                 (últimos 7, 30 o 90 días) en una
+                                      sola fila, arriba de las gráficas
+                                      que afecta; las gráficas de todos
+                                      los tiempos van después, bajo el
+                                      título "De todos los tiempos".
+
+  RF-167     \(41\) Período, registros  Debe mostrar los jugadores nuevos de
+             y embudo                 cada día del período y el total del
+                                      período.
+
+  RF-168     \(41\) Período, registros  Debe mostrar el embudo de activación
+             y embudo                 de los jugadores registrados en el
+                                      período: se registraron, completaron
+                                      1 partida, completaron 5 o más y
+                                      volvieron otro día en su primera
+                                      semana, con el % respecto al primer
+                                      paso.
+
+  RF-169     \(42\) Perfil de los     Debe mostrar los 8 países con más
+             jugadores y horarios     jugadores; el resto se agrupa en
+                                      "Otros países" y los que no
+                                      indicaron país en "Sin especificar".
+
+  RF-170     \(42\) Perfil de los     Debe mostrar cuántos jugadores se
+             jugadores y horarios     registraron con correo, con Google o
+                                      con los dos.
+
+  RF-171     \(42\) Perfil de los     Debe mostrar cuántos jugadores hay
+             jugadores y horarios     en cada nivel (1, 2, 3, 4, 5, 6-10,
+                                      11-20 y 21+).
+
+  RF-172     \(42\) Perfil de los     Debe mostrar un mapa de calor de las
+             jugadores y horarios     sesiones del período por día de la
+                                      semana y hora del día.
   ------------------------------------------------------------------------
 
 AdminReportsScreen
@@ -889,6 +954,77 @@ AdminReportsScreen
              categorías y exportar    \"Exportar Reporte Completo\" deben
              CSV                      generar/descargar el archivo sin
                                       salir de AdminReportsScreen.
+  ------------------------------------------------------------------------
+
+AdminGamesScreen
+
+  ------------------------------------------------------------------------
+  **ID**     **Historia relacionada** **Requisito**
+  ---------- ------------------------ ------------------------------------
+  RF-154     \(37\) Rendimiento de los  Debe mostrar las partidas iniciadas
+             minijuegos               de cada minijuego en el período, de
+                                      la más jugada a la menos jugada, con
+                                      3 indicadores arriba: partidas
+                                      completadas, tasa de abandono y
+                                      precisión media.
+
+  RF-155     \(37\) Rendimiento de los  Debe mostrar, por minijuego, las
+             minijuegos               partidas completadas y abandonadas y
+                                      su % de abandono, primero el más
+                                      abandonado.
+
+  RF-156     \(37\) Rendimiento de los  Debe mostrar la precisión de cada
+             minijuegos               minijuego, del más difícil al más
+                                      fácil, con una línea del promedio.
+
+  RF-157     \(37\) Rendimiento de los  Debe mostrar cuántas partidas
+             minijuegos               sacaron cada puntaje (0 a 10) en el
+                                      minijuego elegido en un selector;
+                                      por defecto, el más jugado.
+
+  RF-158     \(38\) Preguntas         Debe listar las 10 preguntas con
+             difíciles, reto diario   menor % de aciertos del período (con
+             e idioma                 al menos 3 respuestas), con su
+                                      minijuego, su respuesta correcta
+                                      legible y el número de respuestas.
+
+  RF-159     \(38\) Preguntas         Debe mostrar cuántos jugadores
+             difíciles, reto diario   completaron el reto diario cada día
+             e idioma                 del período.
+
+  RF-160     \(38\) Preguntas         Debe mostrar el % de partidas
+             difíciles, reto diario   jugadas en inglés y en español.
+             e idioma
+  ------------------------------------------------------------------------
+
+AdminEconomyScreen
+
+  ------------------------------------------------------------------------
+  **ID**     **Historia relacionada** **Requisito**
+  ---------- ------------------------ ------------------------------------
+  RF-161     \(39\) Flujo y origen de Debe mostrar los créditos ganados y
+             los créditos             gastados por día (período de 7 días)
+                                      o por semana (30 y 90 días), con 3
+                                      indicadores arriba: ganados,
+                                      gastados y en circulación.
+
+  RF-162     \(39\) Flujo y origen de Debe mostrar los créditos ganados en
+             los créditos             el período por cada motivo: reto
+                                      diario, racha de 7 días, compartir
+                                      resultado y referido.
+
+  RF-164     \(39\) Flujo y origen de Debe mostrar el total de créditos en
+             los créditos             manos de los jugadores al final de
+                                      cada día del período.
+
+  RF-163     \(40\) Tienda e insignias  Debe mostrar cuántas veces se compró
+                                      cada artículo de la tienda (de todos
+                                      los tiempos), del más comprado al
+                                      menos comprado.
+
+  RF-165     \(40\) Tienda e insignias  Debe mostrar cuántos jugadores
+                                      tienen cada insignia (de todos los
+                                      tiempos).
   ------------------------------------------------------------------------
 
 5\. Requisitos No Funcionales
@@ -1326,9 +1462,9 @@ AdminDashboardScreen
                                         al líder.
 
   RNF-UI-077   \(30\) Gráfica DAU,      Los accesos rápidos deben mostrarse
-               ranking y accesos        en grid de 3 columnas, con ícono,
-               rápidos                  etiqueta, y efecto hover con sombra
-                                        y borde primary.
+               ranking y accesos        en grid de 2 columnas, con ícono,
+               rápidos                  título, frase explicativa y efecto
+                                        hover con sombra y borde primary.
   --------------------------------------------------------------------------
 
 AdminUsersScreen
@@ -1375,27 +1511,27 @@ AdminAnalyticsScreen
                                         debajo.
 
   RNF-UI-084   \(33\) KPIs, crecimiento La gráfica de crecimiento debe usar
-               y retención              dos áreas superpuestas con degradado
-                                        (azul=activos, dorado=nuevos).
+               y retención              dos líneas (azul = activos, naranja
+                                        = nuevos) con leyenda; no áreas
+                                        superpuestas, que se tapan entre sí.
 
   RNF-UI-085   \(33\) KPIs, crecimiento La curva de retención debe usar
-               y retención              línea dorada con puntos, y las 3
+               y retención              línea azul con puntos, y las 3
                                         tarjetas de resumen deben tener
                                         fondo muted.
 
-  RNF-UI-086   \(34\) Categorías,       Cada barra de categoría debe usar un
-               sesión y precisión       color propio (definido por
-                                        categoría), con esquinas redondeadas
-                                        en el extremo.
+  RNF-UI-086   \(34\) Categorías, sesión  Las barras de categoría deben usar
+               y precisión              un solo color (una sola serie); la
+                                        longitud de la barra y su valor
+                                        escrito comunican la cantidad.
 
-  RNF-UI-087   \(34\) Categorías,       El rango de sesión con mayor
-               sesión y precisión       porcentaje debe resaltarse en color
-                                        dorado; el resto en azul
-                                        semitransparente.
+  RNF-UI-087   \(34\) Categorías, sesión  El rango de sesión con mayor
+               y precisión              porcentaje debe resaltarse en azul;
+                                        el resto en gris.
 
-  RNF-UI-088   \(34\) Categorías,       El radar debe usar relleno dorado
-               sesión y precisión       semitransparente con borde definido
-                                        y puntos en color primary.
+  RNF-UI-088   \(34\) Categorías, sesión  Las barras de precisión deben
+               y precisión              mostrar el porcentaje escrito y una
+                                        línea vertical con el promedio.
   --------------------------------------------------------------------------
 
 AdminReportsScreen
@@ -1424,6 +1560,47 @@ AdminReportsScreen
   RNF-UI-093   \(36\) Top jugadores,    El botón de exportar debe tener
                categorías y exportar    borde punteado, ícono Download y
                CSV                      texto centrado.
+  --------------------------------------------------------------------------
+
+Gráficas del panel de administración (AdminDashboardScreen, AdminAnalyticsScreen, AdminGamesScreen, AdminEconomyScreen y "Ver perfil" de AdminUsersScreen)
+
+  --------------------------------------------------------------------------
+  **ID**       **Historia relacionada** **Requisito**
+  ------------ ------------------------ ------------------------------------
+  RNF-UI-094   \(37\) a \(44\)            Cada gráfica debe ir en una tarjeta
+                                        con título y, debajo, la pregunta
+                                        que responde en lenguaje sencillo
+                                        (ej. "¿Cuál minijuego se juega
+                                        más?").
+
+  RNF-UI-095   \(37\) a \(44\)            Los colores deben salir de una
+                                        paleta validada para daltonismo
+                                        (protanopia, deuteranopia y
+                                        tritanopia) sobre el fondo de la
+                                        tarjeta. Una sola serie usa siempre
+                                        el mismo azul; cada entidad conserva
+                                        su color aunque cambie su posición.
+
+  RNF-UI-096   \(37\) a \(44\)            Toda gráfica debe tener el botón
+                                        "Ver tabla" con los mismos datos en
+                                        números, y un mensaje claro cuando
+                                        todavía no hay datos.
+
+  RNF-UI-097   \(37\) a \(44\)            Las gráficas con 2 o más series
+                                        deben tener leyenda; las barras
+                                        horizontales deben mostrar su valor
+                                        escrito al final. No se usan
+                                        gráficas con dos ejes verticales.
+
+  RNF-UI-098   \(41\) Período, registros  Al cambiar de período, las gráficas
+               y embudo                 deben mantener la versión anterior
+                                        atenuada mientras cargan, sin
+                                        parpadear ni saltar.
+
+  RNF-UI-099   \(42\) Perfil de los     El mapa de calor y el embudo deben
+               jugadores y horarios     usar una rampa de un solo tono (azul
+                                        claro a oscuro) con su escala
+                                        visible.
   --------------------------------------------------------------------------
 
 5.2 Requisitos no funcionales generales
@@ -1670,3 +1847,15 @@ que no estaban en la maqueta original: GamePlayScreen (jugar la partida
 pregunta por pregunta), ForgotPasswordScreen y ResetPasswordScreen
 (recuperar la contraseña por correo). El detalle de cada endpoint está
 en el Contrato de API.
+
+Nota de versión 2.3 (27 de septiembre de 2026): el panel de
+administración suma 8 historias de usuario, de la (37) a la (44), y
+los requisitos RF-154 a RF-175. Dos pantallas nuevas se abren desde el
+Dashboard: AdminGamesScreen (cómo se juega cada minijuego) y
+AdminEconomyScreen (créditos, tienda e insignias). AdminAnalyticsScreen
+suma el selector de período y 6 gráficas; el Dashboard, la tendencia
+de cada KPI y 4 accesos rápidos; AdminUsersScreen, la actividad del
+jugador en "Ver perfil". El radar de precisión se reemplaza por
+barras (RF-144) y los requisitos de color de las gráficas se ajustan a
+una paleta validada para daltonismo (RNF-UI-084 a RNF-UI-088 y
+RNF-UI-094 a RNF-UI-099).

@@ -1,18 +1,18 @@
 # Estado del proyecto
 
-Actualizado al **25 de septiembre de 2026**. Todo el código está en la rama `main` (Pull Request #2, 25 de septiembre de 2026); la documentación, en la rama `documentacion`. Son las dos únicas ramas del repositorio.
+Actualizado al **27 de septiembre de 2026**. El código está en la rama `main`, salvo las gráficas nuevas del panel de administración, que están en la rama de trabajo `feature/admin-graficas` (falta aceptar su Pull Request). La documentación está en la rama `documentacion`.
 
 ## 1. Qué funciona
 
 La aplicación corre completa en local: frontend, backend y base de datos, con los tres servicios externos configurados.
 
-### Pantallas (19)
+### Pantallas (21)
 
 | Grupo | Pantallas |
 |---|---|
 | Acceso (6) | Splash, Welcome (con Continue with Google), Sign In (Player/Admin), Register, Forgot Password, Reset Password |
 | Jugador (9) | Home (con el reto diario), Minigames, GamePlay, Results, News, Credits (con tienda), Profile, Edit Profile, Account Settings |
-| Administrador (4) | Dashboard, Users, Analytics, Reports (con exportación CSV) |
+| Administrador (6) | Dashboard, Users, Analytics, Reports (con exportación CSV), Minijuegos y Economía (se abren desde el Dashboard) |
 
 Las 14 pantallas de la maqueta original se conectaron a la API. GamePlay, Forgot/Reset Password, Edit Profile y Account Settings se agregaron para completar los flujos (Requisitos v2.2, RF-112).
 
@@ -27,9 +27,9 @@ Las 14 pantallas de la maqueta original se conectaron a la API. GamePlay, Forgot
 | Games | 10 minijuegos, **cada uno con su propio estilo y mecánica** (pistas, silueta, escudo dibujado, ficha del estadio, tablero de Connections, línea de tiempo, trayectoria, deslizador de precio, cancha, VAR); 203 preguntas; reto diario; puntaje calculado en el servidor; compartir |
 | Credits | Saldo, recompensas por eventos (reto diario, racha, compartir, referido), historial, tienda |
 | News | Noticias reales de Currents en inglés y español, sincronizadas cada 60 min y filtradas por categoría |
-| Admin | Dashboard, gestión de jugadores, analítica, reportes, exportaciones CSV y auditoría |
+| Admin | Dashboard, gestión de jugadores, analítica, reportes, exportaciones CSV y auditoría; unas 30 gráficas con período de 7, 30 o 90 días |
 
-- **50 endpoints**, todos documentados en el Contrato de API (verificado contra el código).
+- **67 endpoints**, todos documentados en el Contrato de API (verificado contra el código).
 - **16 tablas y 110 columnas**, todas documentadas en el Modelo de Datos (verificado contra la base de datos).
 - **Arquitectura:** monolito modular con Repository, Unit of Work, Strategy, Factory, Adapter, Observer, Facade y DTO; interfaces públicas pequeñas entre módulos. Una prueba automática verifica las reglas.
 
@@ -37,13 +37,14 @@ Las 14 pantallas de la maqueta original se conectaron a la API. GamePlay, Forgot
 
 | Suite | Resultado |
 |---|---|
-| Unitarias (incluye la prueba de arquitectura y la validación de las 203 preguntas en los dos idiomas) | 789 en verde |
-| E2E contra PostgreSQL | 115 en verde |
-| Casos del Plan de Pruebas (61) | 42 automatizados, 14 probados a mano, 5 pendientes de herramientas (Plan de Pruebas §6) |
+| Unitarias (incluye la prueba de arquitectura y la validación de las 203 preguntas en los dos idiomas) | 792 en verde |
+| E2E contra PostgreSQL | 124 en verde |
+| Casos del Plan de Pruebas (67) | 47 automatizados, 15 probados a mano, 5 pendientes de herramientas (Plan de Pruebas §6) |
 
 ## 2. Qué falta
 
 ### Para terminar la versión actual
+- [ ] Aceptar el Pull Request `feature/admin-graficas` → `main` (gráficas del panel de administración).
 - [ ] Revisión de las 203 preguntas por alguien del equipo (sobre todo precios de traspasos y capacidades de estadios, que varían según la fuente) y de su traducción al inglés.
 - [ ] Imágenes para los minijuegos: fotos con licencia libre (Wikimedia Commons, con crédito del autor) para estadios y jugadores. Los escudos se siguen dibujando con los colores del club, porque son marcas registradas.
 

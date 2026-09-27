@@ -52,7 +52,7 @@ Entre módulos solo se usan **interfaces públicas pequeñas** (`UserAccounts`, 
 
 ## 3. Cómo avanzó el proyecto
 
-El proyecto se construyó en 22 etapas, cada una en su propia rama y en cadena (cada rama salía de la anterior). El 25 de septiembre de 2026 la última se unió a `main` (Pull Request #2) y todas las ramas de trabajo se borraron: **`main` tiene todo el código**, y el trabajo de cada etapa se conserva en su historial de commits (`git log --oneline` o la pestaña *Commits* de GitHub).
+El proyecto se construyó en 22 etapas, cada una en su propia rama y en cadena (cada rama salía de la anterior). El 25 de septiembre de 2026 la última se unió a `main` (Pull Request #2) y todas las ramas de trabajo se borraron: **`main` tiene todo el código**, y el trabajo de cada etapa se conserva en su historial de commits (`git log --oneline` o la pestaña *Commits* de GitHub). Desde entonces, cada cambio nuevo es una rama de trabajo que sale de `main` (como la 23).
 
 | # | Etapa (rama original) | Qué agregó | Documentos que implementa |
 |---|---|---|---|
@@ -78,6 +78,7 @@ El proyecto se construyó en 22 etapas, cada una en su propia rama y en cadena (
 | 20 | `feature/idiomas-extra` | Noticias por idioma, correo de recuperación y panel de admin traducidos; arreglo del botón “atrás” | API §6, §9; Arquitectura §8.3 |
 | 21 | `feature/helmet` | Cabeceras de seguridad HTTP con Helmet | Seguridad A05, §10 |
 | 22 | `feature/idiomas-csv-insignias` | CSV del panel de admin e insignias en inglés y español | API §5, §9; Modelo de Datos §5.14 |
+| 23 | `feature/admin-graficas` | Pantallas Minijuegos y Economía y unas 25 gráficas nuevas en el panel de administración (rama de trabajo, sale de `main`) | Requisitos RF-154–175, API §9.5–§9.6, Arquitectura §3 |
 
 ## 4. Flujo de trabajo
 

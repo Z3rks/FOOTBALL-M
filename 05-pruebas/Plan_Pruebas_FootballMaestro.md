@@ -10,9 +10,9 @@ Casos de prueba y trazabilidad de requisitos
 
 Fecha de elaboración: 23 de septiembre de 2026
 
-Fecha de actualización: 25 de septiembre de 2026
+Fecha de actualización: 27 de septiembre de 2026
 
-Versión: 1.4
+Versión: 1.5
 
 ---
 
@@ -191,16 +191,22 @@ Cubren funcionalidades implementadas después de la versión 1.1: Edit Profile, 
 | TC-59 | Arquitectura §8.3 | Pedir el catálogo y jugar una partida con Accept-Language en inglés y en español; retomar la partida pidiendo el otro idioma. | Nombres, preguntas y opciones salen en el idioma pedido; la partida se corrige en el idioma en que empezó y no cambia al retomarla. |
 | TC-60 | RF-067–078 | Consultar /news en inglés y en español tras una sincronización. | Cada idioma muestra solo sus noticias (no se mezclan). |
 | TC-61 | RF-035–039 | Pedir “Forgot password?” con la app en español. | El correo de recuperación llega en español. |
+| TC-62 | RF-154–160 | Como administrador, abrir Minijuegos después de que un jugador complete una partida del reto diario y abandone otra. | La partida completada y la abandonada aparecen en su minijuego, el % de abandono sube, el puntaje obtenido suma en la distribución, el reto diario de hoy suma un jugador y el idioma de las partidas suma dos. Las preguntas más difíciles traen su tasa de aciertos (mínimo 3 respuestas), de menor a mayor. |
+| TC-63 | RF-161–165 | Abrir Economía antes y después de que un jugador complete el reto diario. | Los créditos ganados del día, el motivo “reto diario” y los créditos en circulación suben en 50; con 90 días el flujo se agrupa por semana. Artículos e insignias salen en el idioma pedido. |
+| TC-64 | RF-166–172 | Revisar Analytics con cada período (7, 30 y 90 días). | Registros por día, embudo (cada etapa ≤ la anterior), países, métodos de registro, niveles y mapa de calor responden con su forma; un período distinto de 7, 30 o 90 responde 400. |
+| TC-65 | RF-173, RF-174 | Abrir el Dashboard y el “Ver perfil” de un jugador que jugó hoy. | Cada KPI trae la tendencia de 7 días; el perfil muestra la XP de 30 días (con la de hoy) y la precisión por categoría. Un id inexistente responde 404. |
+| TC-66 | RNF-SEC-03 | Llamar a los endpoints nuevos de gráficas con un token de jugador. | La API responde 403 en todos. |
+| TC-67 | RF-175, RNF-UI-094–099 | En el navegador: entrar a Minijuegos y Economía desde el Dashboard, cambiar el período, usar “Ver tabla” y volver con “atrás”, en inglés y en español. | Cada gráfica muestra su pregunta, su leyenda (si tiene 2 o más series), su tabla y un mensaje claro cuando no hay datos; al cambiar el período la gráfica anterior se atenúa sin parpadear. |
 | TC-56 | Arquitectura §3–§7 | Ejecutar la prueba de arquitectura (src/architecture.spec.ts). | Pasan sus 7 reglas: ningún servicio importa el ORM, otro módulo solo importa interfaces abstractas, la entidad USER no sale de Users y no hay dependencias circulares. |
 
 ## 6. Estado de la automatización
 
-Resultado de la última ejecución (25 de septiembre de 2026), todas en verde:
+Resultado de la última ejecución (27 de septiembre de 2026), todas en verde:
 
 | Suite | Pruebas | Qué cubre y cómo se ejecuta |
 | --- | --- | --- |
-| Unitarias (Jest) | 789 | Servicios, estrategias de cada minijuego, adaptadores (Currents en inglés y español, Brevo), validación de variables de entorno, reglas de progreso, idioma de la petición (shared/i18n), la prueba de arquitectura y la validación de las 203 preguntas en cada idioma (formato, respuesta válida para su estrategia, que details no revele la respuesta y que la traducción coincida con el original). En backend/: npm test. |
-| E2E (Jest + Supertest) | 115 | Los endpoints del Contrato de API contra PostgreSQL real, en 7 archivos (auth, users, games, credits, news, admin, health). En backend/: npm run test:e2e (con la base de datos encendida). |
+| Unitarias (Jest) | 792 | Servicios, estrategias de cada minijuego, adaptadores (Currents en inglés y español, Brevo), validación de variables de entorno, reglas de progreso, idioma de la petición (shared/i18n), la prueba de arquitectura y la validación de las 203 preguntas en cada idioma (formato, respuesta válida para su estrategia, que details no revele la respuesta y que la traducción coincida con el original). En backend/: npm test. |
+| E2E (Jest + Supertest) | 124 | Los endpoints del Contrato de API contra PostgreSQL real, en 8 archivos (auth, users, games, credits, news, admin, admin-charts, health). En backend/: npm run test:e2e (con la base de datos encendida). |
 | Arquitectura | 7 reglas | Parte de las unitarias (src/architecture.spec.ts). Falla si el código rompe el desacople entre módulos o la inversión de dependencias. |
 | Frontend | — | Revisión de tipos (npm run typecheck) y build de producción (npx vite build). Sin pruebas automatizadas de interfaz todavía. |
 
@@ -208,8 +214,8 @@ Casos de este documento por tipo de verificación:
 
 | Verificación | Casos |
 | --- | --- |
-| Automatizados (E2E) | TC-02, 05–08, 10–13, 15–20, 22–24, 26–30, 33–35, 37, 39–48 (37 casos), más TC-55 y TC-59 a TC-61. Cada prueba lleva su TC en el nombre, dentro de backend/test/*.e2e-spec.ts. TC-56 es la prueba de arquitectura. |
-| Manuales en el navegador | TC-01, 03, 04, 09, 14, 21 y 25 (navegación y validaciones de pantalla), TC-50 a TC-54, TC-57 y TC-58 (probados por el equipo el 24 y 25 de septiembre de 2026). Su lógica en la API sí está cubierta por pruebas E2E. |
+| Automatizados (E2E) | TC-02, 05–08, 10–13, 15–20, 22–24, 26–30, 33–35, 37, 39–48 (37 casos), más TC-55, TC-59 a TC-66. Cada prueba lleva su TC en el nombre, dentro de backend/test/*.e2e-spec.ts. TC-56 es la prueba de arquitectura. |
+| Manuales en el navegador | TC-01, 03, 04, 09, 14, 21 y 25 (navegación y validaciones de pantalla), TC-50 a TC-54, TC-57, TC-58 y TC-67 (probados por el equipo entre el 24 y el 27 de septiembre de 2026). Su lógica en la API sí está cubierta por pruebas E2E. |
 | Pendientes (requieren herramientas) | TC-31, 32 y 49 (rendimiento: k6), TC-36 (compatibilidad entre navegadores), TC-38 (accesibilidad con teclado: axe-core o prueba manual). |
 
 ## 7. Criterios de aceptación (Definition of Done)
@@ -237,3 +243,4 @@ Los identificadores de los casos agregados en la versión 1.1 continúan la nume
 | 1.2 | 24 de septiembre de 2026 | Actualización con el sistema implementado: estado de cada herramienta; nuevos casos TC-50 a TC-56 (Edit Profile, Account Settings, Google, correo real, noticias reales, roles y arquitectura); nueva sección 6 con los resultados de las suites automatizadas y qué casos son automáticos, manuales o pendientes; la Definition of Done incluye la prueba de arquitectura. |
 | 1.3 | 24 de septiembre de 2026 | Estilos propios por minijuego: TC-57; 364 pruebas unitarias (incluye la validación de las 203 preguntas) y 110 E2E. |
 | 1.4 | 25 de septiembre de 2026 | Inglés y español: TC-58 a TC-61; 789 pruebas unitarias (el banco de preguntas se valida en los dos idiomas) y 115 E2E (incluye las cabeceras de seguridad de Helmet). |
+| 1.5 | 27 de septiembre de 2026 | Gráficas del panel de administración: TC-62 a TC-67 (pantallas Minijuegos y Economía, Analytics por período, tendencias y actividad del jugador); 792 pruebas unitarias y 124 E2E. |
