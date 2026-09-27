@@ -12,17 +12,17 @@ Fecha de elaboración: 23 de septiembre de 2026
 
 Fecha de actualización: 27 de septiembre de 2026
 
-Versión: 1.9
+Versión: 2.0
 
 ---
 
 ## 1. Introducción
 
-Este documento define la arquitectura de software del backend de “Football Maestro”, complementando el Documento de Requisitos Funcionales y No Funcionales (v2) y el tablero de historias de usuario del proyecto en Trello. El frontend (React 18 + TypeScript + Vite + Tailwind CSS) ya existe como maqueta funcional; este documento se centra en el backend que dará soporte real a sus 14 pantallas:
+Este documento define la arquitectura de software del backend de “Football Maestro”, complementando el Documento de Requisitos Funcionales y No Funcionales (v2) y el tablero de historias de usuario del proyecto en Trello. El frontend (React 18 + TypeScript + Vite + Tailwind CSS) es una aplicación web responsiva (se usa desde el navegador en escritorio, tableta o celular); este documento se centra en el backend que da soporte real a sus 16 pantallas:
 
 - Acceso (4): SplashScreen, WelcomeScreen, SignInScreen, RegisterScreen.
-- Jugador (6, con navegación inferior BottomNav de 5 pestañas: Home, Games, News, Credits, Profile): MainHomeScreen, MinigamesScreen, ResultsScreen, NewsScreen, CreditsScreen, ProfileScreen.
-- Administrador (4, con navegación inferior AdminBottomNav): AdminDashboardScreen, AdminUsersScreen, AdminAnalyticsScreen, AdminReportsScreen.
+- Jugador (6, con una barra superior de 5 secciones: Home, Games, News, Credits, Profile): MainHomeScreen, MinigamesScreen, ResultsScreen, NewsScreen, CreditsScreen, ProfileScreen.
+- Administrador (6, con la barra superior del portal): AdminDashboardScreen, AdminUsersScreen, AdminGamesScreen, AdminEconomyScreen, AdminAnalyticsScreen, AdminReportsScreen.
 
 El objetivo es establecer un estilo arquitectónico, una organización modular del código, los patrones de diseño aplicables a cada módulo, cómo se materializan los principios SOLID en la implementación y cómo se despliega físicamente el sistema.
 
@@ -146,7 +146,7 @@ Cada patrón se seleccionó para resolver un problema concreto identificado en l
 
 | Capa | Tecnología | Justificación |
 | --- | --- | --- |
-| Frontend | React 18 + TypeScript, Vite, Tailwind CSS, Recharts, Motion, i18next | Es el stack del prototipo ya construido (14 pantallas). Se despliega como sitio estático. |
+| Frontend | React 18 + TypeScript, Vite, Tailwind CSS, Recharts, Motion, i18next | Es el stack del frontend ya construido (16 pantallas, aplicación web responsiva). Se despliega como sitio estático. |
 | Backend | Node.js + NestJS + TypeScript | Comparte lenguaje con el frontend y su arquitectura está construida nativamente alrededor de Inyección de Dependencias, módulos y decoradores, lo que facilita demostrar SOLID y los patrones anteriores de forma explícita. |
 | Base de datos | PostgreSQL + TypeORM | Modelo relacional para usuarios, partidas, créditos y actividad; consultas parametrizadas vía ORM (Plan de Seguridad, A03). |
 | Autenticación | JWT de acceso + refresh token (cookie httpOnly), bcrypt, Google OAuth 2.0 | Roles diferenciados Player/Admin validados en el backend (RNF-SEC-03) e invalidación real de sesión (RNF-SEC-05). |
@@ -184,7 +184,9 @@ backend/
 └── package.json
 ```
 
-Frontend del panel de administración (project/src/app/components/admin): charts/ es el kit de gráficas, una pieza por archivo (ChartCard, PeriodSelector, ColumnChart y TrendChart sobre Recharts; BarList, StackedBarList, Heatmap, Funnel y Sparkline en HTML/CSS; paleta validada para daltonismo); data/ tiene un hook por pantalla que consulta la API y deja los datos listos para dibujar (useGamesInsights, useEconomy, useAnalytics); AdminHeader, StatRow y KpiTile son piezas comunes. Así cada pantalla solo compone tarjetas. Cada gráfica muestra la pregunta que responde, un estado vacío y su tabla (“Ver tabla”). Requisitos RNF-UI-094 a RNF-UI-099.
+Frontend del panel de administración (project/src/app/components/admin): charts/ es el kit de gráficas, una pieza por archivo (ChartCard, PeriodSelector, ColumnChart y TrendChart sobre Recharts; BarList, StackedBarList, Heatmap, Funnel y Sparkline en HTML/CSS; paleta validada para daltonismo); data/ tiene un hook por pantalla que consulta la API y deja los datos listos para dibujar (useGamesInsights, useEconomy, useAnalytics); StatRow, KpiTile y UserDetailPanel son piezas comunes. Así cada pantalla solo compone tarjetas. Cada gráfica muestra la pregunta que responde, un estado vacío y su tabla (“Ver tabla”). Requisitos RNF-UI-094 a RNF-UI-099.
+
+Estructura web del frontend (project/src/app/components/layout): PlayerLayout y AdminLayout ponen la barra superior (TopNav) con las secciones del jugador o las 6 del portal, y centran el contenido con un ancho máximo; AuthLayout divide las pantallas de acceso en un panel de presentación y el formulario; PageHeader es el título de cada página con sus acciones y el enlace “atrás” de las subpáginas. Las cuadrículas cambian de columnas según el ancho (Tailwind: sm, md, lg). La partida (GamePlayScreen) es la única pantalla sin barra: es un modo enfocado. Requisitos RNF-UI-100 a RNF-UI-107.
 
 ### 8.3 Idiomas: inglés y español
 
@@ -211,7 +213,7 @@ El siguiente diagrama muestra cómo se distribuyen físicamente los componentes.
 
 | Nodo | Contenido | Comunicación |
 | --- | --- | --- |
-| Dispositivo del usuario | Navegador web (móvil o escritorio) | HTTPS hacia Vercel (descarga de la SPA) y hacia la API (/v1, con JWT). |
+| Dispositivo del usuario | Navegador web (escritorio, tableta o celular) | HTTPS hacia Vercel (descarga de la SPA) y hacia la API (/v1, con JWT). |
 | Vercel | Frontend React + Vite compilado (archivos estáticos) | Solo sirve archivos; no accede a datos. |
 | Render / Railway | Backend NestJS (monolito modular) | TCP/SSL hacia PostgreSQL; HTTPS hacia Google, la API de noticias y el servicio de correo. |
 | PostgreSQL gestionado | Las 16 entidades del Modelo de Datos | Solo accesible desde el backend (credenciales en variables de entorno). |
@@ -237,3 +239,4 @@ Trabajo futuro: el módulo “Partidos y Estadísticas” (calendario, resultado
 | 1.7 | 25 de septiembre de 2026 | Nueva sección 8.3 (idiomas inglés y español): textos del frontend con i18next, errores traducidos en el frontend, Accept-Language y shared/i18n en el backend, contenido con columna translations, partidas con su idioma, noticias por idioma, correo y alertas del admin traducidos. La fila de Strategy describe las 5 estrategias actuales. |
 | 1.8 | 27 de septiembre de 2026 | Gráficas del panel de administración: Credits expone CreditsStatsReader para Admin (Admin → Users, Games y Credits, sin ciclos); Admin suma AdminGamesService y AdminEconomyService (Facade) y las pantallas AdminGamesScreen y AdminEconomyScreen; kit de gráficas del frontend. |
 | 1.9 | 27 de septiembre de 2026 | Refactor de legibilidad: las interfaces de estadísticas se dividen por uso (GameInsightsReader, GamesByPlayerReader y PlayersBreakdownReader); AppClock centraliza la fecha y la zona horaria; Admin tiene un controlador por pantalla; el frontend del panel se organiza en charts/ (una pieza por archivo) y data/ (un hook por pantalla). |
+| 2.0 | 27 de septiembre de 2026 | El frontend es una aplicación web: deja de simular el marco de un celular y la barra inferior (BottomNav, AdminBottomNav) se reemplaza por una barra superior. Nuevas piezas en components/layout (PlayerLayout, AdminLayout, AuthLayout, TopNav y PageHeader). Se listan las 16 pantallas. |

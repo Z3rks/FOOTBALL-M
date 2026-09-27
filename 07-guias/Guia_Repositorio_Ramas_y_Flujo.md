@@ -23,7 +23,8 @@ Football-Maestro/                 (ramas de código)
 │       ├── App.tsx               Navegación entre pantallas
 │       ├── api/                  Cliente HTTP, una función por endpoint, hook useApi
 │       └── components/           Las pantallas
-│           ├── shared/           ScreenHeader, FormField, TextInput, SelectInput, ErrorBox
+│           ├── layout/           Barra superior y estructura web (PlayerLayout, AdminLayout, AuthLayout, PageHeader)
+│           ├── shared/           FormField, TextInput, SelectInput, ErrorBox, LanguageSwitcher
 │           └── games/            Una vista por estilo de minijuego (playStyles.ts las registra)
 └── backend/                      Backend: NestJS + PostgreSQL (monolito modular)
     ├── docker-compose.yml        PostgreSQL 16 para desarrollo

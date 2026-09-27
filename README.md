@@ -28,13 +28,13 @@ Los documentos de diseño vienen en dos formatos con el mismo contenido: **`.doc
 ### 01-requisitos — Qué debe hacer la app
 | Documento | Versión | Contenido |
 |---|---|---|
-| `Documento_Requisitos_Funcionales_NoFuncionales_FootballMaestro_v2.md` | 2.3 | Requisitos funcionales de cada pantalla (RF-001 a RF-153) y no funcionales (rendimiento, seguridad, usabilidad, accesibilidad…). Es la base de todos los demás documentos |
+| `Documento_Requisitos_Funcionales_NoFuncionales_FootballMaestro_v2.md` | 2.4 | Requisitos funcionales de cada pantalla (RF-001 a RF-175) y no funcionales, incluido el diseño web (RNF-UI-100 a 107) (rendimiento, seguridad, usabilidad, accesibilidad…). Es la base de todos los demás documentos |
 | `Football_Maestro_Requisitos_Arquitectura_UML.docx` | Original (19 sep.) | Documento académico inicial: resumen, casos de uso, diagrama de clases y de despliegue. Se conserva como referencia histórica; donde difiera, mandan los documentos de las carpetas 02 a 06 (p. ej. "Partidos y Estadísticas", Redis y WebSockets quedaron fuera de alcance) |
 
 ### 02-arquitectura — Cómo está construido el backend
 | Documento | Versión | Contenido |
 |---|---|---|
-| `Documento_Arquitectura_Software_FootballMaestro` | 1.9 | Monolito modular con 6 módulos; interfaces públicas entre módulos; capas; eventos de dominio; patrones (Repository, Unit of Work, Strategy, Factory, Adapter, Observer, Facade, DTO); SOLID; stack; estructura de carpetas; idiomas inglés y español (§8.3) y despliegue |
+| `Documento_Arquitectura_Software_FootballMaestro` | 2.0 | Monolito modular con 6 módulos; interfaces públicas entre módulos; capas; eventos de dominio; patrones (Repository, Unit of Work, Strategy, Factory, Adapter, Observer, Facade, DTO); SOLID; stack; estructura de carpetas; estructura web del frontend (barra superior y layouts); idiomas inglés y español (§8.3) y despliegue |
 
 ### 03-modelo-de-datos — Las tablas
 | Documento | Versión | Contenido |
@@ -49,7 +49,7 @@ Los documentos de diseño vienen en dos formatos con el mismo contenido: **`.doc
 ### 05-pruebas — Qué se prueba
 | Documento | Versión | Contenido |
 |---|---|---|
-| `Plan_Pruebas_FootballMaestro` | 1.5 | Estrategia, casos TC-01 a TC-67, estado de la automatización (792 unitarias, 124 E2E) y Definition of Done |
+| `Plan_Pruebas_FootballMaestro` | 1.6 | Estrategia, casos TC-01 a TC-68, estado de la automatización (792 unitarias, 124 E2E) y Definition of Done |
 
 ### 06-seguridad — Riesgos y controles
 | Documento | Versión | Contenido |
@@ -67,7 +67,7 @@ Los documentos de diseño vienen en dos formatos con el mismo contenido: **`.doc
 ### 08-propuestas — Funcionalidades futuras (no implementadas)
 | Documento | Versión | Contenido |
 |---|---|---|
-| `Propuesta_Monetizacion_FootballMaestro` | 1.0 | Planes Free (anuncios alrededor del contenido, una partida por minijuego al día) y Premium (partidas ilimitadas, sin anuncios, descuento en la tienda): arquitectura, datos, endpoints, pasarela de pagos, aspectos legales, seguridad, pruebas y fases. Si se aprueba, su contenido pasa a los documentos oficiales |
+| `Propuesta_Monetizacion_FootballMaestro` | 1.1 | Planes Free (anuncios alrededor del contenido, una partida por minijuego al día) y Premium (partidas ilimitadas, sin anuncios, descuento en la tienda): arquitectura, datos, endpoints, pasarela de pagos, aspectos legales, seguridad, pruebas y fases. Si se aprueba, su contenido pasa a los documentos oficiales |
 
 ## Orden de lectura sugerido
 

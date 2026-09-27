@@ -12,7 +12,7 @@ Fecha de elaboración: 23 de septiembre de 2026
 
 Fecha de actualización: 27 de septiembre de 2026
 
-Versión: 1.5
+Versión: 1.6
 
 ---
 
@@ -162,7 +162,7 @@ Se listan los casos de prueba más representativos de cada pantalla (camino exit
 | TC-33 | RNF-SEC-01 | Inspeccionar cualquier respuesta de la API que incluya datos de USER. | El campo password_hash nunca se incluye en la respuesta. |
 | TC-34 | RNF-SEC-03 | Llamar a un endpoint /admin/* con un token válido de rol player. | La API responde 403 Forbidden; el backend valida el rol, no solo el frontend. |
 | TC-35 | RNF-SEC-06 | Ingresar un payload de script (XSS) en el campo Username de registro. | El valor se sanea/escapa antes de guardarse; no se ejecuta código en el cliente. |
-| TC-36 | RNF-COMP-01, RNF-COMP-03 | Cargar las pantallas principales en Chrome, Safari, Edge y Firefox, en móvil y escritorio. | La interfaz se ve y funciona correctamente en todos los casos. |
+| TC-36 | RNF-COMP-01, RNF-COMP-03 | Cargar las pantallas principales en Chrome, Safari, Edge y Firefox, en escritorio y en el navegador del celular. | La interfaz se ve y funciona correctamente en todos los casos. |
 | TC-37 | RNF-DISP-03 | Perder la conexión a mitad de un minijuego, después de responder 2 preguntas. | Al recuperar la conexión, las 2 respuestas ya registradas (GAME_ANSWER) no se pierden y la partida puede continuar. |
 | TC-38 | RNF-ACC-03 | Navegar SignInScreen y RegisterScreen usando solo el teclado (Tab, Enter). | Todos los campos y botones son alcanzables y accionables sin usar el mouse. |
 | TC-42 | Plan de Seguridad §6 (OWASP A04) | Enviar en PATCH /games/sessions/:id un campo score = 10 tras responder 3 de 10 bien. | El campo se rechaza o ignora; el puntaje guardado es 3, calculado en el servidor. |
@@ -196,7 +196,8 @@ Cubren funcionalidades implementadas después de la versión 1.1: Edit Profile, 
 | TC-64 | RF-166–172 | Revisar Analytics con cada período (7, 30 y 90 días). | Registros por día, embudo (cada etapa ≤ la anterior), países, métodos de registro, niveles y mapa de calor responden con su forma; un período distinto de 7, 30 o 90 responde 400. |
 | TC-65 | RF-173, RF-174 | Abrir el Dashboard y el “Ver perfil” de un jugador que jugó hoy. | Cada KPI trae la tendencia de 7 días; el perfil muestra la XP de 30 días (con la de hoy) y la precisión por categoría. Un id inexistente responde 404. |
 | TC-66 | RNF-SEC-03 | Llamar a los endpoints nuevos de gráficas con un token de jugador. | La API responde 403 en todos. |
-| TC-67 | RF-175, RNF-UI-094–099 | En el navegador: entrar a Minijuegos y Economía desde el Dashboard, cambiar el período, usar “Ver tabla” y volver con “atrás”, en inglés y en español. | Cada gráfica muestra su pregunta, su leyenda (si tiene 2 o más series), su tabla y un mensaje claro cuando no hay datos; al cambiar el período la gráfica anterior se atenúa sin parpadear. |
+| TC-68 | RNF-UI-100–107, RNF-USA-04, RNF-COMP-01 | En el navegador, recorrer todas las pantallas del jugador y del portal a 1440 px y a 390 px de ancho: acceso, Home, Games, partida, Results, News, Credits, Profile y sus subpáginas, y las 6 secciones del portal. | Cada pantalla usa todo el ancho (contenido centrado, sin marco de celular) y no tiene scroll horizontal; la barra superior está siempre visible y resalta la sección activa (en 390 px las secciones pasan a una segunda fila); las cuadrículas cambian de columnas; la partida se ve sin barra; en Users el panel del jugador va a la derecha en escritorio y debajo en celular. |
+| TC-67 | RF-175, RNF-UI-094–099 | En el navegador: entrar a Minijuegos y Economía desde los accesos del Dashboard y desde la barra superior, cambiar el período y usar “Ver tabla”, en inglés y en español. | Cada gráfica muestra su pregunta, su leyenda (si tiene 2 o más series), su tabla y un mensaje claro cuando no hay datos; al cambiar el período la gráfica anterior se atenúa sin parpadear. |
 | TC-56 | Arquitectura §3–§7 | Ejecutar la prueba de arquitectura (src/architecture.spec.ts). | Pasan sus 7 reglas: ningún servicio importa el ORM, otro módulo solo importa interfaces abstractas, la entidad USER no sale de Users y no hay dependencias circulares. |
 
 ## 6. Estado de la automatización
@@ -215,7 +216,7 @@ Casos de este documento por tipo de verificación:
 | Verificación | Casos |
 | --- | --- |
 | Automatizados (E2E) | TC-02, 05–08, 10–13, 15–20, 22–24, 26–30, 33–35, 37, 39–48 (37 casos), más TC-55, TC-59 a TC-66. Cada prueba lleva su TC en el nombre, dentro de backend/test/*.e2e-spec.ts. TC-56 es la prueba de arquitectura. |
-| Manuales en el navegador | TC-01, 03, 04, 09, 14, 21 y 25 (navegación y validaciones de pantalla), TC-50 a TC-54, TC-57, TC-58 y TC-67 (probados por el equipo entre el 24 y el 27 de septiembre de 2026). Su lógica en la API sí está cubierta por pruebas E2E. |
+| Manuales en el navegador | TC-01, 03, 04, 09, 14, 21 y 25 (navegación y validaciones de pantalla), TC-50 a TC-54, TC-57, TC-58, TC-67 y TC-68 (probados entre el 24 y el 27 de septiembre de 2026; TC-68 con capturas automáticas en Chrome a 1440 y 390 px). Su lógica en la API sí está cubierta por pruebas E2E. |
 | Pendientes (requieren herramientas) | TC-31, 32 y 49 (rendimiento: k6), TC-36 (compatibilidad entre navegadores), TC-38 (accesibilidad con teclado: axe-core o prueba manual). |
 
 ## 7. Criterios de aceptación (Definition of Done)
@@ -244,3 +245,4 @@ Los identificadores de los casos agregados en la versión 1.1 continúan la nume
 | 1.3 | 24 de septiembre de 2026 | Estilos propios por minijuego: TC-57; 364 pruebas unitarias (incluye la validación de las 203 preguntas) y 110 E2E. |
 | 1.4 | 25 de septiembre de 2026 | Inglés y español: TC-58 a TC-61; 789 pruebas unitarias (el banco de preguntas se valida en los dos idiomas) y 115 E2E (incluye las cabeceras de seguridad de Helmet). |
 | 1.5 | 27 de septiembre de 2026 | Gráficas del panel de administración: TC-62 a TC-67 (pantallas Minijuegos y Economía, Analytics por período, tendencias y actividad del jugador); 792 pruebas unitarias y 124 E2E. |
+| 1.6 | 27 de septiembre de 2026 | Diseño web: TC-68 (todas las pantallas a 1440 y 390 px, barra superior y cuadrículas adaptables); TC-67 entra a Minijuegos y Economía también por la barra superior; TC-36 se redacta para el navegador del celular. |

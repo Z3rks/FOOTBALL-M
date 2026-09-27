@@ -1,6 +1,6 @@
 # Estado del proyecto
 
-Actualizado al **27 de septiembre de 2026**. El código está en la rama `main`, salvo las gráficas nuevas del panel de administración, que están en la rama de trabajo `feature/admin-graficas` (falta aceptar su Pull Request). La documentación está en la rama `documentacion`.
+Actualizado al **27 de septiembre de 2026**. El código está en la rama `main`, salvo las gráficas nuevas del panel de administración (rama `feature/admin-graficas`) y el diseño web (rama `feature/diseno-web`, que sale de la anterior y la incluye); falta aceptar su Pull Request. La documentación está en la rama `documentacion`.
 
 ## 1. Qué funciona
 
@@ -12,9 +12,11 @@ La aplicación corre completa en local: frontend, backend y base de datos, con l
 |---|---|
 | Acceso (6) | Splash, Welcome (con Continue with Google), Sign In (Player/Admin), Register, Forgot Password, Reset Password |
 | Jugador (9) | Home (con el reto diario), Minigames, GamePlay, Results, News, Credits (con tienda), Profile, Edit Profile, Account Settings |
-| Administrador (6) | Dashboard, Users, Analytics, Reports (con exportación CSV), Minijuegos y Economía (se abren desde el Dashboard) |
+| Administrador (6) | Dashboard, Users, Analytics, Reports (con exportación CSV), Minijuegos y Economía |
 
 Las 14 pantallas de la maqueta original se conectaron a la API. GamePlay, Forgot/Reset Password, Edit Profile y Account Settings se agregaron para completar los flujos (Requisitos v2.2, RF-112).
+
+**Diseño web:** Football Maestro es una aplicación web. Las pantallas usan todo el ancho del navegador con una barra superior (5 secciones del jugador; las 6 del portal de administración) y se adaptan a escritorio, tableta y celular. La partida es un modo enfocado, sin barra (Requisitos v2.4, RNF-UI-100 a 107).
 
 **Idiomas:** toda la app está en inglés (por defecto) y español, con el selector EN | ES en Welcome y en Account Settings. Se traducen las pantallas, los errores, los minijuegos y sus 203 preguntas, la tienda, las insignias, los datos curiosos, el correo de recuperación y el panel de administración (incluidos sus CSV); las noticias se traen escritas en cada idioma (Arquitectura §8.3).
 
@@ -39,12 +41,12 @@ Las 14 pantallas de la maqueta original se conectaron a la API. GamePlay, Forgot
 |---|---|
 | Unitarias (incluye la prueba de arquitectura y la validación de las 203 preguntas en los dos idiomas) | 792 en verde |
 | E2E contra PostgreSQL | 124 en verde |
-| Casos del Plan de Pruebas (67) | 47 automatizados, 15 probados a mano, 5 pendientes de herramientas (Plan de Pruebas §6) |
+| Casos del Plan de Pruebas (68) | 47 automatizados, 16 probados a mano, 5 pendientes de herramientas (Plan de Pruebas §6) |
 
 ## 2. Qué falta
 
 ### Para terminar la versión actual
-- [ ] Aceptar el Pull Request `feature/admin-graficas` → `main` (gráficas del panel de administración).
+- [ ] Aceptar el Pull Request `feature/diseno-web` → `main` (gráficas del panel de administración y diseño web; incluye `feature/admin-graficas`).
 - [ ] Revisión de las 203 preguntas por alguien del equipo (sobre todo precios de traspasos y capacidades de estadios, que varían según la fuente) y de su traducción al inglés.
 - [ ] Imágenes para los minijuegos: fotos con licencia libre (Wikimedia Commons, con crédito del autor) para estadios y jugadores. Los escudos se siguen dibujando con los colores del club, porque son marcas registradas.
 

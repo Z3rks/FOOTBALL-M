@@ -14,12 +14,13 @@ Fecha de elaboración: 4 de septiembre de 2026
 
 Fecha de actualización: 27 de septiembre de 2026
 
-Versión: 2.3
+Versión: 2.4
 
 1\. Introducción
 
 El presente documento describe los requisitos funcionales y no
-funcionales del proyecto "Football Maestro", una aplicación móvil/web
+funcionales del proyecto "Football Maestro", una aplicación web
+(responsiva: se usa desde el navegador en escritorio, tableta o celular)
 orientada a aficionados al fútbol que combina noticias deportivas,
 minijuegos de trivia y conocimiento futbolístico, seguimiento de
 progreso del usuario (niveles, rachas, experiencia), un sistema de
@@ -48,10 +49,10 @@ módulos principales del sistema, derivados directamente del tablero del
 proyecto, junto con la cantidad de historias de usuario relevadas para
 cada uno (44 historias de usuario en total). El panel administrativo,
 originalmente una sola pantalla, se reorganizó en 4 pantallas
-independientes con su propia navegación (AdminBottomNav):
-AdminDashboardScreen, AdminUsersScreen, AdminAnalyticsScreen y
-AdminReportsScreen. En la versión 2.3 se agregaron AdminGamesScreen y
-AdminEconomyScreen, que se abren desde los accesos rápidos del Dashboard.
+independientes: AdminDashboardScreen, AdminUsersScreen,
+AdminAnalyticsScreen y AdminReportsScreen. En la versión 2.3 se
+agregaron AdminGamesScreen y AdminEconomyScreen. Desde la versión 2.4
+las 6 pantallas se recorren con la barra superior del portal.
 
   --------------------------------------------------------------------------
   **\#**   **Módulo / Pantalla**                 **N.º de historias de
@@ -398,10 +399,11 @@ MainHomeScreen
   ------------------------------------------------------------------------
   **ID**     **Historia relacionada** **Requisito**
   ---------- ------------------------ ------------------------------------
-  RF-055     \(12\) Header con nivel  Debe mostrar el avatar \"FM\", el
-             y racha                  saludo \"Welcome back!\" y el nombre
-                                      del usuario (ej.
-                                      \"FootballFan123\").
+  RF-055     \(12\) Header con nivel  Debe mostrar el saludo "Welcome
+             y racha                  back, {nombre}!" como título de la
+                                      página y, en la barra superior, el
+                                      avatar con las iniciales del
+                                      usuario.
 
   RF-056     \(12\) Header con nivel  Debe mostrar el nivel actual del
              y racha                  usuario (ej. \"Lvl 12\") con ícono
@@ -411,10 +413,12 @@ MainHomeScreen
              y racha                  consecutivos (ej. \"7\") con ícono
                                       Flame.
 
-  RF-058     \(12\) Header con nivel  El header es informativo; no debe
-             y racha                  tener elementos que naveguen a otra
-                                      pantalla directamente (la navegación
-                                      se hace por BottomNav).
+  RF-058     \(12\) Header con nivel  El saludo y la tarjeta "My Stats"
+             y racha                  son informativos. La navegación
+                                      entre secciones se hace por la barra
+                                      superior (Home, Games, News,
+                                      Credits, Profile); el avatar de la
+                                      barra lleva al Perfil.
 
   RF-059     \(13\) Tarjeta de reto   Debe mostrar la etiqueta \"DAILY
              diario (Daily Challenge) CHALLENGE\", el título \"Football
@@ -433,10 +437,9 @@ MainHomeScreen
              diario (Daily Challenge) de juego del reto diario dentro de
                                       MinigamesScreen.
 
-  RF-063     \(14\) Vista previa de   Debe mostrar una vista previa
-             minijuegos               horizontal (scroll) con al menos 4
-                                      minijuegos: ícono, nombre y
-                                      dificultad.
+  RF-063     \(14\) Vista previa de   Debe mostrar una vista previa en
+             minijuegos               cuadrícula con 5 minijuegos: ícono,
+                                      nombre y dificultad.
 
   RF-064     \(14\) Vista previa de   El enlace \"See all\" debe estar
              minijuegos               visible junto al título
@@ -451,7 +454,7 @@ MainHomeScreen
                                       específico.
 
   RF-067     \(15\) Vista previa de   Debe mostrar una vista previa de
-             noticias y \"My Stats\"  \"Latest Football News\" con 2
+             noticias y \"My Stats\"  "Latest Football News" con 3
                                       artículos (imagen, título, fuente,
                                       tiempo transcurrido).
 
@@ -485,9 +488,10 @@ NewsScreen
              de fútbol                artículo (ej. ESPN, Sky Sports, BBC
                                       Sport).
 
-  RF-074     \(16\) Feed de noticias  El feed debe permitir scroll
-             de fútbol                vertical continuo dentro del área de
-                                      contenido, con BottomNav siempre
+  RF-074     \(16\) Feed de noticias  El feed debe mostrarse en columnas
+             de fútbol                (1 en celular, 2 en tableta y 3 en
+                                      escritorio) con scroll vertical
+                                      continuo y la barra superior siempre
                                       visible.
 
   RF-075     \(17\) Filtro de         Debe mostrar 5 categorías: All,
@@ -542,9 +546,8 @@ MinigamesScreen
                                       Rules) con ícono Star.
 
   RF-086     \(19\) Catálogo de       La cuadrícula debe permitir scroll
-             minijuegos               vertical continuo, con BottomNav
-                                      siempre visible en la parte
-                                      inferior.
+             minijuegos               vertical continuo, con la barra
+                                      superior siempre visible.
 
   RF-087     \(20\) Jugar un          Al hacer clic en cualquier tarjeta
              minijuego desde el       de minijuego, debe iniciar ese juego
@@ -581,8 +584,9 @@ ResultsScreen
              precisión                correctas e incorrectas por
                                       separado.
 
-  RF-094     \(21\) Puntaje final y   El botón \"atrás\" del header debe
-             precisión                regresar a MinigamesScreen.
+  RF-094     \(21\) Puntaje final y   El enlace "atrás" (Games) sobre el
+             precisión                título de la página debe regresar a
+                                      MinigamesScreen.
 
   RF-095     \(22\) Cuadrícula de     Debe mostrar una cuadrícula de 5
              aciertos/errores         columnas con un cuadro numerado por
@@ -756,12 +760,11 @@ AdminDashboardScreen
              ranking y accesos        llevar directo a AdminUsersScreen,
              rápidos                  AdminGamesScreen, AdminEconomyScreen
                                       o AdminAnalyticsScreen según
-                                      corresponda. Reportes sigue en
-                                      AdminBottomNav.
+                                      corresponda.
 
-  RF-129     \(30\) Gráfica DAU,      El AdminBottomNav debe permanecer
-             ranking y accesos        visible y resaltar \"Dashboard\"
-             rápidos                  como pestaña activa.
+  RF-129     \(30\) Gráfica DAU,      La barra superior del portal debe
+             ranking y accesos        permanecer visible y resaltar
+             rápidos                  "Panel" como sección activa.
 
   RF-173     \(43\) Tendencias del    Cada una de las 4 tarjetas de KPI
              panel                    debe incluir una mini gráfica con la
@@ -770,11 +773,10 @@ AdminDashboardScreen
                                       y precisión de cada día).
 
   RF-175     \(43\) Tendencias del    AdminGamesScreen y
-             panel                    AdminEconomyScreen se abren solo
-                                      desde los accesos rápidos del
-                                      Dashboard y tienen botón "atrás"
-                                      hacia él; AdminBottomNav mantiene 4
-                                      pestañas.
+             panel                    AdminEconomyScreen se abren desde
+                                      los accesos rápidos del Dashboard o
+                                      desde la barra superior del portal,
+                                      que muestra las 6 secciones.
   ------------------------------------------------------------------------
 
 AdminUsersScreen
@@ -805,11 +807,14 @@ AdminUsersScreen
                                       país, nombre, indicador de estado,
                                       email, nivel, racha y XP.
 
-  RF-135     \(32\) Panel de acciones Al hacer clic en la tarjeta (o en el
-             expandible por usuario   botón de más opciones), debe
-                                      expandirse un panel con 3 acciones:
-                                      Ver perfil, Suspender/Activar (según
-                                      estado actual), Eliminar.
+  RF-135     \(32\) Panel de acciones Al hacer clic en la tarjeta debe
+             expandible por usuario   abrirse el panel del jugador con 3
+                                      acciones: Ver perfil,
+                                      Suspender/Activar (según estado
+                                      actual) y Eliminar. En escritorio el
+                                      panel va a la derecha de la lista;
+                                      en pantallas angostas, debajo de la
+                                      tarjeta.
 
   RF-136     \(32\) Panel de acciones El panel expandido debe mostrar
              expandible por usuario   también la fecha de registro y el
@@ -845,9 +850,9 @@ AdminAnalyticsScreen
                                       destacado de Día 1/7/30 en 3
                                       tarjetas.
 
-  RF-141     \(33\) KPIs, crecimiento El AdminBottomNav debe permanecer
-             y retención              visible y resaltar \"Analytics\"
-                                      como pestaña activa.
+  RF-141     \(33\) KPIs, crecimiento La barra superior del portal debe
+             y retención              permanecer visible y resaltar
+                                      "Analytics" como sección activa.
 
   RF-142     \(34\) Categorías,       Debe mostrar las partidas jugadas
              sesión y precisión       por cada categoría del catálogo de
@@ -946,14 +951,15 @@ AdminReportsScreen
              CSV                      precisión, tendencia arriba/abajo).
 
   RF-152     \(36\) Top jugadores,    Debe mostrar el pico de actividad
-             categorías y exportar    por hora del día (24 barras) y el
-             CSV                      botón \"Exportar Reporte Completo
-                                      (CSV)\" al final de la pantalla.
+             categorías y exportar    por hora del día (24 barras). El
+             CSV                      botón "Exportar Reporte Completo
+                                      (CSV)" va junto al título de la
+                                      página.
 
-  RF-153     \(36\) Top jugadores,    El botón CSV del header y el de
-             categorías y exportar    \"Exportar Reporte Completo\" deben
-             CSV                      generar/descargar el archivo sin
-                                      salir de AdminReportsScreen.
+  RF-153     \(36\) Top jugadores,    El botón "Exportar Reporte Completo
+             categorías y exportar    (CSV)" debe generar/descargar el
+             CSV                      archivo sin salir de
+                                      AdminReportsScreen.
   ------------------------------------------------------------------------
 
 AdminGamesScreen
@@ -1084,19 +1090,25 @@ WelcomeScreen
   --------------------------------------------------------------------------
   **ID**       **Historia relacionada** **Requisito**
   ------------ ------------------------ ------------------------------------
-  RNF-UI-007   \(1\) Pantalla de        El fondo debe incluir un patrón
-               bienvenida con logo y    sutil de campo de fútbol (líneas
-               propuesta                repetidas cada 50px) con 3% de
-                                        opacidad.
+  RNF-UI-007   \(1\) Pantalla de        En escritorio la pantalla se divide
+               bienvenida con logo y    en dos: a la izquierda un panel de
+               propuesta                presentación con degradado de
+                                        primary a secondary y un patrón de
+                                        campo de fútbol (líneas cada 50px),
+                                        con el lema y 3 atractivos de la
+                                        app; a la derecha los botones de
+                                        acceso. En pantallas angostas solo
+                                        se ve el acceso.
 
   RNF-UI-008   \(1\) Pantalla de        El ícono de trofeo debe ir en color
                bienvenida con logo y    accent dentro del círculo primary,
                propuesta                centrado.
 
-  RNF-UI-009   \(1\) Pantalla de        El pie de página debe mostrar el
-               bienvenida con logo y    texto \"Learn football through fun
-               propuesta                challenges\" centrado, en tono
-                                        muted.
+  RNF-UI-009   \(1\) Pantalla de        El texto "Learn football through fun
+               bienvenida con logo y    challenges" debe ir debajo del lema
+               propuesta                en el panel de presentación
+                                        (escritorio) o al pie, centrado y en
+                                        tono muted (pantallas angostas).
 
   RNF-UI-010   \(2\) Botones Sign In /  \"Sign In\" debe verse como botón
                Create Account           relleno (bg-primary, texto blanco,
@@ -1130,9 +1142,11 @@ SignInScreen
   --------------------------------------------------------------------------
   **ID**       **Historia relacionada** **Requisito**
   ------------ ------------------------ ------------------------------------
-  RNF-UI-016   \(6\) Iniciar sesión     El header debe usar bg-background
-               como Jugador             con el título \"Sign In\" centrado y
-                                        texto en foreground.
+  RNF-UI-016   \(6\) Iniciar sesión     El formulario debe ir a la derecha
+               como Jugador             del panel de presentación (en
+                                        escritorio), con el título "Sign In"
+                                        en foreground y el enlace "atrás" y
+                                        el selector de idioma arriba.
 
   RNF-UI-017   \(6\) Iniciar sesión     La opción \"Player\" activa debe
                como Jugador             tener fondo blanco, sombra y el
@@ -1143,11 +1157,11 @@ SignInScreen
                como Jugador             bg-primary con texto blanco, y
                                         cambiar a bg-secondary en hover.
 
-  RNF-UI-019   \(7\) Iniciar sesión     El header debe cambiar a
-               como Administrador       bg-secondary, con título \"Admin
-                                        Portal\" en blanco y el ícono
-                                        ShieldCheck en color accent a la
-                                        derecha.
+  RNF-UI-019   \(7\) Iniciar sesión     El panel de presentación debe
+               como Administrador       cambiar al degradado secondary y el
+                                        título a "Admin Portal", con el
+                                        ícono ShieldCheck en color accent a
+                                        la derecha.
 
   RNF-UI-020   \(7\) Iniciar sesión     Debe mostrarse el texto de
                como Administrador       advertencia \"Admin credentials
@@ -1177,9 +1191,10 @@ RegisterScreen
   --------------------------------------------------------------------------
   **ID**       **Historia relacionada** **Requisito**
   ------------ ------------------------ ------------------------------------
-  RNF-UI-025   \(9\) Crear cuenta con   El header debe mostrar el botón
-               usuario, correo y        \"atrás\" (ArrowLeft) y el título
-               contraseña               \"Create Account\" centrado.
+  RNF-UI-025   \(9\) Crear cuenta con   La pantalla debe mostrar el enlace
+               usuario, correo y        "atrás" (ArrowLeft) arriba a la
+               contraseña               izquierda y el título "Create
+                                        Account" sobre el formulario.
 
   RNF-UI-026   \(9\) Crear cuenta con   Los inputs deben tener fondo
                usuario, correo y        input-background, borde, esquinas
@@ -1217,18 +1232,21 @@ MainHomeScreen
   --------------------------------------------------------------------------
   **ID**       **Historia relacionada** **Requisito**
   ------------ ------------------------ ------------------------------------
-  RNF-UI-032   \(12\) Header con nivel  El header debe tener fondo
-               y racha                  bg-primary con sombra media
-                                        (shadow-md).
+  RNF-UI-032   \(12\) Header con nivel  La barra superior debe tener fondo
+               y racha                  bg-primary y quedar fija arriba al
+                                        hacer scroll.
 
-  RNF-UI-033   \(12\) Header con nivel  El avatar debe ser un círculo
-               y racha                  bg-accent con las iniciales \"FM\"
-                                        en color primary, tamaño 12x12.
+  RNF-UI-033   \(12\) Header con nivel  El avatar de la barra superior debe
+               y racha                  ser un círculo bg-accent con las
+                                        iniciales del usuario en color
+                                        primary.
 
-  RNF-UI-034   \(12\) Header con nivel  Los badges de nivel y racha deben
-               y racha                  tener fondo semitransparente
-                                        (white/10) en píldora redondeada,
-                                        con texto blanco.
+  RNF-UI-034   \(12\) Header con nivel  Los badges de nivel y racha de la
+               y racha                  barra superior deben tener fondo
+                                        semitransparente (white/10) en
+                                        píldora redondeada, con texto
+                                        blanco; en pantallas angostas se
+                                        ocultan (siguen en el Perfil).
 
   RNF-UI-035   \(13\) Tarjeta de reto   La tarjeta debe tener un fondo
                diario (Daily Challenge) degradado de primary a secondary,
@@ -1243,23 +1261,27 @@ MainHomeScreen
                diario (Daily Challenge) bg-accent, texto primary bold, ancho
                                         completo, con sombra media.
 
-  RNF-UI-038   \(14\) Vista previa de   Cada tarjeta de minijuego debe tener
-               minijuegos               ancho fijo (w-32), borde, esquinas
+  RNF-UI-038   \(14\) Vista previa de   Las tarjetas de minijuego deben ir
+               minijuegos               en una cuadrícula (2 columnas en
+                                        celular, 3 en tableta y 5 en
+                                        escritorio), con borde, esquinas
                                         redondeadas xl y sombra que aumenta
                                         en hover.
 
-  RNF-UI-039   \(14\) Vista previa de   El scroll horizontal debe ocultar la
-               minijuegos               barra de desplazamiento
-                                        (scrollbar-hide).
+  RNF-UI-039   \(14\) Vista previa de   El reto diario y "My Stats" deben ir
+               minijuegos               lado a lado en escritorio (el reto
+                                        ocupa 2 de 3 columnas) y uno debajo
+                                        del otro en pantallas angostas.
 
   RNF-UI-040   \(15\) Vista previa de   Cada artículo debe mostrar una
-               noticias y \"My Stats\"  imagen de 128px de alto y el título
+               noticias y \"My Stats\"  imagen de 160px de alto y el título
                                         truncado a 2 líneas (line-clamp-2).
 
-  RNF-UI-041   \(15\) Vista previa de   \"My Stats\" debe mostrarse en 3
-               noticias y \"My Stats\"  columnas con íconos Target
+  RNF-UI-041   \(15\) Vista previa de   "My Stats" debe mostrarse como una
+               noticias y \"My Stats\"  lista en tarjeta con íconos Target
                                         (Accuracy), Award (Badges) y
-                                        TrendingUp (Total XP).
+                                        TrendingUp (Total XP), con el valor
+                                        a la derecha.
   --------------------------------------------------------------------------
 
 NewsScreen
@@ -1267,10 +1289,10 @@ NewsScreen
   --------------------------------------------------------------------------
   **ID**       **Historia relacionada** **Requisito**
   ------------ ------------------------ ------------------------------------
-  RNF-UI-042   \(16\) Feed de noticias  El header debe tener fondo
-               de fútbol                bg-primary con el título \"Football
-                                        News\" y subtítulo \"Stay updated
-                                        with the latest\".
+  RNF-UI-042   \(16\) Feed de noticias  El título de la página "Football
+               de fútbol                News" y su subtítulo "Stay updated
+                                        with the latest" deben ir debajo de
+                                        la barra superior, en foreground.
 
   RNF-UI-043   \(16\) Feed de noticias  Cada tarjeta de noticia debe tener
                de fútbol                imagen de 160px de alto, borde y
@@ -1283,8 +1305,8 @@ NewsScreen
 
   RNF-UI-045   \(17\) Filtro de         La categoría activa debe verse con
                categorías de noticias   fondo bg-primary y texto blanco; las
-                                        inactivas con fondo bg-muted y texto
-                                        muted-foreground.
+                                        inactivas con fondo de tarjeta,
+                                        borde y texto muted-foreground.
 
   RNF-UI-046   \(17\) Filtro de         Los tabs deben permitir scroll
                categorías de noticias   horizontal si no caben en el ancho
@@ -1302,14 +1324,14 @@ MinigamesScreen
   --------------------------------------------------------------------------
   **ID**       **Historia relacionada** **Requisito**
   ------------ ------------------------ ------------------------------------
-  RNF-UI-048   \(19\) Catálogo de       El header debe tener fondo
-               minijuegos               bg-primary con el título
-                                        \"Mini-games\" y subtítulo \"Test
-                                        your football knowledge\".
+  RNF-UI-048   \(19\) Catálogo de       El título de la página "Mini-games"
+               minijuegos               y su subtítulo "Test your football
+                                        knowledge" deben ir debajo de la
+                                        barra superior, en foreground.
 
   RNF-UI-049   \(19\) Catálogo de       Cada tarjeta debe mostrar el ícono
-               minijuegos               emoji del juego en tamaño grande
-                                        (text-4xl), con borde y sombra que
+               minijuegos               del juego en un cuadro con su color
+                                        propio, con borde y sombra que
                                         aumenta en hover.
 
   RNF-UI-050   \(19\) Catálogo de       El badge de dificultad debe usar
@@ -1372,10 +1394,11 @@ ProfileScreen
   --------------------------------------------------------------------------
   **ID**       **Historia relacionada** **Requisito**
   ------------ ------------------------ ------------------------------------
-  RNF-UI-061   \(24\) Cabecera con      El header debe tener fondo
-               avatar y estadísticas    bg-primary, con el avatar de 96px en
-                                        círculo bg-accent centrado y con
-                                        sombra.
+  RNF-UI-061   \(24\) Cabecera con      La tarjeta de identidad (columna
+               avatar y estadísticas    izquierda en escritorio) debe tener
+                                        fondo bg-primary, con el avatar de
+                                        96px en círculo bg-accent centrado y
+                                        con sombra.
 
   RNF-UI-062   \(24\) Cabecera con      El nombre debe ir en blanco, 2xl,
                avatar y estadísticas    bold; el email en blanco al 80% de
@@ -1413,9 +1436,10 @@ CreditsScreen
   --------------------------------------------------------------------------
   **ID**       **Historia relacionada** **Requisito**
   ------------ ------------------------ ------------------------------------
-  RNF-UI-068   \(27\) Saldo y formas de El bloque de saldo debe tener fondo
-               ganar créditos           degradado de accent/20 a accent/5,
-                                        con ícono Coins en círculo accent.
+  RNF-UI-068   \(27\) Saldo y formas de El saldo debe ir junto al título de
+               ganar créditos           la página, con fondo degradado de
+                                        accent/20 a accent/5 e ícono Coins
+                                        en círculo accent.
 
   RNF-UI-069   \(27\) Saldo y formas de Cada método de ganar créditos debe
                ganar créditos           mostrarse en una fila con ícono,
@@ -1445,11 +1469,13 @@ AdminDashboardScreen
                                         las informativas en azul, cada una
                                         con ícono AlertCircle.
 
-  RNF-UI-074   \(29\) Alertas del       Los KPIs deben mostrarse en grid
-               sistema y KPIs           2×2, cada tarjeta con ícono en
-                                        círculo blanco, fondo de color
-                                        distintivo, y flecha de tendencia
-                                        (verde=positiva, roja=negativa).
+  RNF-UI-074   \(29\) Alertas del       Los KPIs deben mostrarse en 4
+               sistema y KPIs           columnas en escritorio y en grid 2×2
+                                        en pantallas angostas, cada tarjeta
+                                        con ícono en círculo blanco, fondo
+                                        de color distintivo y flecha de
+                                        tendencia (verde=positiva,
+                                        roja=negativa).
 
   RNF-UI-075   \(30\) Gráfica DAU,      La gráfica DAU debe usar área con
                ranking y accesos        degradado azul (primary), tooltip
@@ -1462,8 +1488,9 @@ AdminDashboardScreen
                                         al líder.
 
   RNF-UI-077   \(30\) Gráfica DAU,      Los accesos rápidos deben mostrarse
-               ranking y accesos        en grid de 2 columnas, con ícono,
-               rápidos                  título, frase explicativa y efecto
+               ranking y accesos        en 4 columnas en escritorio (2 en
+               rápidos                  pantallas angostas), con ícono,
+                                        título, frase explicativa y efecto
                                         hover con sombra y borde primary.
   --------------------------------------------------------------------------
 
@@ -1472,15 +1499,16 @@ AdminUsersScreen
   --------------------------------------------------------------------------
   **ID**       **Historia relacionada** **Requisito**
   ------------ ------------------------ ------------------------------------
-  RNF-UI-078   \(31\) Buscador y        El buscador debe estar integrado en
-               filtros de usuarios      el header (fondo bg-secondary), con
-                                        ícono Search y botón \"×\" para
-                                        limpiar cuando hay texto.
+  RNF-UI-078   \(31\) Buscador y        El buscador debe ir debajo del
+               filtros de usuarios      título de la página, junto a las
+                                        píldoras de filtro, con ícono Search
+                                        y botón "✕" para limpiar cuando hay
+                                        texto.
 
   RNF-UI-079   \(31\) Buscador y        La píldora de filtro activa debe
                filtros de usuarios      verse en fondo primary con texto
-                                        blanco; las inactivas en fondo
-                                        muted.
+                                        blanco; las inactivas con fondo de
+                                        tarjeta y borde.
 
   RNF-UI-080   \(32\) Panel de acciones El indicador de estado debe ser un
                expandible por usuario   punto verde (activo) o gris
@@ -1494,10 +1522,12 @@ AdminUsersScreen
                                         \"Eliminar\" rojo, \"Ver perfil\"
                                         azul.
 
-  RNF-UI-082   \(32\) Panel de acciones El panel expandido debe conectarse
-               expandible por usuario   visualmente a la tarjeta del usuario
-                                        (fondo muted, sin borde superior,
-                                        esquinas inferiores redondeadas).
+  RNF-UI-082   \(32\) Panel de acciones El panel del jugador debe verse en
+               expandible por usuario   una tarjeta propia: fija a la
+                                        derecha de la lista en escritorio y
+                                        debajo de la tarjeta en pantallas
+                                        angostas. La tarjeta elegida se
+                                        resalta con borde primary.
   --------------------------------------------------------------------------
 
 AdminAnalyticsScreen
@@ -1540,8 +1570,9 @@ AdminReportsScreen
   **ID**       **Historia relacionada** **Requisito**
   ------------ ------------------------ ------------------------------------
   RNF-UI-089   \(35\) Métricas clave y  Las 4 métricas clave deben mostrarse
-               resumen semanal          en grid 2×2, cada una con su emoji
-                                        distintivo arriba.
+               resumen semanal          en 4 columnas en escritorio (grid
+                                        2×2 en pantallas angostas), cada una
+                                        con su emoji distintivo arriba.
 
   RNF-UI-090   \(35\) Métricas clave y  La fila de la semana más reciente en
                resumen semanal          la tabla debe resaltarse con fondo
@@ -1557,9 +1588,9 @@ AdminReportsScreen
                CSV                      de mayor uso (20-22h), el resto en
                                         azul semitransparente.
 
-  RNF-UI-093   \(36\) Top jugadores,    El botón de exportar debe tener
-               categorías y exportar    borde punteado, ícono Download y
-               CSV                      texto centrado.
+  RNF-UI-093   \(36\) Top jugadores,    El botón de exportar debe ir junto
+               categorías y exportar    al título de la página, en bg-
+               CSV                      primary, con ícono Download.
   --------------------------------------------------------------------------
 
 Gráficas del panel de administración (AdminDashboardScreen, AdminAnalyticsScreen, AdminGamesScreen, AdminEconomyScreen y "Ver perfil" de AdminUsersScreen)
@@ -1603,6 +1634,73 @@ Gráficas del panel de administración (AdminDashboardScreen, AdminAnalyticsScre
                                         visible.
   --------------------------------------------------------------------------
 
+Diseño web (todas las pantallas, versión 2.4)
+
+  --------------------------------------------------------------------------
+  **ID**       **Historia relacionada** **Requisito**
+  ------------ ------------------------ ------------------------------------
+  RNF-UI-100   Todas las pantallas      La aplicación es web: cada pantalla
+                                        ocupa todo el ancho de la ventana
+                                        del navegador (no se simula el marco
+                                        de un celular). El contenido va
+                                        centrado con un ancho máximo de
+                                        1152px y márgenes laterales de 16px
+                                        en celular y 32px en escritorio.
+
+  RNF-UI-101   Pantallas del jugador    La barra superior del jugador debe
+                                        mostrar el logo, las 5 secciones
+                                        (Home, Games, News, Credits,
+                                        Profile) con la activa resaltada y,
+                                        a la derecha, nivel, racha, selector
+                                        de idioma y avatar. En pantallas
+                                        angostas las secciones pasan a una
+                                        segunda fila con scroll horizontal.
+
+  RNF-UI-102   Portal de                La barra superior del portal debe
+               administración           tener fondo secondary, la etiqueta
+                                        "Portal de administración", las 6
+                                        secciones (Panel, Usuarios,
+                                        Minijuegos, Economía, Analytics,
+                                        Reportes), el selector de idioma y
+                                        el botón "Salir".
+
+  RNF-UI-103   Todas las pantallas      Cada página empieza con su título y
+                                        subtítulo; sus acciones (período,
+                                        actualizar, exportar, saldo) van a
+                                        la derecha del título. Las
+                                        subpáginas (Edit Profile, Account
+                                        Settings, Results) muestran arriba
+                                        un enlace "atrás" hacia la página de
+                                        la que salen.
+
+  RNF-UI-104   Todas las pantallas      Las cuadrículas se adaptan al ancho:
+                                        1 o 2 columnas en celular y de 3 a 5
+                                        en escritorio (minijuegos, noticias,
+                                        tienda). Las gráficas del panel van
+                                        en 2 columnas desde 1024px y el mapa
+                                        de calor ocupa todo el ancho.
+
+  RNF-UI-105   Acceso (Welcome, Sign    Las pantallas de acceso comparten la
+               In, Register,            misma estructura: panel de
+               contraseña)              presentación a la izquierda y
+                                        formulario a la derecha en
+                                        escritorio; solo el formulario en
+                                        pantallas angostas.
+
+  RNF-UI-106   Partida                  La partida es un modo enfocado:
+               (GamePlayScreen)         ocupa toda la ventana sin la barra
+                                        de secciones, con la pregunta
+                                        centrada (ancho máximo 672px), la
+                                        barra de progreso arriba y el botón
+                                        X para salir.
+
+  RNF-UI-107   Perfil (ProfileScreen)   En escritorio, la identidad y el
+                                        menú van a la izquierda y las
+                                        estadísticas y el rendimiento a la
+                                        derecha; en pantallas angostas el
+                                        menú queda al final.
+  --------------------------------------------------------------------------
+
 5.2 Requisitos no funcionales generales
 
 A continuación se presentan los requisitos no funcionales generales del
@@ -1630,9 +1728,9 @@ escalado, degradados) que forman parte central de la experiencia.*
                  usuarios en el panel administrativo deben reflejar
                  resultados en tiempo real, en menos de 1 segundo.
 
-  RNF-PERF-04    La carga de las vistas previas horizontales (minijuegos,
-                 noticias) en MainHomeScreen no debe bloquear el
-                 renderizado del resto de la pantalla.
+  RNF-PERF-04    La carga de las vistas previas (minijuegos, noticias) en
+                 MainHomeScreen no debe bloquear el renderizado del resto
+                 de la pantalla.
 
   RNF-PERF-05    El sistema debe soportar el registro y consulta de
                  estadísticas (XP, precisión, rachas) sin degradar el
@@ -1704,9 +1802,11 @@ hover/disabled).*
                  deben ser claros, visibles y no bloquear permanentemente
                  el flujo del usuario.
 
-  RNF-USA-04     La navegación inferior (BottomNav) debe permanecer
-                 visible y accesible en todas las pantallas principales
-                 de la aplicación de jugador.
+  RNF-USA-04     La barra superior (del jugador o del portal de
+                 administración) debe permanecer visible y accesible en
+                 todas las pantallas principales, fija arriba al hacer
+                 scroll. La partida es la única excepción (modo
+                 enfocado).
 
   RNF-USA-05     El sistema debe mantener el punto de scroll del usuario
                  al regresar de una vista externa o al cambiar de pestaña
@@ -1722,21 +1822,22 @@ experiencia consistente en distintos dispositivos.*
   -----------------------------------------------------------------------
   **ID**         **Requisito**
   -------------- --------------------------------------------------------
-  RNF-COMP-01    La interfaz debe ser responsiva y adaptarse
-                 correctamente a resoluciones móviles, tablet y
-                 escritorio.
+  RNF-COMP-01    La interfaz es una aplicación web responsiva: debe verse
+                 y usarse correctamente en escritorio, tableta y celular,
+                 desde 360px de ancho, sin scroll horizontal de la
+                 página.
 
-  RNF-COMP-02    Las cuadrículas de contenido (minijuegos, tienda de
-                 créditos, resultados) deben reorganizarse de forma
-                 legible en pantallas pequeñas.
+  RNF-COMP-02    Las cuadrículas de contenido (minijuegos, noticias,
+                 tienda de créditos, resultados y gráficas) deben
+                 reorganizar sus columnas según el ancho de la ventana.
 
   RNF-COMP-03    El sistema debe funcionar correctamente en los
                  navegadores modernos más utilizados (Chrome, Safari,
                  Edge, Firefox) en sus últimas dos versiones estables.
 
   RNF-COMP-04    Los flujos de autenticación externa (Google OAuth) y de
-                 exportación (CSV) deben operar de forma consistente
-                 entre dispositivos móviles y de escritorio.
+                 exportación (CSV) deben operar de forma consistente en
+                 el navegador de escritorio y de celular.
   -----------------------------------------------------------------------
 
 Disponibilidad y confiabilidad
@@ -1859,3 +1960,14 @@ jugador en "Ver perfil". El radar de precisión se reemplaza por
 barras (RF-144) y los requisitos de color de las gráficas se ajustan a
 una paleta validada para daltonismo (RNF-UI-084 a RNF-UI-088 y
 RNF-UI-094 a RNF-UI-099).
+
+Nota de versión 2.4 (27 de septiembre de 2026): Football Maestro es una
+aplicación web, no una app de celular. Las pantallas dejan de simular el
+marco de un teléfono (375px) y usan todo el ancho del navegador: la
+barra inferior (BottomNav y AdminBottomNav) se reemplaza por una barra
+superior, y en el portal de administración esa barra muestra las 6
+secciones, incluidas Minijuegos y Economía (RF-128, RF-129, RF-141 y
+RF-175). Se agregan RNF-UI-100 a RNF-UI-107 (diseño web) y se ajustan los
+requisitos de interfaz que describían encabezados y rejillas de celular,
+RNF-USA-04 y RNF-COMP-01, 02 y 04. Los requisitos funcionales no cambian
+de fondo: solo dónde aparece cada elemento.

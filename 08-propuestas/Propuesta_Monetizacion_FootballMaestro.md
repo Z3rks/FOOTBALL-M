@@ -10,9 +10,9 @@ Planes Free y Premium, anuncios no intrusivos y pagos
 
 Fecha de elaboración: 24 de septiembre de 2026
 
-Fecha de actualización: 24 de septiembre de 2026
+Fecha de actualización: 27 de septiembre de 2026
 
-Versión: 1.0
+Versión: 1.1
 
 ---
 
@@ -53,25 +53,23 @@ Los anuncios se muestran alrededor de lo que el jugador está haciendo, nunca en
 
 | Pantalla | Ubicación propuesta |
 | --- | --- |
-| Home, Minigames, News, Profile | Un banner fijo justo encima de la barra de navegación inferior, y una tarjeta "Patrocinado" entre secciones del contenido. |
-| GamePlay (partida) | Solo un banner delgado al final de la pantalla, separado de los botones de respuesta. Nunca entre la pregunta y las opciones. |
+| Home, Minigames, News, Profile | En escritorio, un banner horizontal (728×90) al final del contenido o una columna lateral (300×250) donde la página deja espacio; en celular, un banner (320×50) al final del contenido. Además, una tarjeta "Patrocinado" entre secciones. Nunca dentro de la barra superior. |
+| GamePlay (partida) | Solo un banner delgado debajo de la zona de juego, separado de los botones de respuesta. Nunca entre la pregunta y las opciones. |
 | Results | Una tarjeta "Patrocinado" debajo del resultado y del dato curioso. |
 | Acceso y Admin | Sin anuncios (Splash, Welcome, Sign In, Register, recuperar contraseña y panel administrativo). |
 
 Formatos prohibidos: ventanas emergentes, anuncios a pantalla completa (interstitial), videos con sonido automático y anuncios que muevan los botones al cargar. Esto además cumple las políticas de las redes de anuncios, que prohíben ubicar anuncios donde provoquen clics accidentales.
 
 ```
-┌──────────────────────────┐
-│  Encabezado del juego    │
-├──────────────────────────┤
-│                          │
-│   Pregunta y opciones    │   ← zona sin anuncios
-│                          │
-├──────────────────────────┤
-│ [ banner 320×50 ]        │   ← solo plan Free
-├──────────────────────────┤
-│  Navegación inferior     │
-└──────────────────────────┘
+┌────────────────────────────────────────────┐
+│  Encabezado del juego (progreso y salir)   │
+├────────────────────────────────────────────┤
+│                                            │
+│          Pregunta y opciones               │   ← zona sin anuncios
+│                                            │
+├────────────────────────────────────────────┤
+│   [ banner 728×90 · 320×50 en celular ]    │   ← solo plan Free
+└────────────────────────────────────────────┘
 ```
 
 ## 4. Reglas del plan Premium
@@ -102,7 +100,7 @@ Billing no depende de ningún otro módulo de dominio: guarda el user_id y el co
 
 ### 5.3 Anuncios en el frontend
 
-Un componente AdSlot con posiciones fijas (banner inferior, tarjeta entre secciones). Solo se dibuja si el plan del usuario es Free. Para la web, la red propuesta es Google AdSense; en desarrollo el componente muestra un recuadro de ejemplo para no cargar anuncios reales. El plan llega en GET /users/me, pero la decisión de mostrar u ocultar anuncios no es un control de seguridad: lo que se protege en el backend son el límite de partidas y el descuento.
+Un componente AdSlot con posiciones fijas (banner al final del contenido, columna lateral en escritorio y tarjeta entre secciones); el tamaño del banner cambia con el ancho de la ventana. Solo se dibuja si el plan del usuario es Free. Para la web, la red propuesta es Google AdSense; en desarrollo el componente muestra un recuadro de ejemplo para no cargar anuncios reales. El plan llega en GET /users/me, pero la decisión de mostrar u ocultar anuncios no es un control de seguridad: lo que se protege en el backend son el límite de partidas y el descuento.
 
 ## 6. Modelo de datos propuesto
 
@@ -214,3 +212,4 @@ Para el proyecto académico se recomienda implementarlo en modo de pruebas (sand
 | Versión | Fecha | Cambios |
 | --- | --- | --- |
 | 1.0 | 24 de septiembre de 2026 | Propuesta inicial: planes Free (anuncios alrededor del contenido y una partida por minijuego al día) y Premium (partidas ilimitadas, sin anuncios y descuento en la tienda); arquitectura, datos, endpoints, pasarela, aspectos legales, seguridad, pruebas y fases. |
+| 1.1 | 27 de septiembre de 2026 | La app es web: los anuncios se ubican según el ancho de la ventana (banner 728×90 o columna lateral en escritorio, 320×50 en celular); ya no hay barra de navegación inferior. |
