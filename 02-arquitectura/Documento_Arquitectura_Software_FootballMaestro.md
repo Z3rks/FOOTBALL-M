@@ -12,7 +12,7 @@ Fecha de elaboración: 23 de septiembre de 2026
 
 Fecha de actualización: 27 de septiembre de 2026
 
-Versión: 2.1
+Versión: 2.2
 
 ---
 
@@ -54,7 +54,7 @@ Interfaces públicas entre módulos (lo único que un módulo puede importar de 
 
 Los enums de rol y estado (users/user.enums) son vocabulario compartido. La entidad USER solo la importan otras entidades, para sus llaves foráneas.
 
-Las dependencias entre módulos no forman ciclos: Auth → Users → Games; Credits → Users; Admin → Users, Games y Credits. Games no depende de ningún otro módulo de dominio. Estas reglas se verifican automáticamente en la suite de pruebas (src/architecture.spec.ts): falla si un servicio importa el ORM, si un módulo importa de otro algo que no sea una de estas interfaces (o si una de ellas deja de ser abstracta), si otro módulo usa la entidad USER fuera de una llave foránea o si aparece una dependencia circular.
+Las dependencias entre módulos no forman ciclos: Auth → Users → Games; Credits → Users; Admin → Users, Games y Credits. Games no depende de ningún otro módulo de dominio. Estas reglas se verifican automáticamente en la suite de pruebas (src/architecture.spec.ts): falla si un servicio importa el ORM, si un módulo importa de otro algo que no sea una de estas interfaces (o si una de ellas deja de ser abstracta), si otro módulo usa la entidad USER fuera de una llave foránea, si aparece una dependencia circular o si una migración importa código de la app (las migraciones son fotos fijas: lo que necesitan se copia dentro de ellas).
 
 ### 3.1 Comparación de alternativas evaluadas
 
@@ -170,7 +170,7 @@ backend/
 │   ├── auth/      (+ guards/, adapters/ de Google y correo)
 │   ├── users/     (+ progress.listener.ts; interfaces públicas user-accounts.ts,
 │   │               credit-balance.store.ts, player-directory.ts, users-stats.reader.ts)
-│   ├── news/      (+ providers/ Currents y ejemplo, sincronización)
+│   ├── news/      (+ providers/ Currents y ejemplo, sincronización, news-dedup.ts)
 │   ├── games/     (+ strategies/; interfaces públicas player-game-stats.reader.ts,
 │   │               games-stats.reader.ts)
 │   ├── credits/   (+ credits.listener.ts; interfaz pública credits-stats.reader.ts)
@@ -241,3 +241,4 @@ Trabajo futuro: el módulo “Partidos y Estadísticas” (calendario, resultado
 | 1.9 | 27 de septiembre de 2026 | Refactor de legibilidad: las interfaces de estadísticas se dividen por uso (GameInsightsReader, GamesByPlayerReader y PlayersBreakdownReader); AppClock centraliza la fecha y la zona horaria; Admin tiene un controlador por pantalla; el frontend del panel se organiza en charts/ (una pieza por archivo) y data/ (un hook por pantalla). |
 | 2.0 | 27 de septiembre de 2026 | El frontend es una aplicación web: deja de simular el marco de un celular y la barra inferior (BottomNav, AdminBottomNav) se reemplaza por una barra superior. Nuevas piezas en components/layout (PlayerLayout, AdminLayout, AuthLayout, TopNav y PageHeader). Se listan las 16 pantallas. |
 | 2.1 | 27 de septiembre de 2026 | Responsabilidades del módulo News: noticias sin repetidas ni de otros deportes y filtros por categoría, texto y fecha. |
+| 2.2 | 27 de septiembre de 2026 | La regla de noticias repetidas (news-dedup.ts) la aplica NewsSyncService; el repositorio solo guarda y consulta. La prueba de arquitectura suma una regla: las migraciones no importan código de la app. |

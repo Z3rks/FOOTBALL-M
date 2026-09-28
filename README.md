@@ -34,7 +34,7 @@ Los documentos de diseño vienen en dos formatos con el mismo contenido: **`.doc
 ### 02-arquitectura — Cómo está construido el backend
 | Documento | Versión | Contenido |
 |---|---|---|
-| `Documento_Arquitectura_Software_FootballMaestro` | 2.1 | Monolito modular con 6 módulos; interfaces públicas entre módulos; capas; eventos de dominio; patrones (Repository, Unit of Work, Strategy, Factory, Adapter, Observer, Facade, DTO); SOLID; stack; estructura de carpetas; estructura web del frontend (barra superior y layouts); idiomas inglés y español (§8.3) y despliegue |
+| `Documento_Arquitectura_Software_FootballMaestro` | 2.2 | Monolito modular con 6 módulos; interfaces públicas entre módulos; capas; eventos de dominio; patrones (Repository, Unit of Work, Strategy, Factory, Adapter, Observer, Facade, DTO); SOLID; stack; estructura de carpetas; estructura web del frontend (barra superior y layouts); idiomas inglés y español (§8.3) y despliegue |
 
 ### 03-modelo-de-datos — Las tablas
 | Documento | Versión | Contenido |
@@ -49,7 +49,7 @@ Los documentos de diseño vienen en dos formatos con el mismo contenido: **`.doc
 ### 05-pruebas — Qué se prueba
 | Documento | Versión | Contenido |
 |---|---|---|
-| `Plan_Pruebas_FootballMaestro` | 1.7 | Estrategia, casos TC-01 a TC-70, estado de la automatización (796 unitarias, 128 E2E) y Definition of Done |
+| `Plan_Pruebas_FootballMaestro` | 1.8 | Estrategia, casos TC-01 a TC-70, estado de la automatización (801 unitarias, 128 E2E) y Definition of Done |
 
 ### 06-seguridad — Riesgos y controles
 | Documento | Versión | Contenido |

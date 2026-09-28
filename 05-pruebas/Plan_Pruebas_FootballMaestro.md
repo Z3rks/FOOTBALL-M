@@ -12,7 +12,7 @@ Fecha de elaboración: 23 de septiembre de 2026
 
 Fecha de actualización: 27 de septiembre de 2026
 
-Versión: 1.7
+Versión: 1.8
 
 ---
 
@@ -200,7 +200,7 @@ Cubren funcionalidades implementadas después de la versión 1.1: Edit Profile, 
 | TC-69 | RF-179 | Sincronizar noticias en las que otro medio publica la misma nota (mismo título con otra puntuación, u otro titular con la misma imagen), y noticias de otros deportes que dicen “Mundial” o “fichajes”. | Se guarda una sola copia de cada noticia y ninguna de otro deporte; sincronizar de nuevo no las agrega. |
 | TC-70 | RF-176–178 | Filtrar el feed por una liga nueva, buscar un texto (en mayúsculas, con % o de más de 100 caracteres) y elegir “Hoy” o “3 días”. | Cada filtro deja solo las noticias que lo cumplen y se pueden combinar; % se busca como texto; 101 caracteres o days=2 → 400. |
 | TC-67 | RF-175, RNF-UI-094–099 | En el navegador: entrar a Minijuegos y Economía desde los accesos del Dashboard y desde la barra superior, cambiar el período y usar “Ver tabla”, en inglés y en español. | Cada gráfica muestra su pregunta, su leyenda (si tiene 2 o más series), su tabla y un mensaje claro cuando no hay datos; al cambiar el período la gráfica anterior se atenúa sin parpadear. |
-| TC-56 | Arquitectura §3–§7 | Ejecutar la prueba de arquitectura (src/architecture.spec.ts). | Pasan sus 7 reglas: ningún servicio importa el ORM, otro módulo solo importa interfaces abstractas, la entidad USER no sale de Users y no hay dependencias circulares. |
+| TC-56 | Arquitectura §3–§7 | Ejecutar la prueba de arquitectura (src/architecture.spec.ts). | Pasan sus 8 reglas: ningún servicio importa el ORM, otro módulo solo importa interfaces abstractas, la entidad USER no sale de Users, no hay dependencias circulares y las migraciones no importan código de la app. |
 
 ## 6. Estado de la automatización
 
@@ -208,9 +208,9 @@ Resultado de la última ejecución (27 de septiembre de 2026), todas en verde:
 
 | Suite | Pruebas | Qué cubre y cómo se ejecuta |
 | --- | --- | --- |
-| Unitarias (Jest) | 796 | Servicios, estrategias de cada minijuego, adaptadores (Currents en inglés y español, Brevo), validación de variables de entorno, reglas de progreso, idioma de la petición (shared/i18n), la prueba de arquitectura y la validación de las 203 preguntas en cada idioma (formato, respuesta válida para su estrategia, que details no revele la respuesta y que la traducción coincida con el original). En backend/: npm test. |
+| Unitarias (Jest) | 801 | Servicios, estrategias de cada minijuego, adaptadores (Currents en inglés y español, Brevo), validación de variables de entorno, reglas de progreso, idioma de la petición (shared/i18n), la prueba de arquitectura y la validación de las 203 preguntas en cada idioma (formato, respuesta válida para su estrategia, que details no revele la respuesta y que la traducción coincida con el original). En backend/: npm test. |
 | E2E (Jest + Supertest) | 128 | Los endpoints del Contrato de API contra PostgreSQL real, en 8 archivos (auth, users, games, credits, news, admin, admin-charts, health). En backend/: npm run test:e2e (con la base de datos encendida). |
-| Arquitectura | 7 reglas | Parte de las unitarias (src/architecture.spec.ts). Falla si el código rompe el desacople entre módulos o la inversión de dependencias. |
+| Arquitectura | 8 reglas | Parte de las unitarias (src/architecture.spec.ts). Falla si el código rompe el desacople entre módulos o la inversión de dependencias. |
 | Frontend | — | Revisión de tipos (npm run typecheck) y build de producción (npx vite build). Sin pruebas automatizadas de interfaz todavía. |
 
 Casos de este documento por tipo de verificación:
@@ -249,3 +249,4 @@ Los identificadores de los casos agregados en la versión 1.1 continúan la nume
 | 1.5 | 27 de septiembre de 2026 | Gráficas del panel de administración: TC-62 a TC-67 (pantallas Minijuegos y Economía, Analytics por período, tendencias y actividad del jugador); 792 pruebas unitarias y 124 E2E. |
 | 1.6 | 27 de septiembre de 2026 | Diseño web: TC-68 (todas las pantallas a 1440 y 390 px, barra superior y cuadrículas adaptables); TC-67 entra a Minijuegos y Economía también por la barra superior; TC-36 se redacta para el navegador del celular. |
 | 1.7 | 27 de septiembre de 2026 | Noticias: TC-69 (sin repetidas ni otros deportes) y TC-70 (ligas nuevas, buscador y período), automatizados en news.e2e-spec.ts; 796 pruebas unitarias y 128 E2E. |
+| 1.8 | 27 de septiembre de 2026 | La prueba de arquitectura (TC-56) suma la regla de migraciones; pruebas unitarias de las noticias repetidas; 801 pruebas unitarias. |
