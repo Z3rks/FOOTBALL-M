@@ -14,7 +14,7 @@ Fecha de elaboración: 4 de septiembre de 2026
 
 Fecha de actualización: 27 de septiembre de 2026
 
-Versión: 2.5
+Versión: 2.6
 
 1\. Introducción
 
@@ -1606,16 +1606,19 @@ AdminReportsScreen
   RNF-UI-089   \(35\) Métricas clave y  Las 4 métricas clave deben mostrarse
                resumen semanal          en 4 columnas en escritorio (grid
                                         2×2 en pantallas angostas), cada una
-                                        con su emoji distintivo arriba.
+                                        con su ícono en un cuadro de color
+                                        arriba (partidas, duración,
+                                        preguntas y XP).
 
   RNF-UI-090   \(35\) Métricas clave y  La fila de la semana más reciente en
                resumen semanal          la tabla debe resaltarse con fondo
                                         primary/5 y esquinas redondeadas.
 
   RNF-UI-091   \(36\) Top jugadores,    Los primeros 3 lugares del top deben
-               categorías y exportar    tener fondo accent/10 con emoji
-               CSV                      grande; del 4° en adelante, número
-                                        en fondo muted.
+               categorías y exportar    mostrar el ícono de medalla en oro,
+               CSV                      plata o bronce, con la barra del
+                                        mismo color; del 4.º en adelante, el
+                                        número en fondo muted.
 
   RNF-UI-092   \(36\) Top jugadores,    La barra de pico de actividad debe
                categorías y exportar    resaltar en dorado el rango horario
@@ -1686,17 +1689,20 @@ Diseño web (todas las pantallas, versión 2.4)
                                         (Home, Games, News, Credits,
                                         Profile) con la activa resaltada y,
                                         a la derecha, nivel, racha, selector
-                                        de idioma y avatar. En pantallas
-                                        angostas las secciones pasan a una
-                                        segunda fila con scroll horizontal.
+                                        de idioma y avatar. Por debajo de
+                                        1280px de ancho las secciones pasan
+                                        a una segunda fila con scroll
+                                        horizontal, y ningún botón de la
+                                        barra puede quedar fuera de la
+                                        pantalla.
 
   RNF-UI-102   Portal de                La barra superior del portal debe
                administración           tener fondo secondary, la etiqueta
-                                        "Portal de administración", las 6
-                                        secciones (Panel, Usuarios,
-                                        Minijuegos, Economía, Analytics,
-                                        Reportes), el selector de idioma y
-                                        el botón "Salir".
+                                        "Portal de administración" (oculta
+                                        en celular), las 6 secciones (Panel,
+                                        Usuarios, Minijuegos, Economía,
+                                        Analytics, Reportes), el selector de
+                                        idioma y el botón "Salir".
 
   RNF-UI-103   Todas las pantallas      Cada página empieza con su título y
                                         subtítulo; sus acciones (período,
@@ -2010,3 +2016,9 @@ Nota de versión 2.5 (27 de septiembre de 2026): NewsScreen suma la
 historia de usuario (45), con más filtros (4 categorías nuevas, buscador
 y período: RF-176 a RF-178, RNF-UI-108) y noticias sin repetir y solo de
 fútbol (RF-179). Son 45 historias en total.
+
+Nota de versión 2.6 (27 de septiembre de 2026): el portal de
+administración usa íconos en lugar de emojis (métricas y medallas de
+Reportes, racha en Usuarios: RNF-UI-089 y RNF-UI-091). La barra superior
+pone las secciones junto al logo solo desde 1280px, para que las 6 del
+portal quepan (RNF-UI-101 y RNF-UI-102).

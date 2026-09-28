@@ -28,7 +28,7 @@ Los documentos de diseño vienen en dos formatos con el mismo contenido: **`.doc
 ### 01-requisitos — Qué debe hacer la app
 | Documento | Versión | Contenido |
 |---|---|---|
-| `Documento_Requisitos_Funcionales_NoFuncionales_FootballMaestro_v2.md` | 2.5 | Requisitos funcionales de cada pantalla (RF-001 a RF-179) y no funcionales, incluido el diseño web (RNF-UI-100 a 108) (rendimiento, seguridad, usabilidad, accesibilidad…). Es la base de todos los demás documentos |
+| `Documento_Requisitos_Funcionales_NoFuncionales_FootballMaestro_v2.md` | 2.6 | Requisitos funcionales de cada pantalla (RF-001 a RF-179) y no funcionales, incluido el diseño web (RNF-UI-100 a 108) (rendimiento, seguridad, usabilidad, accesibilidad…). Es la base de todos los demás documentos |
 | `Football_Maestro_Requisitos_Arquitectura_UML.docx` | Original (19 sep.) | Documento académico inicial: resumen, casos de uso, diagrama de clases y de despliegue. Se conserva como referencia histórica; donde difiera, mandan los documentos de las carpetas 02 a 06 (p. ej. "Partidos y Estadísticas", Redis y WebSockets quedaron fuera de alcance) |
 
 ### 02-arquitectura — Cómo está construido el backend
