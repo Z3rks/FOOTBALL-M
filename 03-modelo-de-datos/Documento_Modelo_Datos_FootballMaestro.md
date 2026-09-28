@@ -12,7 +12,7 @@ Fecha de elaboración: 23 de septiembre de 2026
 
 Fecha de actualización: 25 de septiembre de 2026
 
-Versión: 2.0
+Versión: 2.1
 
 ---
 
@@ -202,9 +202,10 @@ Noticias sincronizadas desde la API de noticias externa, mostradas en NewsScreen
 | `id` | uuid | PK | Identificador interno del artículo. |
 | `external_id` | string | único | Identificador del artículo en la API externa (evita duplicados al sincronizar). |
 | `title` | string |  | Título. |
+| `title_key` | string |  | Título normalizado (minúsculas, solo letras y números). Una noticia con la misma clave o la misma imagen en el mismo idioma no se guarda de nuevo: evita repetir la nota que publican varios medios (RF-179). |
 | `description` | string |  | Resumen mostrado en la tarjeta. |
 | `language` | string |  | Idioma de la noticia (“en” o “es”). El feed muestra solo las del idioma del jugador. |
-| `category` | enum |  | Transfers, Champions League, World Cup o Premier League (“All” es un filtro, no una categoría). |
+| `category` | enum |  | Transfers, Champions League, World Cup, Premier League, La Liga, Serie A, Bundesliga o Copa Libertadores (“All” es un filtro, no una categoría). |
 | `source` | string |  | Fuente (ej. ESPN, Sky Sports, BBC Sport). |
 | `source_url` | string |  | Enlace a la noticia original (RF-080). |
 | `image_url` | string | nulo | Imagen de la noticia. |
@@ -308,7 +309,7 @@ Registro de auditoría de acciones administrativas, según RNF-SEC-04 del Docume
 
 Este modelo de datos debe revisarse junto con el Documento de Arquitectura de Software: cada entidad aquí definida corresponde a un Repository dentro del módulo indicado como su dueño (USER, USER_SESSION, BADGE y USER_BADGE en Users; AUTH_TOKEN en Auth; GAME, QUESTION, DAILY_CHALLENGE, GAME_SESSION, GAME_ANSWER y FUN_FACT en Games; NEWS_ARTICLE en News; CREDIT_TRANSACTION, STORE_ITEM y USER_STORE_ITEM en Credits; ADMIN_AUDIT_LOG en Admin). Ningún módulo accede directamente a las tablas de otro: el módulo Admin obtiene sus métricas a través de las interfaces públicas de Users, Games y Credits.
 
-Índices recomendados: GAME_SESSION(user_id, completed_at), GAME_SESSION(game_id, completed_at), USER_SESSION(started_at), CREDIT_TRANSACTION(user_id, created_at), NEWS_ARTICLE(category, published_at), NEWS_ARTICLE(language, category, published_at) y USER(status, created_at), que soportan los filtros y agregaciones del panel administrativo (RNF-PERF-03, RNF-MANT-04).
+Índices recomendados: GAME_SESSION(user_id, completed_at), GAME_SESSION(game_id, completed_at), USER_SESSION(started_at), CREDIT_TRANSACTION(user_id, created_at), NEWS_ARTICLE(category, published_at), NEWS_ARTICLE(language, category, published_at), NEWS_ARTICLE(language, title_key) y USER(status, created_at), que soportan los filtros y agregaciones del panel administrativo (RNF-PERF-03, RNF-MANT-04).
 
 ## 8. Historial de versiones
 
@@ -325,3 +326,4 @@ Este modelo de datos debe revisarse junto con el Documento de Arquitectura de So
 | 1.8 | 24 de septiembre de 2026 | GAME.icon guarda el nombre del ícono del minijuego en lugar de un emoji. |
 | 1.9 | 25 de septiembre de 2026 | Inglés y español: columna translations (jsonb) en GAME, QUESTION, FUN_FACT y STORE_ITEM; GAME_SESSION.locale; NEWS_ARTICLE.language con su índice (migraciones ContentTranslations y NewsLanguage). Las 203 preguntas tienen su traducción al inglés. |
 | 2.0 | 25 de septiembre de 2026 | BADGE suma translations (migración BadgeTranslations): las insignias también están en inglés y español. |
+| 2.1 | 27 de septiembre de 2026 | NEWS_ARTICLE suma title_key con su índice y 4 categorías (migración NewsFiltersDedup, que además borra las noticias repetidas y las de otros deportes ya guardadas). |

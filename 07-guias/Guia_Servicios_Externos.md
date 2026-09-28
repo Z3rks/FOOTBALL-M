@@ -5,7 +5,7 @@ Football Maestro usa tres servicios externos, siempre a través de un *adapter* 
 | Servicio | Para qué | Plan | Adapter | Sin configurar |
 |---|---|---|---|---|
 | Google OAuth 2.0 | "Continue with Google" | Gratis | `GoogleAuthLibraryVerifier` | El botón avisa que no está disponible |
-| Currents API | Noticias reales | Gratis, 250 peticiones/día | `CurrentsNewsProvider` | 6 noticias de ejemplo |
+| Currents API | Noticias reales | Gratis, 250 peticiones/día | `CurrentsNewsProvider` | 10 noticias de ejemplo |
 | Brevo | Correo de recuperación de contraseña | Gratis, 300 correos/día | `BrevoMailSender` | El enlace se escribe en la consola del backend |
 
 **Las claves de Currents y de Brevo son secretas:** solo van en `backend/.env` (que git ignora) y, al desplegar, en las variables de entorno del servidor. El Client ID de Google no es secreto, pero igual vive en los `.env`. El "secreto del cliente" de Google no se usa.
@@ -28,14 +28,15 @@ Football Maestro usa tres servicios externos, siempre a través de un *adapter* 
 
 ## 2. Currents API (noticias)
 
-**Estado:** funciona, con noticias reales de las 4 categorías en inglés y en español.
+**Estado:** funciona, con noticias reales de las 8 categorías en inglés y en español.
 
 - Variable: `NEWS_API_KEY` en `backend/.env`. Cada integrante puede sacar su propia clave gratis en currentsapi.services, para no compartir el cupo diario.
-- Sincroniza al arrancar y cada 60 minutos (`NEWS_SYNC_MINUTES`): 4 categorías × 2 idiomas × 24 veces = 192 peticiones al día. **No bajar de 60 minutos**: con 30 serían 384 y se pasaría del cupo gratuito (250). La app siempre lee de la base de datos, así que el feed sigue funcionando aunque Currents falle. Las noticias de más de 30 días se borran.
-- Búsqueda: una por categoría e idioma con los parámetros `keywords` y `language` (en inglés "transfer news", "Champions League", "World Cup", "Premier League"; en español "fichajes", "Champions League", "Mundial", "Premier League"). **Currents ignora el parámetro `query`**. Como su búsqueda es aproximada, el adapter además descarta noticias de otros deportes (NFL, rugby, críquet, dardos, ciclismo, baloncesto…) y las que no mencionan el tema de la categoría, con palabras de cada idioma.
+- Sincroniza al arrancar y cada 120 minutos (`NEWS_SYNC_MINUTES`): 8 categorías × 2 idiomas × 12 veces = 192 peticiones al día. **No bajar de 120 minutos**: con 60 serían 384 y se pasaría del cupo gratuito (250). La app siempre lee de la base de datos, así que el feed sigue funcionando aunque Currents falle. Las noticias de más de 30 días se borran.
+- Búsqueda: una por categoría e idioma con los parámetros `keywords` y `language` (en inglés "transfer news", "Champions League", "World Cup", "Premier League", "La Liga", "Serie A", "Bundesliga", "Copa Libertadores"; en español "fichajes", "Mundial", "LaLiga", "Libertadores"…). **Currents ignora el parámetro `query`**. Como su búsqueda es aproximada, el adapter además descarta noticias de otros deportes (NFL, rugby, críquet, ciclismo, atletismo, balonmano…), en español las que no tienen ninguna palabra de fútbol ("Mundial" y "fichajes" se usan en cualquier deporte), las que no mencionan el tema de la categoría y las de fuentes que no son de fútbol (Cricinfo, Reddit).
+- **Sin repetidas:** los periódicos de un mismo grupo (p. ej. El Periódico, Levante-EMV, Faro de Vigo y LNE) publican la misma nota. Una noticia con el mismo título normalizado o la misma imagen que otra ya guardada en ese idioma no se guarda.
 - Cada noticia guarda su idioma y el feed muestra solo las del idioma del jugador: las noticias no se traducen.
 - Máximo 20 resultados por consulta; el feed crece con cada sincronización.
-- Sin clave se usan 6 noticias de ejemplo en cada idioma. Al activar la clave se borran con `DELETE FROM news_articles WHERE external_id LIKE 'sample:%'`.
+- Sin clave se usan 10 noticias de ejemplo en cada idioma (al menos una por categoría). Al activar la clave se borran con `DELETE FROM news_articles WHERE external_id LIKE 'sample:%'`.
 
 ## 3. Brevo (correo)
 

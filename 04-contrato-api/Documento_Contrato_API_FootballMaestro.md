@@ -12,7 +12,7 @@ Fecha de elaboración: 23 de septiembre de 2026
 
 Fecha de actualización: 27 de septiembre de 2026
 
-Versión: 2.1
+Versión: 2.2
 
 ---
 
@@ -104,7 +104,7 @@ Cubre NewsScreen y la vista previa de noticias en MainHomeScreen. Las noticias s
 
 | Método | Endpoint | Descripción | RF relacionados |
 | --- | --- | --- | --- |
-| `GET` | `/news?category=&page=&limit=` | Lista noticias ordenadas de la más reciente a la más antigua, opcionalmente filtradas por categoría (Transfers, Champions League, World Cup, Premier League; All o sin parámetro = todas). Solo devuelve las noticias escritas en el idioma de Accept-Language (se sincronizan noticias en inglés y en español; no se traducen). Cada noticia: id, title, description, category, source, sourceUrl, imageUrl, publishedAt. | RF-067–070, RF-071–078 |
+| `GET` | `/news?category=&search=&days=&page=&limit=` | Lista noticias ordenadas de la más reciente a la más antigua. Filtros opcionales y combinables: category (Transfers, Champions League, World Cup, Premier League, La Liga, Serie A, Bundesliga, Copa Libertadores; All o sin parámetro = todas), search (texto en el título o la descripción, sin distinguir mayúsculas; máx. 100 caracteres; % y _ se buscan como texto) y days (1, 3 o 7: solo las publicadas en ese período; otro valor → 400). Solo devuelve las noticias escritas en el idioma de Accept-Language (se sincronizan noticias en inglés y en español; no se traducen). Cada noticia: id, title, description, category, source, sourceUrl, imageUrl, publishedAt. | RF-067–070, RF-071–078, RF-176–178 |
 | `GET` | `/news/:id` | Detalle de una noticia, incluida la URL de la fuente original a la que redirige el ícono ExternalLink. | RF-079–082 |
 
 ## 7. Módulo Games
@@ -305,3 +305,4 @@ Este contrato debe mantenerse sincronizado con el Documento de Requisitos: cualq
 | 1.9 | 25 de septiembre de 2026 | Inglés y español: convención de la cabecera Accept-Language; contenido traducido en /games, las partidas (con su idioma fijo), /store/items, /news (noticias por idioma), el correo de forgot-password y el ranking de administración; las alertas del dashboard suman code y values y el resumen del reporte suma week. |
 | 2.0 | 25 de septiembre de 2026 | GET /users/me/badges y los CSV de /admin/users/export y /admin/reports/export responden en el idioma de Accept-Language; label de las semanas del reporte en inglés. |
 | 2.1 | 27 de septiembre de 2026 | Gráficas del panel de administración: período ?days=7\|30\|90; GET /admin/dashboard/trends, /admin/users/:id/activity y 6 endpoints nuevos de Analytics; secciones nuevas 9.5 (AdminGamesScreen, 4 endpoints) y 9.6 (AdminEconomyScreen, 5 endpoints). Total: 67 endpoints. |
+| 2.2 | 27 de septiembre de 2026 | GET /news suma los filtros search y days y 4 categorías (La Liga, Serie A, Bundesliga, Copa Libertadores). El feed ya no repite la misma noticia de varios medios. |

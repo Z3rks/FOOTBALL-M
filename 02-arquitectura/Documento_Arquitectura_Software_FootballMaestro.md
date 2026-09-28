@@ -12,7 +12,7 @@ Fecha de elaboración: 23 de septiembre de 2026
 
 Fecha de actualización: 27 de septiembre de 2026
 
-Versión: 2.0
+Versión: 2.1
 
 ---
 
@@ -74,7 +74,7 @@ Las dependencias entre módulos no forman ciclos: Auth → Users → Games; Cred
 | --- | --- | --- |
 | Auth | Login y registro con correo/contraseña, autenticación con Google (OAuth 2.0), refresh tokens, cierre de sesión, recuperación de contraseña y gestión de roles Player/Admin. | WelcomeScreen, SignInScreen, RegisterScreen (SplashScreen verifica la sesión) |
 | Users | Perfil, nivel, racha, XP, precisión, insignias, configuración de cuenta y registro de la actividad de uso (USER_SESSION) que alimenta la analítica. | ProfileScreen, MainHomeScreen (header y “My Stats”) |
-| News | Sincronización periódica de la API de noticias externa, feed y filtrado por categoría. | NewsScreen, MainHomeScreen (vista previa) |
+| News | Sincronización periódica de la API de noticias externa (sin repetidas ni otros deportes), feed y filtros por categoría, texto y fecha. | NewsScreen, MainHomeScreen (vista previa) |
 | Games | Catálogo de minijuegos, preguntas, reto diario, lógica de cada juego, cálculo de resultados y datos curiosos. | MinigamesScreen, ResultsScreen, MainHomeScreen (reto diario y vista previa) |
 | Credits | Saldo de créditos, formas de ganarlos, tienda de canje e ítems aplicados al perfil. | CreditsScreen |
 | Admin | Dashboard, gestión de usuarios, analítica, reportes y registro de auditoría. Consulta a Users, Games y Credits solo a través de sus interfaces públicas. | AdminDashboardScreen, AdminUsersScreen, AdminAnalyticsScreen, AdminReportsScreen, AdminGamesScreen, AdminEconomyScreen |
@@ -240,3 +240,4 @@ Trabajo futuro: el módulo “Partidos y Estadísticas” (calendario, resultado
 | 1.8 | 27 de septiembre de 2026 | Gráficas del panel de administración: Credits expone CreditsStatsReader para Admin (Admin → Users, Games y Credits, sin ciclos); Admin suma AdminGamesService y AdminEconomyService (Facade) y las pantallas AdminGamesScreen y AdminEconomyScreen; kit de gráficas del frontend. |
 | 1.9 | 27 de septiembre de 2026 | Refactor de legibilidad: las interfaces de estadísticas se dividen por uso (GameInsightsReader, GamesByPlayerReader y PlayersBreakdownReader); AppClock centraliza la fecha y la zona horaria; Admin tiene un controlador por pantalla; el frontend del panel se organiza en charts/ (una pieza por archivo) y data/ (un hook por pantalla). |
 | 2.0 | 27 de septiembre de 2026 | El frontend es una aplicación web: deja de simular el marco de un celular y la barra inferior (BottomNav, AdminBottomNav) se reemplaza por una barra superior. Nuevas piezas en components/layout (PlayerLayout, AdminLayout, AuthLayout, TopNav y PageHeader). Se listan las 16 pantallas. |
+| 2.1 | 27 de septiembre de 2026 | Responsabilidades del módulo News: noticias sin repetidas ni de otros deportes y filtros por categoría, texto y fecha. |

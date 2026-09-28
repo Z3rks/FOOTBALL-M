@@ -14,7 +14,7 @@ Fecha de elaboración: 4 de septiembre de 2026
 
 Fecha de actualización: 27 de septiembre de 2026
 
-Versión: 2.4
+Versión: 2.5
 
 1\. Introducción
 
@@ -47,7 +47,7 @@ desarrollo y las pruebas del sistema "Football Maestro".
 El alcance funcional cubre las siguientes dieciséis (16) pantallas o
 módulos principales del sistema, derivados directamente del tablero del
 proyecto, junto con la cantidad de historias de usuario relevadas para
-cada uno (44 historias de usuario en total). El panel administrativo,
+cada uno (45 historias de usuario en total). El panel administrativo,
 originalmente una sola pantalla, se reorganizó en 4 pantallas
 independientes: AdminDashboardScreen, AdminUsersScreen,
 AdminAnalyticsScreen y AdminReportsScreen. En la versión 2.3 se
@@ -68,7 +68,7 @@ las 6 pantallas se recorren con la barra superior del portal.
 
   5        MainHomeScreen                        4
 
-  6        NewsScreen                            3
+  6        NewsScreen                            4
 
   7        MinigamesScreen                       2
 
@@ -494,9 +494,10 @@ NewsScreen
                                       continuo y la barra superior siempre
                                       visible.
 
-  RF-075     \(17\) Filtro de         Debe mostrar 5 categorías: All,
+  RF-075     \(17\) Filtro de         Debe mostrar las categorías: All,
              categorías de noticias   Transfers, Champions League, World
-                                      Cup, Premier League.
+                                      Cup y Premier League (y las de
+                                      RF-176).
 
   RF-076     \(17\) Filtro de         \"All\" debe estar seleccionada por
              categorías de noticias   defecto al entrar a la pantalla.
@@ -524,6 +525,32 @@ NewsScreen
   RF-082     \(18\) Abrir noticia en  Al cerrar la vista externa, el
              fuente externa           usuario debe regresar a NewsScreen
                                       en el mismo punto de scroll.
+
+  RF-176     \(45\) Filtros y         Además de las 4 categorías
+             noticias sin repetir     originales, el filtro debe ofrecer
+                                      La Liga, Serie A, Bundesliga y Copa
+                                      Libertadores (9 opciones con "All").
+
+  RF-177     \(45\) Filtros y         Debe tener un buscador que filtre
+             noticias sin repetir     por texto en el título o la
+                                      descripción, sin distinguir
+                                      mayúsculas, combinable con la
+                                      categoría y el período.
+
+  RF-178     \(45\) Filtros y         Debe permitir filtrar por fecha de
+             noticias sin repetir     publicación: cualquier fecha, hoy,
+                                      últimos 3 días o últimos 7 días. Si
+                                      ningún artículo cumple los filtros,
+                                      se muestra un mensaje y el botón
+                                      "Quitar filtros".
+
+  RF-179     \(45\) Filtros y         El feed no debe mostrar la misma
+             noticias sin repetir     noticia repetida cuando varios
+                                      medios la publican (mismo título o
+                                      misma imagen), ni noticias de otros
+                                      deportes que solo comparten palabras
+                                      con el fútbol ("Mundial",
+                                      "fichajes").
   ------------------------------------------------------------------------
 
 MinigamesScreen
@@ -1317,6 +1344,13 @@ NewsScreen
                fuente externa           cambiando a secondary en hover,
                                         alineado a la derecha junto a la
                                         fuente.
+
+  RNF-UI-108   \(45\) Filtros y         El buscador debe ir con ícono Search
+               noticias sin repetir     sobre las categorías, y el período
+                                        en un selector de 4 opciones a su
+                                        derecha (debajo en pantallas
+                                        angostas); la opción activa en fondo
+                                        primary.
   --------------------------------------------------------------------------
 
 MinigamesScreen
@@ -1971,3 +2005,8 @@ RF-175). Se agregan RNF-UI-100 a RNF-UI-107 (diseño web) y se ajustan los
 requisitos de interfaz que describían encabezados y rejillas de celular,
 RNF-USA-04 y RNF-COMP-01, 02 y 04. Los requisitos funcionales no cambian
 de fondo: solo dónde aparece cada elemento.
+
+Nota de versión 2.5 (27 de septiembre de 2026): NewsScreen suma la
+historia de usuario (45), con más filtros (4 categorías nuevas, buscador
+y período: RF-176 a RF-178, RNF-UI-108) y noticias sin repetir y solo de
+fútbol (RF-179). Son 45 historias en total.

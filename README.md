@@ -28,28 +28,28 @@ Los documentos de diseño vienen en dos formatos con el mismo contenido: **`.doc
 ### 01-requisitos — Qué debe hacer la app
 | Documento | Versión | Contenido |
 |---|---|---|
-| `Documento_Requisitos_Funcionales_NoFuncionales_FootballMaestro_v2.md` | 2.4 | Requisitos funcionales de cada pantalla (RF-001 a RF-175) y no funcionales, incluido el diseño web (RNF-UI-100 a 107) (rendimiento, seguridad, usabilidad, accesibilidad…). Es la base de todos los demás documentos |
+| `Documento_Requisitos_Funcionales_NoFuncionales_FootballMaestro_v2.md` | 2.5 | Requisitos funcionales de cada pantalla (RF-001 a RF-179) y no funcionales, incluido el diseño web (RNF-UI-100 a 108) (rendimiento, seguridad, usabilidad, accesibilidad…). Es la base de todos los demás documentos |
 | `Football_Maestro_Requisitos_Arquitectura_UML.docx` | Original (19 sep.) | Documento académico inicial: resumen, casos de uso, diagrama de clases y de despliegue. Se conserva como referencia histórica; donde difiera, mandan los documentos de las carpetas 02 a 06 (p. ej. "Partidos y Estadísticas", Redis y WebSockets quedaron fuera de alcance) |
 
 ### 02-arquitectura — Cómo está construido el backend
 | Documento | Versión | Contenido |
 |---|---|---|
-| `Documento_Arquitectura_Software_FootballMaestro` | 2.0 | Monolito modular con 6 módulos; interfaces públicas entre módulos; capas; eventos de dominio; patrones (Repository, Unit of Work, Strategy, Factory, Adapter, Observer, Facade, DTO); SOLID; stack; estructura de carpetas; estructura web del frontend (barra superior y layouts); idiomas inglés y español (§8.3) y despliegue |
+| `Documento_Arquitectura_Software_FootballMaestro` | 2.1 | Monolito modular con 6 módulos; interfaces públicas entre módulos; capas; eventos de dominio; patrones (Repository, Unit of Work, Strategy, Factory, Adapter, Observer, Facade, DTO); SOLID; stack; estructura de carpetas; estructura web del frontend (barra superior y layouts); idiomas inglés y español (§8.3) y despliegue |
 
 ### 03-modelo-de-datos — Las tablas
 | Documento | Versión | Contenido |
 |---|---|---|
-| `Documento_Modelo_Datos_FootballMaestro` | 2.0 | Diagrama entidad-relación, decisiones de diseño y diccionario de las 16 tablas (verificado contra la base de datos real), incluido el contenido en inglés y español |
+| `Documento_Modelo_Datos_FootballMaestro` | 2.1 | Diagrama entidad-relación, decisiones de diseño y diccionario de las 16 tablas (verificado contra la base de datos real), incluido el contenido en inglés y español |
 
 ### 04-contrato-api — Los endpoints
 | Documento | Versión | Contenido |
 |---|---|---|
-| `Documento_Contrato_API_FootballMaestro` | 2.1 | Convenciones (autenticación, idioma, errores, paginación, período de las gráficas), los 67 endpoints por módulo con el RF que cubre cada uno (verificado contra el código) y el formato de cada estilo de minijuego (§7.4) |
+| `Documento_Contrato_API_FootballMaestro` | 2.2 | Convenciones (autenticación, idioma, errores, paginación, período de las gráficas), los 67 endpoints por módulo con el RF que cubre cada uno (verificado contra el código) y el formato de cada estilo de minijuego (§7.4) |
 
 ### 05-pruebas — Qué se prueba
 | Documento | Versión | Contenido |
 |---|---|---|
-| `Plan_Pruebas_FootballMaestro` | 1.6 | Estrategia, casos TC-01 a TC-68, estado de la automatización (792 unitarias, 124 E2E) y Definition of Done |
+| `Plan_Pruebas_FootballMaestro` | 1.7 | Estrategia, casos TC-01 a TC-70, estado de la automatización (796 unitarias, 128 E2E) y Definition of Done |
 
 ### 06-seguridad — Riesgos y controles
 | Documento | Versión | Contenido |

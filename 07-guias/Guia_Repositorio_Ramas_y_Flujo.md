@@ -80,6 +80,8 @@ El proyecto se construyó en 22 etapas, cada una en su propia rama y en cadena (
 | 21 | `feature/helmet` | Cabeceras de seguridad HTTP con Helmet | Seguridad A05, §10 |
 | 22 | `feature/idiomas-csv-insignias` | CSV del panel de admin e insignias en inglés y español | API §5, §9; Modelo de Datos §5.14 |
 | 23 | `feature/admin-graficas` | Pantallas Minijuegos y Economía y unas 25 gráficas nuevas en el panel de administración (rama de trabajo, sale de `main`) | Requisitos RF-154–175, API §9.5–§9.6, Arquitectura §3 |
+| 24 | `feature/diseno-web` | App web: barra superior y todas las pantallas a ancho completo (sale de `feature/admin-graficas`) | Requisitos RNF-UI-100–107, Arquitectura §8 |
+| 25 | `feature/noticias-filtros` | Noticias sin repetidas y solo de fútbol; filtros por 4 ligas más, texto y fecha (sale de `feature/diseno-web`) | Requisitos RF-176–179, API §6, Modelo de Datos §5.10 |
 
 ## 4. Flujo de trabajo
 
