@@ -73,8 +73,8 @@ Sin ellos la app funciona igual: noticias de ejemplo, botón de Google deshabili
 | Qué | Cómo |
 |---|---|
 | API y base de datos | http://localhost:3000/v1/health responde `{"status":"ok","database":"up"}` |
-| Pruebas unitarias y de arquitectura | `npm test` en `backend` (364 pruebas) |
-| Pruebas E2E | `npm run test:e2e` en `backend`, con la base de datos encendida (110 pruebas) |
+| Pruebas unitarias y de arquitectura | `npm test` en `backend` (801 pruebas) |
+| Pruebas E2E | `npm run test:e2e` en `backend`, con la base de datos encendida (128 pruebas) |
 | Tipos del frontend | `npm run typecheck` en `project` |
 
 ## 7. Problemas comunes
