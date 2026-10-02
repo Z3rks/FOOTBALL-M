@@ -12,7 +12,7 @@ Fecha de elaboración: 23 de septiembre de 2026
 
 Fecha de actualización: 2 de octubre de 2026
 
-Versión: 1.4
+Versión: 1.5
 
 ---
 
@@ -144,6 +144,7 @@ Controles de este plan verificados en el código el 24 de septiembre de 2026:
 | Cabeceras de seguridad (Helmet) | Implementado | helmet en backend/src/app.setup.ts: Content-Security-Policy, X-Frame-Options, Strict-Transport-Security, X-Content-Type-Options y sin X-Powered-By. Lo verifica una prueba E2E (health). |
 | HTTPS | Configurado (despliegue) | Lo dan Vercel y Render; el reenvío de /v1 entre ellos también va por HTTPS. En local se usa HTTP. |
 | SSL hacia la base de datos | Configurado (despliegue) | DB_SSL=true en Render (Supabase lo exige). Cifra la conexión; verificar el certificado requiere DB_SSL_CA (pendiente). |
+| API propia de Supabase cerrada | Implementado | Migración CloseSupabaseDataApi: los roles anon y authenticated de Supabase no tienen permisos sobre las tablas (tampoco las futuras) y todas tienen RLS; solo el backend, dueño de las tablas, las usa. Detectado por el asesor de seguridad de Supabase el 2 de octubre de 2026, antes de abrir el registro. |
 | IP real detrás de proxies | Configurado (despliegue) | TRUST_PROXY=2 en render.yaml, para que el rate limiting sea por usuario y no por proxy. |
 
 ## 11. Consideraciones finales
@@ -159,3 +160,4 @@ Este plan debe revisarse cada vez que se agregue una nueva funcionalidad al tabl
 | 1.2 | 24 de septiembre de 2026 | Actualización con el sistema implementado: nueva sección 10 con el estado real de cada control (Helmet queda pendiente); el checklist previo al despliegue suma Google, dominio de correo, cookies/proxy y claves nuevas de producción. |
 | 1.3 | 25 de septiembre de 2026 | Helmet instalado (A05): cabeceras de seguridad HTTP en todas las respuestas, verificadas por una prueba E2E. |
 | 1.4 | 2 de octubre de 2026 | Despliegue en Vercel + Render + Supabase: cookie del mismo sitio gracias al reenvío de /v1, TRUST_PROXY con número de proxies, SSL hacia la base de datos (checklist 10 y 12; estado de HTTPS). |
+| 1.5 | 2 de octubre de 2026 | Se cierra la API propia de Supabase sobre las tablas (permisos de anon y authenticated y RLS en todas las tablas). |

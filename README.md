@@ -54,7 +54,7 @@ Los documentos de diseño vienen en dos formatos con el mismo contenido: **`.doc
 ### 06-seguridad — Riesgos y controles
 | Documento | Versión | Contenido |
 |---|---|---|
-| `Plan_Seguridad_FootballMaestro` | 1.4 | Modelo de amenazas, OWASP Top 10, sesiones, integridad de puntaje y créditos, datos personales (Ley 1581), checklist antes de desplegar y estado real de cada control |
+| `Plan_Seguridad_FootballMaestro` | 1.5 | Modelo de amenazas, OWASP Top 10, sesiones, integridad de puntaje y créditos, datos personales (Ley 1581), checklist antes de desplegar y estado real de cada control |
 
 ### 07-guias — Guías prácticas
 | Documento | Para qué sirve |

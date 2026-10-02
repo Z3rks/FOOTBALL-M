@@ -42,6 +42,8 @@ El proyecto **Football Maestro** ya existe. Se dejó vacío el 2 de octubre de 2
 
 Las tablas no se crean a mano: las crea Render al desplegar (paso 2), con las mismas migraciones de siempre.
 
+> **Seguridad:** Supabase publica el esquema `public` en su propia API (REST y GraphQL) y por defecto da todos los permisos a sus roles `anon` y `authenticated`. La app no usa esa API, así que la migración `CloseSupabaseDataApi` les quita los permisos y activa RLS en todas las tablas. En Supabase → *Advisors → Security* no debe aparecer "RLS Disabled in Public".
+
 ## 2. Render (backend)
 
 1. En [render.com](https://render.com), **New → Blueprint** y elegir el repositorio `Z3rks/Football-Maestro`, rama `main`. Render lee `render.yaml` y propone el servicio **football-maestro-api** (plan gratis, región Ohio, la misma zona que Supabase).
