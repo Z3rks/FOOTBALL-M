@@ -1,6 +1,6 @@
 # Estado del proyecto
 
-Actualizado al **27 de septiembre de 2026**. Todo el código está en la rama `main` (incluidas las gráficas del panel de administración, el diseño web y los filtros de noticias, unidos con el Pull Request #3). La documentación está en la rama `documentacion`.
+Actualizado al **2 de octubre de 2026**. El código está en la rama `main`, salvo la preparación del despliegue, que está en la rama de trabajo `feature/despliegue` (falta aceptar su Pull Request). La documentación está en la rama `documentacion`.
 
 ## 1. Qué funciona
 
@@ -32,14 +32,14 @@ Las 14 pantallas de la maqueta original se conectaron a la API. GamePlay, Forgot
 | Admin | Dashboard, gestión de jugadores, analítica, reportes, exportaciones CSV y auditoría; unas 30 gráficas con período de 7, 30 o 90 días |
 
 - **67 endpoints**, todos documentados en el Contrato de API (verificado contra el código).
-- **16 tablas y 111 columnas**, todas documentadas en el Modelo de Datos (verificado contra la base de datos).
+- **16 tablas y 112 columnas**, todas documentadas en el Modelo de Datos (verificado contra la base de datos).
 - **Arquitectura:** monolito modular con Repository, Unit of Work, Strategy, Factory, Adapter, Observer, Facade y DTO; interfaces públicas pequeñas entre módulos. Una prueba automática verifica las reglas.
 
 ### Pruebas
 
 | Suite | Resultado |
 |---|---|
-| Unitarias (incluye la prueba de arquitectura y la validación de las 203 preguntas en los dos idiomas) | 801 en verde |
+| Unitarias (incluye la prueba de arquitectura y la validación de las 203 preguntas en los dos idiomas) | 807 en verde |
 | E2E contra PostgreSQL | 128 en verde |
 | Casos del Plan de Pruebas (70) | 49 automatizados, 16 probados a mano, 5 pendientes de herramientas (Plan de Pruebas §6) |
 
@@ -50,11 +50,17 @@ Las 14 pantallas de la maqueta original se conectaron a la API. GamePlay, Forgot
 - [ ] Imágenes para los minijuegos: fotos con licencia libre (Wikimedia Commons, con crédito del autor) para estadios y jugadores. Los escudos se siguen dibujando con los colores del club, porque son marcas registradas.
 
 ### Para desplegar en internet
-- [ ] Frontend en Vercel; backend y PostgreSQL en Render o Railway (Arquitectura §9).
-- [ ] Google: dominio real en los orígenes del cliente OAuth y publicar la app ([Guía de servicios externos](Guia_Servicios_Externos.md)).
-- [ ] Brevo: dominio propio autenticado (SPF/DKIM).
-- [ ] Claves nuevas de Currents y Brevo solo en el servidor; administrador con contraseña distinta a la de desarrollo.
-- [ ] `COOKIE_SAMESITE=none` y `TRUST_PROXY=true` según el hosting.
+Paso a paso en la [Guía de despliegue](Guia_Despliegue.md): frontend en Vercel, backend en Render (plan gratis) y PostgreSQL en Supabase.
+
+- [x] Código listo para producción (`render.yaml`, `project/vercel.json`, SSL hacia la base, proxies, migraciones compiladas), en la rama `feature/despliegue`.
+- [x] Proyecto de Supabase "Football Maestro" reactivado y vacío (se borró un prototipo viejo de junio).
+- [ ] Aceptar el Pull Request `feature/despliegue` → `main`.
+- [ ] Z3rks autoriza las apps de Vercel y Render en GitHub para el repositorio.
+- [ ] Render: crear el servicio desde `render.yaml` con los datos de Supabase.
+- [ ] Vercel: importar el repositorio con *Root Directory* `project`.
+- [ ] Crear el administrador en la base publicada, con una contraseña distinta a la de desarrollo.
+- [ ] Google: dirección de Vercel en los orígenes del cliente OAuth y publicar la app ([Guía de servicios externos](Guia_Servicios_Externos.md)).
+- [ ] Claves nuevas de Currents y Brevo solo en Render; Brevo con dominio propio (SPF/DKIM).
 - [ ] Recorrer el checklist del Plan de Seguridad §9.
 
 ### Pruebas pendientes

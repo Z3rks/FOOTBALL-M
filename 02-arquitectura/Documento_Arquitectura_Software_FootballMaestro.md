@@ -10,9 +10,9 @@ Diseño de la arquitectura lógica y física del sistema
 
 Fecha de elaboración: 23 de septiembre de 2026
 
-Fecha de actualización: 27 de septiembre de 2026
+Fecha de actualización: 2 de octubre de 2026
 
-Versión: 2.2
+Versión: 2.3
 
 ---
 
@@ -151,7 +151,7 @@ Cada patrón se seleccionó para resolver un problema concreto identificado en l
 | Base de datos | PostgreSQL + TypeORM | Modelo relacional para usuarios, partidas, créditos y actividad; consultas parametrizadas vía ORM (Plan de Seguridad, A03). |
 | Autenticación | JWT de acceso + refresh token (cookie httpOnly), bcrypt, Google OAuth 2.0 | Roles diferenciados Player/Admin validados en el backend (RNF-SEC-03) e invalidación real de sesión (RNF-SEC-05). |
 | Servicios externos | Currents API (noticias; plan gratuito de 250 peticiones/día, sin retraso), Google OAuth 2.0, Brevo (correo transaccional; plan gratuito de 300 correos/día) | Consumidos siempre a través de Adapters (sección 6). |
-| Hosting | Vercel (frontend), Render o Railway (backend y PostgreSQL gestionado) | Planes gratuitos suficientes para el prototipo académico. |
+| Hosting | Vercel (frontend), Render (backend, plan gratis) y Supabase (PostgreSQL) | Planes gratuitos suficientes para el prototipo académico. Configuración en project/vercel.json y render.yaml; pasos en la Guía de despliegue. |
 
 Redis y WebSockets (Socket.IO), propuestos en el documento del 19 de septiembre para resultados de partidos en vivo, no son necesarios en el alcance actual: ninguna de las 14 pantallas muestra datos en tiempo real. Se reconsiderarán si se implementa el módulo futuro de Partidos y Estadísticas.
 
@@ -207,16 +207,16 @@ SOLID: la traducción está en un solo lugar por capa (Single Responsibility); a
 
 ## 9. Vista física (despliegue)
 
-El siguiente diagrama muestra cómo se distribuyen físicamente los componentes. El navegador descarga el frontend estático desde Vercel y consume la API REST del backend directamente; solo el backend se comunica con la base de datos y con los servicios externos.
+El siguiente diagrama muestra cómo se distribuyen físicamente los componentes. El navegador solo habla con Vercel: descarga el frontend estático y llama a la API en /v1 de ese mismo dominio, y Vercel reenvía esas peticiones al backend en Render (rewrite de project/vercel.json). Así la cookie del refresh token es del mismo sitio (funciona en Safari y en iPhone sin SameSite=None) y no hace falta CORS entre dominios. Solo el backend se comunica con la base de datos y con los servicios externos.
 
 ![Diagrama de despliegue de Football Maestro](./Documento_Arquitectura_Software_FootballMaestro_images/despliegue.png)
 
 | Nodo | Contenido | Comunicación |
 | --- | --- | --- |
-| Dispositivo del usuario | Navegador web (escritorio, tableta o celular) | HTTPS hacia Vercel (descarga de la SPA) y hacia la API (/v1, con JWT). |
-| Vercel | Frontend React + Vite compilado (archivos estáticos) | Solo sirve archivos; no accede a datos. |
-| Render / Railway | Backend NestJS (monolito modular) | TCP/SSL hacia PostgreSQL; HTTPS hacia Google, la API de noticias y el servicio de correo. |
-| PostgreSQL gestionado | Las 16 entidades del Modelo de Datos | Solo accesible desde el backend (credenciales en variables de entorno). |
+| Dispositivo del usuario | Navegador web (escritorio, tableta o celular) | HTTPS solo hacia Vercel: la SPA y la API en /v1 (con JWT) salen del mismo dominio. |
+| Vercel | Frontend React + Vite compilado (archivos estáticos) | Sirve la SPA (cualquier ruta devuelve index.html) y reenvía /v1 al backend por HTTPS; no accede a datos. |
+| Render (plan gratis) | Backend NestJS (monolito modular) | TCP/SSL hacia PostgreSQL por el Session pooler de Supabase; HTTPS hacia Google, Currents y Brevo. Confía en 2 proxies (TRUST_PROXY=2: Vercel y Render) para leer la IP real. Se apaga tras 15 min sin visitas; cada despliegue aplica migraciones y catálogos. |
+| Supabase (PostgreSQL) | Las 16 entidades del Modelo de Datos | Solo accesible con credenciales (variables de entorno de Render); conexión cifrada (DB_SSL=true). |
 | Servicios externos | Google OAuth 2.0, Currents API (noticias), Brevo (correo transaccional) | Consumidos mediante Adapters; un fallo de Google no bloquea el login con correo (RNF-DISP-02). |
 
 ## 10. Consideraciones finales
@@ -242,3 +242,4 @@ Trabajo futuro: el módulo “Partidos y Estadísticas” (calendario, resultado
 | 2.0 | 27 de septiembre de 2026 | El frontend es una aplicación web: deja de simular el marco de un celular y la barra inferior (BottomNav, AdminBottomNav) se reemplaza por una barra superior. Nuevas piezas en components/layout (PlayerLayout, AdminLayout, AuthLayout, TopNav y PageHeader). Se listan las 16 pantallas. |
 | 2.1 | 27 de septiembre de 2026 | Responsabilidades del módulo News: noticias sin repetidas ni de otros deportes y filtros por categoría, texto y fecha. |
 | 2.2 | 27 de septiembre de 2026 | La regla de noticias repetidas (news-dedup.ts) la aplica NewsSyncService; el repositorio solo guarda y consulta. La prueba de arquitectura suma una regla: las migraciones no importan código de la app. |
+| 2.3 | 2 de octubre de 2026 | Vista física con el despliegue real: Vercel (frontend y reenvío de /v1), Render (backend) y Supabase (PostgreSQL); diagrama de despliegue actualizado. |

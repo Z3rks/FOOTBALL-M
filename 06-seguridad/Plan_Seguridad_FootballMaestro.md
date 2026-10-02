@@ -10,9 +10,9 @@ Modelo de amenazas y medidas de mitigación
 
 Fecha de elaboración: 23 de septiembre de 2026
 
-Fecha de actualización: 25 de septiembre de 2026
+Fecha de actualización: 2 de octubre de 2026
 
-Versión: 1.3
+Versión: 1.4
 
 ---
 
@@ -118,8 +118,9 @@ El sistema almacena datos personales (nombre de usuario, email, país) y datos d
 | 7 | El cálculo de score/créditos se verificó del lado del servidor, no se confía en ningún valor final enviado por el cliente (casos TC-42 y TC-43). |
 | 8 | Google: el dominio real está en los orígenes autorizados del cliente OAuth y la app de Google está publicada (hoy en modo prueba). |
 | 9 | Correo: dominio propio autenticado en Brevo (SPF/DKIM) para que los correos no lleguen a spam. |
-| 10 | Cookies y proxy: COOKIE_SAMESITE=none si frontend y API están en dominios distintos (exige HTTPS) y TRUST_PROXY=true detrás del proxy del hosting. |
+| 10 | Cookies y proxy: con el reenvío de /v1 en Vercel, frontend y API comparten dominio y se mantiene COOKIE_SAMESITE=strict. TRUST_PROXY=2 (Vercel → Render): con menos, todos los usuarios comparten la IP del proxy en el límite de intentos; con más, cualquiera podría falsificar su IP. |
 | 11 | Claves nuevas para producción: las claves de Currents y Brevo usadas en desarrollo se compartieron por chat; generar otras y ponerlas solo en las variables de entorno del servidor. Administrador creado con una contraseña distinta a la de desarrollo. |
+| 12 | Base de datos: conexión con SSL (DB_SSL=true); para verificar además el certificado de Supabase, poner DB_SSL_CA. La contraseña de Supabase solo en las variables de Render. |
 
 ## 10. Estado de implementación
 
@@ -141,7 +142,9 @@ Controles de este plan verificados en el código el 24 de septiembre de 2026:
 | Secretos fuera del repositorio | Implementado | Todas las claves en .env (ignorado por git); .env.example sin valores reales. |
 | Dependencias | Implementado | npm audit del backend: 0 vulnerabilidades. Frontend: 2 alertas que solo afectan al servidor de desarrollo de Vite. |
 | Cabeceras de seguridad (Helmet) | Implementado | helmet en backend/src/app.setup.ts: Content-Security-Policy, X-Frame-Options, Strict-Transport-Security, X-Content-Type-Options y sin X-Powered-By. Lo verifica una prueba E2E (health). |
-| HTTPS | Pendiente (despliegue) | Lo da el hosting (Vercel, Render/Railway); en local se usa HTTP. |
+| HTTPS | Configurado (despliegue) | Lo dan Vercel y Render; el reenvío de /v1 entre ellos también va por HTTPS. En local se usa HTTP. |
+| SSL hacia la base de datos | Configurado (despliegue) | DB_SSL=true en Render (Supabase lo exige). Cifra la conexión; verificar el certificado requiere DB_SSL_CA (pendiente). |
+| IP real detrás de proxies | Configurado (despliegue) | TRUST_PROXY=2 en render.yaml, para que el rate limiting sea por usuario y no por proxy. |
 
 ## 11. Consideraciones finales
 
@@ -155,3 +158,4 @@ Este plan debe revisarse cada vez que se agregue una nueva funcionalidad al tabl
 | 1.1 | 23 de septiembre de 2026 | Revisión de consistencia: la verificación de respuestas usa QUESTION (antes decía GAME); refresh token alineado con el Contrato de API (cookie httpOnly + POST /auth/refresh, guardado como hash en AUTH_TOKEN); se agregan reglas de recuperación de contraseña y cuentas suspendidas; consentimiento y supresión de datos (RNF-SEC-07); ORM fijado en TypeORM; se corrige el rango de casos de seguridad del checklist (TC-33 a TC-35 y TC-42 a TC-48). |
 | 1.2 | 24 de septiembre de 2026 | Actualización con el sistema implementado: nueva sección 10 con el estado real de cada control (Helmet queda pendiente); el checklist previo al despliegue suma Google, dominio de correo, cookies/proxy y claves nuevas de producción. |
 | 1.3 | 25 de septiembre de 2026 | Helmet instalado (A05): cabeceras de seguridad HTTP en todas las respuestas, verificadas por una prueba E2E. |
+| 1.4 | 2 de octubre de 2026 | Despliegue en Vercel + Render + Supabase: cookie del mismo sitio gracias al reenvío de /v1, TRUST_PROXY con número de proxies, SSL hacia la base de datos (checklist 10 y 12; estado de HTTPS). |

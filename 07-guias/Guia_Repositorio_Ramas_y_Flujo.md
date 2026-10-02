@@ -82,6 +82,8 @@ El proyecto se construyó en 22 etapas, cada una en su propia rama y en cadena (
 | 23 | `feature/admin-graficas` | Pantallas Minijuegos y Economía y unas 25 gráficas nuevas en el panel de administración (sale de `main`) | Requisitos RF-154–175, API §9.5–§9.6, Arquitectura §3 |
 | 24 | `feature/diseno-web` | App web: barra superior y todas las pantallas a ancho completo (sale de `feature/admin-graficas`) | Requisitos RNF-UI-100–107, Arquitectura §8 |
 | 25 | `feature/noticias-filtros` | Noticias sin repetidas y solo de fútbol; filtros por 4 ligas más, texto y fecha (sale de `feature/diseno-web`) | Requisitos RF-176–179, API §6, Modelo de Datos §5.10 |
+| 26 | `feature/iconos-admin` | Íconos en lugar de emojis en el portal; la barra superior cabe en todos los anchos | Requisitos RNF-UI-089, 091, 101, 102 |
+| 27 | `feature/despliegue` | Configuración para publicar en Vercel, Render y Supabase | Arquitectura §9, Guía de despliegue |
 
 ## 4. Flujo de trabajo
 

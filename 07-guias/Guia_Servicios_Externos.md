@@ -60,6 +60,8 @@ Football Maestro usa tres servicios externos, siempre a través de un *adapter* 
 
 ## 4. Antes de desplegar
 
+Dónde va cada clave en producción y en qué orden se configura todo: [Guía de despliegue](Guia_Despliegue.md). En resumen, `GOOGLE_CLIENT_ID`, `NEWS_API_KEY`, `MAIL_API_KEY` y `MAIL_FROM` van en las variables de entorno de Render, y `VITE_GOOGLE_CLIENT_ID` en las de Vercel.
+
 Resumen de lo que falta en estos servicios (el checklist completo está en el Plan de Seguridad §9):
 
 - [ ] Google: dominio real en los orígenes y app publicada.

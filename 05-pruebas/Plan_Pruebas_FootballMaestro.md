@@ -10,9 +10,9 @@ Casos de prueba y trazabilidad de requisitos
 
 Fecha de elaboración: 23 de septiembre de 2026
 
-Fecha de actualización: 27 de septiembre de 2026
+Fecha de actualización: 2 de octubre de 2026
 
-Versión: 1.8
+Versión: 1.9
 
 ---
 
@@ -208,7 +208,7 @@ Resultado de la última ejecución (27 de septiembre de 2026), todas en verde:
 
 | Suite | Pruebas | Qué cubre y cómo se ejecuta |
 | --- | --- | --- |
-| Unitarias (Jest) | 801 | Servicios, estrategias de cada minijuego, adaptadores (Currents en inglés y español, Brevo), validación de variables de entorno, reglas de progreso, idioma de la petición (shared/i18n), la prueba de arquitectura y la validación de las 203 preguntas en cada idioma (formato, respuesta válida para su estrategia, que details no revele la respuesta y que la traducción coincida con el original). En backend/: npm test. |
+| Unitarias (Jest) | 807 | Servicios, estrategias de cada minijuego, adaptadores (Currents en inglés y español, Brevo), validación de variables de entorno, reglas de progreso, idioma de la petición (shared/i18n), la prueba de arquitectura y la validación de las 203 preguntas en cada idioma (formato, respuesta válida para su estrategia, que details no revele la respuesta y que la traducción coincida con el original). En backend/: npm test. |
 | E2E (Jest + Supertest) | 128 | Los endpoints del Contrato de API contra PostgreSQL real, en 8 archivos (auth, users, games, credits, news, admin, admin-charts, health). En backend/: npm run test:e2e (con la base de datos encendida). |
 | Arquitectura | 8 reglas | Parte de las unitarias (src/architecture.spec.ts). Falla si el código rompe el desacople entre módulos o la inversión de dependencias. |
 | Frontend | — | Revisión de tipos (npm run typecheck) y build de producción (npx vite build). Sin pruebas automatizadas de interfaz todavía. |
@@ -250,3 +250,4 @@ Los identificadores de los casos agregados en la versión 1.1 continúan la nume
 | 1.6 | 27 de septiembre de 2026 | Diseño web: TC-68 (todas las pantallas a 1440 y 390 px, barra superior y cuadrículas adaptables); TC-67 entra a Minijuegos y Economía también por la barra superior; TC-36 se redacta para el navegador del celular. |
 | 1.7 | 27 de septiembre de 2026 | Noticias: TC-69 (sin repetidas ni otros deportes) y TC-70 (ligas nuevas, buscador y período), automatizados en news.e2e-spec.ts; 796 pruebas unitarias y 128 E2E. |
 | 1.8 | 27 de septiembre de 2026 | La prueba de arquitectura (TC-56) suma la regla de migraciones; pruebas unitarias de las noticias repetidas; 801 pruebas unitarias. |
+| 1.9 | 2 de octubre de 2026 | Pruebas unitarias de la configuración de producción (SSL de la base, migraciones compiladas, número de proxies y sincronización de noticias al arrancar); 807 pruebas unitarias y 128 E2E. |

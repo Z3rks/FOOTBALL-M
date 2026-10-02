@@ -10,9 +10,9 @@ Diseño de la base de datos del sistema
 
 Fecha de elaboración: 23 de septiembre de 2026
 
-Fecha de actualización: 25 de septiembre de 2026
+Fecha de actualización: 2 de octubre de 2026
 
-Versión: 2.1
+Versión: 2.2
 
 ---
 
@@ -210,6 +210,7 @@ Noticias sincronizadas desde la API de noticias externa, mostradas en NewsScreen
 | `source_url` | string |  | Enlace a la noticia original (RF-080). |
 | `image_url` | string | nulo | Imagen de la noticia. |
 | `published_at` | datetime |  | Fecha de publicación; define el orden del feed (RF-072). |
+| `synced_at` | datetime |  | Última vez que la sincronización trajo la noticia. El máximo dice cuándo fue la última sincronización: al arrancar, el backend no vuelve a sincronizar si fue hace menos de NEWS_SYNC_MINUTES. |
 
 ### 5.11 CREDIT_TRANSACTION
 
@@ -327,3 +328,4 @@ Este modelo de datos debe revisarse junto con el Documento de Arquitectura de So
 | 1.9 | 25 de septiembre de 2026 | Inglés y español: columna translations (jsonb) en GAME, QUESTION, FUN_FACT y STORE_ITEM; GAME_SESSION.locale; NEWS_ARTICLE.language con su índice (migraciones ContentTranslations y NewsLanguage). Las 203 preguntas tienen su traducción al inglés. |
 | 2.0 | 25 de septiembre de 2026 | BADGE suma translations (migración BadgeTranslations): las insignias también están en inglés y español. |
 | 2.1 | 27 de septiembre de 2026 | NEWS_ARTICLE suma title_key con su índice y 4 categorías (migración NewsFiltersDedup, que además borra las noticias repetidas y las de otros deportes ya guardadas). |
+| 2.2 | 2 de octubre de 2026 | NEWS_ARTICLE.synced_at (migración NewsSyncedAt): evita gastar el cupo de noticias cada vez que el servidor de Render despierta. |

@@ -34,12 +34,12 @@ Los documentos de diseño vienen en dos formatos con el mismo contenido: **`.doc
 ### 02-arquitectura — Cómo está construido el backend
 | Documento | Versión | Contenido |
 |---|---|---|
-| `Documento_Arquitectura_Software_FootballMaestro` | 2.2 | Monolito modular con 6 módulos; interfaces públicas entre módulos; capas; eventos de dominio; patrones (Repository, Unit of Work, Strategy, Factory, Adapter, Observer, Facade, DTO); SOLID; stack; estructura de carpetas; estructura web del frontend (barra superior y layouts); idiomas inglés y español (§8.3) y despliegue |
+| `Documento_Arquitectura_Software_FootballMaestro` | 2.3 | Monolito modular con 6 módulos; interfaces públicas entre módulos; capas; eventos de dominio; patrones (Repository, Unit of Work, Strategy, Factory, Adapter, Observer, Facade, DTO); SOLID; stack; estructura de carpetas; estructura web del frontend (barra superior y layouts); idiomas inglés y español (§8.3) y despliegue |
 
 ### 03-modelo-de-datos — Las tablas
 | Documento | Versión | Contenido |
 |---|---|---|
-| `Documento_Modelo_Datos_FootballMaestro` | 2.1 | Diagrama entidad-relación, decisiones de diseño y diccionario de las 16 tablas (verificado contra la base de datos real), incluido el contenido en inglés y español |
+| `Documento_Modelo_Datos_FootballMaestro` | 2.2 | Diagrama entidad-relación, decisiones de diseño y diccionario de las 16 tablas (verificado contra la base de datos real), incluido el contenido en inglés y español |
 
 ### 04-contrato-api — Los endpoints
 | Documento | Versión | Contenido |
@@ -49,12 +49,12 @@ Los documentos de diseño vienen en dos formatos con el mismo contenido: **`.doc
 ### 05-pruebas — Qué se prueba
 | Documento | Versión | Contenido |
 |---|---|---|
-| `Plan_Pruebas_FootballMaestro` | 1.8 | Estrategia, casos TC-01 a TC-70, estado de la automatización (801 unitarias, 128 E2E) y Definition of Done |
+| `Plan_Pruebas_FootballMaestro` | 1.9 | Estrategia, casos TC-01 a TC-70, estado de la automatización (807 unitarias, 128 E2E) y Definition of Done |
 
 ### 06-seguridad — Riesgos y controles
 | Documento | Versión | Contenido |
 |---|---|---|
-| `Plan_Seguridad_FootballMaestro` | 1.3 | Modelo de amenazas, OWASP Top 10, sesiones, integridad de puntaje y créditos, datos personales (Ley 1581), checklist antes de desplegar y estado real de cada control |
+| `Plan_Seguridad_FootballMaestro` | 1.4 | Modelo de amenazas, OWASP Top 10, sesiones, integridad de puntaje y créditos, datos personales (Ley 1581), checklist antes de desplegar y estado real de cada control |
 
 ### 07-guias — Guías prácticas
 | Documento | Para qué sirve |
@@ -62,6 +62,7 @@ Los documentos de diseño vienen en dos formatos con el mismo contenido: **`.doc
 | [`Estado_del_Proyecto.md`](07-guias/Estado_del_Proyecto.md) | Qué funciona hoy y qué falta (terminar, desplegar, probar) |
 | [`Guia_Instalacion_y_Ejecucion.md`](07-guias/Guia_Instalacion_y_Ejecucion.md) | Cómo correr la app en un PC, crear un administrador y solucionar problemas comunes |
 | [`Guia_Repositorio_Ramas_y_Flujo.md`](07-guias/Guia_Repositorio_Ramas_y_Flujo.md) | Las dos ramas del repositorio, estructura del código, las etapas del proyecto, flujo de trabajo, convenciones y checklist de Pull Request |
+| [`Guia_Despliegue.md`](07-guias/Guia_Despliegue.md) | Cómo publicar la app en internet: Vercel (frontend), Render (backend) y Supabase (PostgreSQL), con qué poner en cada variable |
 | [`Guia_Servicios_Externos.md`](07-guias/Guia_Servicios_Externos.md) | Google, Currents (noticias) y Brevo (correo): configuración actual y lo que falta para producción |
 
 ### 08-propuestas — Funcionalidades futuras (no implementadas)
