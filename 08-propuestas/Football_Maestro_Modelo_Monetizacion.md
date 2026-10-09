@@ -1,6 +1,6 @@
 # Football Maestro — Modelo de monetización
 
-Oct 9, 2026 · @Matias
+Oct 9, 2026
 
 Football Maestro se monetiza con un modelo freemium. Cualquiera juega gratis con anuncios y un límite diario. Quien quiera jugar sin límite y sin anuncios paga una suscripción Premium. El diseño técnico ya está en la Propuesta de Monetización v1.1 del repositorio; este documento resume el modelo de negocio.
 
