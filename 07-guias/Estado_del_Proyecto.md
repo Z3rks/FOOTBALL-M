@@ -69,7 +69,7 @@ Paso a paso en la [Guía de despliegue](Guia_Despliegue.md): frontend en Vercel,
 - [ ] Pruebas automatizadas de la interfaz (Playwright o Cypress).
 
 ### Propuestas para el futuro
-- Monetización con planes Free y Premium: diseñada pero no implementada ([Propuesta de monetización](../08-propuestas/Propuesta_Monetizacion_FootballMaestro.md)).
+- Monetización con planes Free y Premium: modelo de negocio propuesto, no implementado ([Modelo de monetización](../08-propuestas/Football_Maestro_Modelo_Monetizacion.md)).
 
 ### Fuera de alcance
 - Módulo "Partidos y Estadísticas" (calendario y resultados en vivo): no tiene pantalla; queda como trabajo futuro (Arquitectura §10).

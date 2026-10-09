@@ -68,7 +68,7 @@ Los documentos de diseño vienen en dos formatos con el mismo contenido: **`.doc
 ### 08-propuestas — Funcionalidades futuras (no implementadas)
 | Documento | Versión | Contenido |
 |---|---|---|
-| `Propuesta_Monetizacion_FootballMaestro` | 1.1 | Planes Free (anuncios alrededor del contenido, una partida por minijuego al día) y Premium (partidas ilimitadas, sin anuncios, descuento en la tienda): arquitectura, datos, endpoints, pasarela de pagos, aspectos legales, seguridad, pruebas y fases. Si se aprueba, su contenido pasa a los documentos oficiales |
+| `Football_Maestro_Modelo_Monetizacion` | 9 oct. 2026 | Modelo de negocio freemium: planes Free y Premium, fuentes de ingreso (suscripción, anuncios, paquetes de créditos y patrocinios), precios propuestos en COP y qué falta para implementarlo |
 
 ## Orden de lectura sugerido
 
