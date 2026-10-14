@@ -40,7 +40,7 @@ Las 14 pantallas de la maqueta original se conectaron a la API. GamePlay, Forgot
 | Suite | Resultado |
 |---|---|
 | Unitarias (incluye la prueba de arquitectura y la validación de las 203 preguntas en los dos idiomas) | 807 en verde |
-| E2E contra PostgreSQL | 128 en verde |
+| E2E contra PostgreSQL | 129 en verde |
 | Casos del Plan de Pruebas (70) | 49 automatizados, 16 probados a mano, 5 pendientes de herramientas (Plan de Pruebas §6) |
 
 ## 2. Qué falta

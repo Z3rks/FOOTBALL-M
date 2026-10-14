@@ -49,7 +49,7 @@ Los documentos de diseño vienen en dos formatos con el mismo contenido: **`.doc
 ### 05-pruebas — Qué se prueba
 | Documento | Versión | Contenido |
 |---|---|---|
-| `Plan_Pruebas_FootballMaestro` | 1.9 | Estrategia, casos TC-01 a TC-70, estado de la automatización (807 unitarias, 128 E2E) y Definition of Done |
+| `Plan_Pruebas_FootballMaestro` | 2.0 | Estrategia, casos TC-01 a TC-70, estado de la automatización (807 unitarias, 129 E2E) y Definition of Done |
 
 ### 06-seguridad — Riesgos y controles
 | Documento | Versión | Contenido |
