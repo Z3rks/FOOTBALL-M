@@ -1,0 +1,35 @@
+/**
+ * Mensajes de error de la API (siempre en inglés) → clave de traducción. El backend no cambia:
+ * el frontend traduce los que conoce y muestra el original si llega uno nuevo.
+ */
+export const API_ERROR_KEYS: Record<string, string> = {
+  "Account suspended": "errors.accountSuspended",
+  "Administrator accounts cannot be self-deleted": "errors.adminCannotDelete",
+  "Administrators must sign in with email and password": "errors.adminUseEmail",
+  "All questions must be answered before completing": "errors.answerAll",
+  "Current password is incorrect": "errors.currentPasswordIncorrect",
+  "Daily challenge already completed today": "errors.dailyDone",
+  "Email already registered": "errors.emailTaken",
+  "Email or username already registered": "errors.emailOrUsernameTaken",
+  "Game not found": "errors.gameNotFound",
+  "Google email is not verified": "errors.googleEmailNotVerified",
+  "Google sign-in is not configured": "errors.googleNotConfigured",
+  "Insufficient role": "errors.insufficientRole",
+  "Invalid Google token": "errors.invalidGoogleToken",
+  "Invalid email or password": "errors.invalidCredentials",
+  "Invalid or expired token": "errors.invalidResetToken",
+  "Invalid referral code": "errors.invalidReferral",
+  "Item already owned": "errors.itemOwned",
+  "Item not owned": "errors.itemNotOwned",
+  "Not enough credits": "errors.notEnoughCredits",
+  "Password is required and must be correct": "errors.passwordIncorrect",
+  "Question already answered": "errors.alreadyAnswered",
+  "Session expired": "errors.sessionExpired",
+  "Session is not in progress": "errors.sessionNotInProgress",
+  "This account cannot use the selected access type": "errors.wrongAccessType",
+  "This account signs in with Google and has no password": "errors.googleNoPassword",
+  "This game has no questions yet": "errors.noQuestions",
+  "Username already taken": "errors.usernameTaken",
+  "consentAccepted must be true to create an account": "errors.consentRequired",
+  "month cannot be in the future": "errors.futureMonth",
+};
