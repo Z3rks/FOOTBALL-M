@@ -50,6 +50,7 @@ Los documentos de diseño vienen en dos formatos con el mismo contenido: **`.doc
 | Documento | Versión | Contenido |
 |---|---|---|
 | `Plan_Pruebas_FootballMaestro` | 2.0 | Estrategia, casos TC-01 a TC-70, estado de la automatización (807 unitarias, 129 E2E) y Definition of Done |
+| `Casos_de_prueba_Football-Maestro.xlsx` | 1.0 | Los 105 escenarios de prueba ejecutados el 5 de noviembre de 2026 sobre la app publicada: resultado (Pasó/Falló) y evidencia de cada caso, con su captura dentro de la hoja |
 
 ### 06-seguridad — Riesgos y controles
 | Documento | Versión | Contenido |
